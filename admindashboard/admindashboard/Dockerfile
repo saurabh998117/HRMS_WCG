@@ -12,6 +12,9 @@ COPY src ./src
 # 4. Build the app (skipping tests to save time)
 RUN ./mvnw clean package -DskipTests
 
+# Give execution permission to the Maven Wrapper
+RUN chmod +x mvnw
+
 # 5. Run the built jar file
 # (Note: This finds any jar file in target folder)
 CMD ["java", "-jar", "target/admindashboard-0.0.1-SNAPSHOT.jar"]
