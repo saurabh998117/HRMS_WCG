@@ -15,19 +15,25 @@ public class DashboardController {
         return "index";
     }
 
-    // 2. The Logic to Check Password (THE NEW FIX)
+    // 2. The Logic to Check Password (UPDATED: Accepts ANY valid input)
     @PostMapping("/login")
     public String verifyLogin(@RequestParam String username,
                               @RequestParam String password,
                               Model model) {
 
-        // Simple Hardcoded Check (We will connect DB later)
-        if ("admin".equals(username) && "admin123".equals(password)) {
-            // Success: Go to Dashboard
+        // TEMPORARY LOGIC:
+        // Instead of checking for "admin", we just check if the fields are NOT empty.
+        // Once the Database is added, we will check if "username" exists in the DB.
+
+        if (username != null && !username.trim().isEmpty() &&
+                password != null && !password.trim().isEmpty()) {
+
+            // Input is valid (not empty) -> Let them in!
             return "redirect:/dashboard";
+
         } else {
-            // Failure: Stay on Login Page & Show Error
-            model.addAttribute("error", "Invalid Username or Password");
+            // Input is empty -> Block them.
+            model.addAttribute("error", "Username and Password cannot be empty");
             return "index";
         }
     }
@@ -38,11 +44,34 @@ public class DashboardController {
         return "dashboard";
     }
 
-    // 4. The Client Dashboard
+    // 4. The Client Dashboard (Updated to accept data)
     @GetMapping("/client")
-    public String clientDashboard() {
+    public String clientDashboard(@RequestParam String clientName,
+                                  @RequestParam String phone,
+                                  @RequestParam String pan,
+                                  Model model) {
+
+        // Send these values to the HTML page
+        model.addAttribute("name", clientName);
+        model.addAttribute("phone", "+91 " + phone);
+        model.addAttribute("pan", pan);
+
         return "client-dashboard";
     }
-}
 
+    // 5. The Profile Page Route (Now accepts real data)
+    @GetMapping("/profile")
+    public String profilePage(@RequestParam String clientName,
+                              @RequestParam String phone,
+                              @RequestParam String pan,
+                              Model model) {
+
+        // Pass the login data to the profile page
+        model.addAttribute("name", clientName);
+        model.addAttribute("phone", phone);
+        model.addAttribute("pan", pan);
+
+        return "profile";
+    }
+}
 
