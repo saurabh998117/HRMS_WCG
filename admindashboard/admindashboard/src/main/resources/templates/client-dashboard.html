@@ -20,7 +20,7 @@
                 <li><h5 class="dropdown-header text-primary" th:text="${name}">User Name</h5></li>
 
                 <li><a class="dropdown-item fw-bold mt-2"
-                       th:href="@{/profile(clientName=${name}, phone=${phone}, pan=${pan})}">
+                       th:href="@{/profile(clientName=${name}, phone=${phone}, pan=${pan}, role='client')}">
                     <i class="fas fa-user-edit me-2 text-primary"></i>Edit Profile
                 </a></li>
 

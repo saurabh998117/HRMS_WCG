@@ -59,19 +59,21 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" name="email" placeholder="client@example.com">
+                                <input type="email" class="form-control" name="email" placeholder="example@email.com">
                             </div>
                         </div>
 
-                        <h5 class="text-primary mb-3 mt-4">Business Details</h5>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">PAN Number</label>
-                                <input type="text" class="form-control bg-light fw-bold" name="pan" th:value="${pan}" readonly>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">GSTIN <span class="text-muted small">(Optional)</span></label>
-                                <input type="text" class="form-control text-uppercase" name="gstin" placeholder="27ABCDE1234F1Z5">
+                        <div th:if="${role == 'client'}">
+                            <h5 class="text-primary mb-3 mt-4">Business Details</h5>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">PAN Number</label>
+                                    <input type="text" class="form-control bg-light fw-bold" name="pan" th:value="${pan}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">GSTIN <span class="text-muted small">(Optional)</span></label>
+                                    <input type="text" class="form-control text-uppercase" name="gstin" placeholder="27ABCDE1234F1Z5">
+                                </div>
                             </div>
                         </div>
 

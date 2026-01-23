@@ -59,17 +59,18 @@ public class DashboardController {
         return "client-dashboard";
     }
 
-    // 5. The Profile Page Route (Now accepts real data)
+    // 5. The Profile Page Route (Updated with Role)
     @GetMapping("/profile")
     public String profilePage(@RequestParam String clientName,
                               @RequestParam String phone,
                               @RequestParam String pan,
+                              @RequestParam(defaultValue = "client") String role, // New: Checks if Admin or Client
                               Model model) {
 
-        // Pass the login data to the profile page
         model.addAttribute("name", clientName);
         model.addAttribute("phone", phone);
         model.addAttribute("pan", pan);
+        model.addAttribute("role", role); // Sends "admin" or "client" to the page
 
         return "profile";
     }
