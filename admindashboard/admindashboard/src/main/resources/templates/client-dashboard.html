@@ -16,46 +16,107 @@
 </nav>
 
 <div class="container mt-5">
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-muted mb-4">Current Filing Status: <span class="text-primary fw-bold">In Process</span></h5>
+            <div class="position-relative m-4">
+                <div class="progress" style="height: 2px;">
+                    <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <button type="button" class="position-absolute top-0 start-0 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">1</button>
+                <button type="button" class="position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">2</button>
+                <button type="button" class="position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill" style="width: 2rem; height:2rem;">3</button>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <small class="text-primary fw-bold">Docs Uploaded</small>
+                    <small class="text-primary fw-bold">IT Verification</small>
+                    <small class="text-muted">Govt Filing</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-4">
+
             <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-bold">
+                    <i class="fas fa-heartbeat me-2 text-danger"></i>Compliance Health
+                </div>
                 <div class="card-body text-center">
-                    <h5 class="card-title text-muted">Current Status</h5>
-                    <h2 class="text-warning display-4 my-3"><i class="fas fa-clock"></i></h2>
-                    <h4 class="text-warning">Documents Pending</h4>
-                    <p class="small text-muted">Please upload your GST docs.</p>
+                    <div style="width: 120px; height: 120px; border-radius: 50%; border: 8px solid #ffc107; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <div>
+                            <h3 class="mb-0">Med</h3>
+                            <small class="text-muted">Risk</small>
+                        </div>
+                    </div>
+                    <p class="mt-3 small text-muted">
+                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                        GSTR-3B Due in <strong>3 Days</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4 bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5>Need Help?</h5>
+                    <p class="small">Chat with your assigned CA directly.</p>
+                    <button class="btn btn-light btn-sm w-100 fw-bold text-primary">Open Support Chat</button>
                 </div>
             </div>
         </div>
 
         <div class="col-md-8">
-            <div class="card shadow-sm">
+
+            <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white fw-bold">
-                    <i class="fas fa-file-upload me-2"></i>Upload Documents
+                    <i class="fas fa-file-upload me-2"></i>Upload Pending Documents
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info small">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Uploading here triggers an alert to the Admin instantly.
+                    <div class="alert alert-warning small d-flex align-items-center">
+                        <i class="fas fa-bell me-2"></i>
+                        <div><strong>Action Required:</strong> Please upload your purchase invoices for Jan 2026.</div>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Select Document Type</label>
-                        <select class="form-select">
-                            <option>GST Return Data</option>
-                            <option>Income Tax Proofs</option>
-                            <option>Bank Statement</option>
-                        </select>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="inputGroupFile02">
+                        <button class="input-group-text btn btn-dark">Upload</button>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Upload File (PDF/Excel)</label>
-                        <input class="form-control" type="file">
-                    </div>
-
-                    <button class="btn btn-success"><i class="fas fa-paper-plane me-1"></i> Submit to Admin</button>
                 </div>
             </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">
+                    <i class="fas fa-history me-2"></i>Recent Filings
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light small">
+                        <tr>
+                            <th>Service</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>GSTR-1 (Dec)</td>
+                            <td>Jan 11, 2026</td>
+                            <td><span class="badge bg-success">Filed</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td>GSTR-3B (Nov)</td>
+                            <td>Dec 20, 2025</td>
+                            <td><span class="badge bg-success">Filed</span></td>
+                            <td><button class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
