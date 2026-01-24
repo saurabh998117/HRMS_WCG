@@ -128,7 +128,6 @@ body {
     }
 }
 /* === Compliance Risk Meter === */
-
 .risk-meter {
     width: 30px;
     height: 30px;
@@ -162,3 +161,78 @@ body {
     font-size: 0.8rem;
     z-index: 10;
 }
+
+/* FLOATING WIDGET (FAB) STYLES */
+.fab-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1050; /* Above everything */
+    display: flex;
+    flex-direction: column-reverse; /* Main button at bottom, items stack up */
+    align-items: center;
+}
+
+/* The Main Toggle Button */
+.fab-main {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+    font-size: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.fab-main:hover { transform: scale(1.1); }
+
+/* The Hidden Actions */
+.fab-action-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse; /* Label to the left of button */
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    transition: all 0.3s;
+    pointer-events: none; /* Can't click when hidden */
+}
+
+/* The Small Buttons */
+.fab-action {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+}
+.fab-action:hover { color: white; filter: brightness(1.1); }
+
+/* The Labels (Tooltips) */
+.fab-label {
+    margin-right: 15px;
+    background: rgba(33, 37, 41, 0.9);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    white-space: nowrap;
+}
+
+/* ACTIVE STATE (When Opened) */
+.fab-container.active .fab-action-wrapper {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* Staggered Animation Delays (Bottom to Top) */
+.fab-container.active .fab-action-wrapper:nth-child(2) { transition-delay: 0.05s; }
+.fab-container.active .fab-action-wrapper:nth-child(3) { transition-delay: 0.1s; }
+.fab-container.active .fab-action-wrapper:nth-child(4) { transition-delay: 0.15s; }

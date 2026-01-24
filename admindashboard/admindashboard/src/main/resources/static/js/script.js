@@ -151,3 +151,26 @@ function removeFile(input, uploadBtn, removeBtn) {
     // C. Delete the Remove Button from the screen
     removeBtn.remove();
 }
+
+// 1 Initialize Bootstrap Tooltips (Runs when page loads)
+document.addEventListener("DOMContentLoaded", function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+//  FAB Widget Toggle Logic
+function toggleFab() {
+    var container = document.getElementById('fabContainer');
+    var icon = document.querySelector('.fab-main i');
+
+    container.classList.toggle('active');
+
+    if (container.classList.contains('active')) {
+        icon.classList.remove('fa-bolt');
+        icon.classList.add('fa-times'); // Change to 'X' close icon
+    } else {
+        icon.classList.add('fa-bolt');
+        icon.classList.remove('fa-times');
+    }
+}
