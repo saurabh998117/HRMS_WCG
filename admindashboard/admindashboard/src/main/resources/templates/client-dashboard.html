@@ -19,10 +19,8 @@
                     <i class="fas fa-bell fa-lg"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">3</span>
                 </button>
-
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="width: 340px;">
                     <li><h6 class="dropdown-header text-uppercase small fw-bold text-muted spacing-1">Recent Alerts</h6></li>
-
                     <li>
                         <div class="dropdown-item-text d-flex align-items-start py-3 border-bottom">
                             <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
@@ -30,35 +28,10 @@
                             </div>
                             <div>
                                 <small class="fw-bold d-block text-dark">Action Required</small>
-                                <small class="text-muted small text-wrap lh-sm">Please re-upload Jan Invoices. The previous image was blurry.</small>
+                                <small class="text-muted small text-wrap lh-sm">Please re-upload Jan Invoices. Image blurry.</small>
                             </div>
                         </div>
                     </li>
-
-                    <li>
-                        <div class="dropdown-item-text d-flex align-items-start py-3 border-bottom">
-                            <div class="bg-success bg-opacity-10 text-success rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div>
-                                <small class="fw-bold d-block text-dark">Filing Successful</small>
-                                <small class="text-muted small text-wrap lh-sm">GSTR-1 for Dec 2025 has been filed successfully.</small>
-                            </div>
-                        </div>
-                    </li>
-
-                    <li>
-                        <div class="dropdown-item-text d-flex align-items-start py-3">
-                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                <i class="fas fa-info"></i>
-                            </div>
-                            <div>
-                                <small class="fw-bold d-block text-dark">New Tax Update</small>
-                                <small class="text-muted small text-wrap lh-sm">Govt has extended the due date for tax audits.</small>
-                            </div>
-                        </div>
-                    </li>
-
                     <li>
                         <a class="dropdown-item text-center small text-primary fw-bold py-2 bg-light border-top" href="/notifications">
                             View All Notifications <i class="fas fa-arrow-right ms-1"></i>
@@ -87,7 +60,6 @@
     <div class="row">
 
         <div class="col-md-4">
-
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white fw-bold small text-muted">CURRENT STATUS</div>
                 <div class="card-body text-center">
@@ -129,25 +101,20 @@
         <div class="col-md-8">
 
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-white fw-bold">
-                    <i class="fas fa-file-upload me-2"></i>Upload Pending Documents
-                </div>
+                <div class="card-header bg-white fw-bold"><i class="fas fa-file-upload me-2"></i>Upload Pending Documents</div>
                 <div class="card-body">
                     <div class="alert alert-warning small d-flex align-items-center">
                         <i class="fas fa-bell me-2"></i>
                         <div><strong>Action Required:</strong> Please upload your purchase invoices for Jan 2026.</div>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label small text-muted">Document Type</label>
                         <select class="form-select">
                             <option selected>Purchase Invoices (GST)</option>
                             <option>Bank Statement</option>
                             <option>Sales Register</option>
-                            <option>Challan Copy</option>
                         </select>
                     </div>
-
                     <div class="input-group">
                         <input type="file" class="form-control" id="inputGroupFile02">
                         <button class="input-group-text btn btn-dark">Upload</button>
@@ -169,6 +136,54 @@
                     </tr>
                     </thead>
                     <tbody>
+
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-file-image text-danger me-2"></i>
+                                <div><div class="fw-bold">Jan Invoices</div><small class="text-muted">Jan 2026</small></div>
+                            </div>
+                        </td>
+                        <td>Today</td>
+                        <td>
+                                <span class="badge bg-danger cursor-pointer"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top"
+                                      title="Reason: Image is blurry. Please scan and re-upload.">
+                                    <i class="fas fa-exclamation-circle me-1"></i>Rejected
+                                </span>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-warning text-dark fw-bold me-1" title="Re-upload Correct File">
+                                <i class="fas fa-upload me-1"></i>Fix Now
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-file-excel text-success me-2"></i>
+                                <div><div class="fw-bold">Bank Statement</div><small class="text-muted">Dec 2025</small></div>
+                            </div>
+                        </td>
+                        <td>Jan 23, 2026</td>
+                        <td>
+                                <span class="badge bg-warning text-dark cursor-pointer"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top"
+                                      title="Est. Completion: 24 Hours">
+                                    <i class="fas fa-clock me-1"></i>Processing
+                                </span>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm btn-outline-warning me-1"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
@@ -177,27 +192,19 @@
                             </div>
                         </td>
                         <td>Jan 11, 2026</td>
-                        <td><span class="badge bg-success">Filed</span></td>
+                        <td>
+                                <span class="badge bg-success cursor-pointer"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top"
+                                      title="Filed on Jan 11 via Govt Portal">
+                                    <i class="fas fa-check-circle me-1"></i>Filed
+                                </span>
+                        </td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary" title="Download"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></button>
                         </td>
                     </tr>
 
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-file-excel text-success me-2"></i>
-                                <div><div class="fw-bold">Purchase Invoices</div><small class="text-muted">Jan 2026</small></div>
-                            </div>
-                        </td>
-                        <td>Jan 23, 2026</td>
-                        <td><span class="badge bg-warning text-dark">Processing</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary me-1" title="Download"><i class="fas fa-download"></i></button>
-                            <button class="btn btn-sm btn-outline-warning me-1" title="Replace File"><i class="fas fa-sync-alt"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" title="Delete File"><i class="fas fa-trash-alt"></i></button>
-                        </td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -206,28 +213,29 @@
     </div>
 </div>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="chatDrawer" aria-labelledby="chatLabel">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="chatDrawer">
     <div class="offcanvas-header bg-primary text-white">
-        <h5 class="offcanvas-title" id="chatLabel"><i class="fas fa-headset me-2"></i>Support Chat</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <h5 class="offcanvas-title"><i class="fas fa-headset me-2"></i>Support Chat</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
-    <div class="offcanvas-body d-flex flex-column">
-        <div class="flex-grow-1 mb-3">
-            <div class="d-flex flex-row justify-content-start mb-3">
-                <div class="p-3 bg-light rounded shadow-sm" style="max-width: 80%;">
-                    <p class="small mb-0">Hello! Do you need help with the upload?</p>
-                </div>
-            </div>
-        </div>
-        <div class="mt-auto">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Type a message...">
-                <button class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
-            </div>
+    <div class="offcanvas-body">
+        <p class="text-muted small text-center">Start a conversation...</p>
+        <div class="input-group mt-auto">
+            <input type="text" class="form-control" placeholder="Type a message...">
+            <button class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // This small script wakes up the tooltips so they appear on hover
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+
 </body>
 </html>
