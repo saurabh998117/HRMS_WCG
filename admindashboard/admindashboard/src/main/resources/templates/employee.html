@@ -158,18 +158,120 @@
             height: 100%;
         }
         /* OPTION 1: FORMAL NAVY THEME */
-:root {
-    --bs-primary: #1e3a8a; /* Deep Navy */
-    --bs-primary-rgb: 30, 58, 138;
-}
+        :root {
+            --bs-primary: #1e3a8a; /* Deep Navy */
+            --bs-primary-rgb: 30, 58, 138;
+        }
 
-/* Override hardcoded blue in sidebar & widgets */
-.sidebar-link:hover, .sidebar-link.active { color: #1e3a8a !important; }
-.calendar-today { background-color: #1e3a8a !important; }
-.app-btn:hover { border-color: #1e3a8a !important; background-color: #f0f4ff !important; }
-.holiday-link:hover { color: #1e3a8a !important; }
-.text-primary { color: #1e3a8a !important; }
-.bg-primary { background-color: #1e3a8a !important; }
+        /* Override hardcoded blue in sidebar & widgets */
+        .sidebar-link:hover, .sidebar-link.active { color: #1e3a8a !important; }
+        .calendar-today { background-color: #1e3a8a !important; }
+        .app-btn:hover { border-color: #1e3a8a !important; background-color: #f0f4ff !important; }
+        .holiday-link:hover { color: #1e3a8a !important; }
+        .text-primary { color: #1e3a8a !important; }
+        .bg-primary { background-color: #1e3a8a !important; }
+
+        /* 1.SMOOTH PAGE ENTRY ANIMATION */
+        body {
+            animation: fadeInPage 0.6s ease-out forwards;
+        }
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(15px); /* Slides up slightly */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 2.TACTILE CLICK EFFECT */
+        .app-btn:active, .sidebar-link:active, .btn:active {
+            transform: scale(0.96) !important; /* Shrinks slightly when clicked */
+            transition: transform 0.1s;
+        }
+
+        /* 3.FROSTED GLASS STICKY NAVBAR */
+        .top-navbar {
+            position: sticky;
+            top: 20px; /* Floats slightly from top */
+            z-index: 1020;
+            background: rgba(255, 255, 255, 0.85); /* Semi-transparent */
+            backdrop-filter: blur(12px); /* The "Frosted" blur effect */
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 4.PULSE EFFECT FOR 'TODAY' IN CALENDAR */
+        .calendar-today {
+            box-shadow: 0 0 0 rgba(30, 58, 138, 0.4);
+            animation: pulseBlue 2s infinite;
+        }
+        @keyframes pulseBlue {
+            0% {
+                box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(30, 58, 138, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(30, 58, 138, 0);
+            }
+        }
+
+        /* 5. WATERFALL CARD ENTRY */
+        /* First, hide the columns initially */
+        .main-content .col-lg-6, .main-content .col-lg-4 {
+            opacity: 0;
+            animation: slideUpCard 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* Define the Slide Up Animation */
+        @keyframes slideUpCard {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Add delays so they load one by one */
+        .main-content .row:nth-of-type(2) .col-lg-6:nth-child(1) { animation-delay: 0.1s; } /* Self Service */
+        .main-content .row:nth-of-type(2) .col-lg-6:nth-child(2) { animation-delay: 0.2s; } /* Applications */
+        .main-content .row:nth-of-type(3) .col-lg-4:nth-child(1) { animation-delay: 0.3s; } /* Calendar */
+        .main-content .row:nth-of-type(3) .col-lg-4:nth-child(2) { animation-delay: 0.4s; } /* Middle */
+        .main-content .row:nth-of-type(3) .col-lg-4:nth-child(3) { animation-delay: 0.5s; } /* Right */
+
+        /* 6. ALIVE SEARCH BAR */
+        .form-control:focus {
+            box-shadow: none; /* Remove default blue glow */
+            border-color: transparent;
+        }
+
+        /* Animate the container when input is clicked */
+        .input-group:focus-within {
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15); /* Soft Navy Glow */
+            border-color: var(--bs-primary);
+            transform: scale(1.02); /* Expands slightly */
+            transition: all 0.2s ease;
+        }
+
+        /* Color the search icon blue when active */
+        .input-group:focus-within .fa-search {
+            color: var(--bs-primary) !important;
+            transition: color 0.2s;
+        }
+
+        /* 7. SWINGING ICONS */
+        @keyframes swing {
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-10deg); }
+            60% { transform: rotate(5deg); }
+            80% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+        /* Apply to sidebar icons on hover */
+        .sidebar-link:hover i {
+            animation: swing 0.6s ease;
+            display: inline-block; /* Required for rotation to work */
+        }
 
     </style>
 </head>
