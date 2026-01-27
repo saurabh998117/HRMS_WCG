@@ -351,6 +351,73 @@
             text-decoration: none;
         }
 
+        /* MOBILE RESPONSIVENESS (Phone View Fixes)  */
+        @media (max-width: 768px) {
+
+            /* 1. Sidebar: Move to Bottom (Bottom Navigation) */
+            .sidebar {
+                width: 100%;           /* Full width across bottom */
+                height: 60px;          /* Short height */
+                top: auto;             /* Unstick from top */
+                bottom: 0;             /* Stick to bottom */
+                flex-direction: row;   /* Icons side-by-side, not vertical */
+                justify-content: space-around; /* Even spacing */
+                padding-top: 0;
+                border-right: none;
+                border-top: 1px solid #e0e0e0;
+                z-index: 2000;         /* Stay on top of everything */
+            }
+            /* Adjust Sidebar Icons for Horizontal Layout */
+            .sidebar-link {
+                margin-bottom: 0;      /* Remove vertical gap */
+                padding: 10px;
+            }
+            /* Hide the Logout Button text on mobile to save space */
+            .sidebar .mt-auto {
+                margin-top: 0 !important;
+            }
+
+            /* 2. Top Navbar: Full Width & Compact */
+            .top-navbar {
+                width: 100%;
+                left: 0;
+                height: 70px;          /* Slightly smaller header */
+                padding: 0 10px;
+            }
+            /* Resize Logo for Mobile */
+            .top-navbar img {
+                height: 40px !important; /* Smaller logo */
+            }
+            .top-navbar span {
+                font-size: 1.2rem !important; /* Smaller text */
+            }
+
+            /* 3. Main Content: Adjust Margins */
+            .main-content {
+                margin-left: 0;        /* Remove left margin (sidebar is gone) */
+                padding-top: 90px;     /* Clear the top header */
+                padding-bottom: 80px;  /* Clear the bottom sidebar */
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            /* 4. Widget Cards: Stack Vertically */
+            .col-md-4, .col-md-6, .col-lg-4, .col-lg-6 {
+                width: 100%;           /* Force cards to be full width */
+                margin-bottom: 15px;
+            }
+
+            /* 5. Buttons: Adjust text size if needed */
+            .app-text {
+                font-size: 0.75rem;    /* Slightly smaller text for buttons */
+            }
+
+            /* 6. Hide Search Bar on small phones (Optional - keeps it clean) */
+            .top-navbar .input-group {
+                display: none;
+            }
+        }
+
     </style>
 </head>
 <body>
