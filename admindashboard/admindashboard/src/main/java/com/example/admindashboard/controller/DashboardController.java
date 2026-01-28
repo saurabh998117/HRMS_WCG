@@ -69,6 +69,12 @@ public class DashboardController {
         return "conference-room";
     }
 
+    // 8. "My Approvals" Page Button
+    @GetMapping("/my-approvals")
+    public String showApprovalsPage() {
+        return "my-approvals";
+    }
+
 
 
     // 6. The Client Dashboard (Updated to accept data)
