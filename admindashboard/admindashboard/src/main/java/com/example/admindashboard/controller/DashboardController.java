@@ -75,6 +75,12 @@ public class DashboardController {
         return "my-approvals";
     }
 
+    // 9. "My WhiteCircle" Page
+    @GetMapping("/my-whitecircle")
+    public String showMyWhiteCircle() {
+        return "my-whitecircle";
+    }
+
 
 
     // 6. The Client Dashboard (Updated to accept data)
