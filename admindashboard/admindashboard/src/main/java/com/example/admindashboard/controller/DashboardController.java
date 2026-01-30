@@ -87,9 +87,16 @@ public class DashboardController {
         return "timesheet";
     }
 
+    // 11. "Attendance Regulation" Page Controller
     @GetMapping("/attendance")
     public String showAttendancePage() {
         return "attendance";
+    }
+
+    // 12. "Password Reset" Page controller
+    @GetMapping("/password-reset")
+    public String showPasswordResetPage() {
+        return "password-reset";
     }
 
 
