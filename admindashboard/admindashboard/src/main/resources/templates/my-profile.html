@@ -214,7 +214,8 @@
                     <div class="row g-3 w-100">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control fw-bold text-primary" id="empName" placeholder="Name" value="">
+                                <input type="text" class="form-control fw-bold text-primary" id="empName" placeholder="Name"
+                                       th:value="${session.loggedInUser}" readonly>
                                 <label for="empName">Employee Name</label>
                             </div>
                         </div>

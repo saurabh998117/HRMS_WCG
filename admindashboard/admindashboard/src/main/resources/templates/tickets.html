@@ -163,7 +163,9 @@
 
 <div class="container">
     <div class="hero-section">
-        <h2 class="greeting-text">Hello, Anil</h2>
+        <h2 class="greeting-text">
+            Hello, <span th:text="${session.loggedInUser}">User</span>
+        </h2>
         <p class="sub-text">Find all your requests in one place. Search and raise new requests easily.</p>
 
         <div class="search-container">

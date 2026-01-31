@@ -93,7 +93,6 @@
         </div>
 
         <div class="row justify-content-center g-4 mb-5">
-
             <div class="col-md-5 col-lg-4">
                 <div class="card service-card shadow">
                     <div class="service-icon-wrapper">
@@ -127,7 +126,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="row mt-5 pt-3">
@@ -135,7 +133,6 @@
                 <h3 class="text-white fw-bold">Streamlining Operations & Delivery</h3>
                 <p class="text-white-50">One platform for team productivity and client transparency.</p>
             </div>
-
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="feature-box">
                     <i class="fas fa-tasks feature-icon"></i>
@@ -143,7 +140,6 @@
                     <p class="small opacity-75">Real-time tracking of project phases from Requirement to Delivery.</p>
                 </div>
             </div>
-
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="feature-box">
                     <i class="fas fa-file-invoice-dollar feature-icon text-warning"></i>
@@ -151,7 +147,6 @@
                     <p class="small opacity-75">Automated invoice generation and milestone-based payment tracking.</p>
                 </div>
             </div>
-
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="feature-box">
                     <i class="fas fa-users-cog feature-icon text-success"></i>
@@ -160,7 +155,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="row justify-content-center" id="login-container">
@@ -181,35 +175,48 @@
 
                 <div class="card-body p-4">
 
-                    <div id="employee-form-section" style="display: none;">
-                        <form action="/employee" method="get"> <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Corporate Email / Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
-                                <input type="text" name="username" class="form-control" placeholder="user@whitecircle.com" required>
-                            </div>
-                        </div>
+                    <div id="employee-form-section">
+                        <form action="/login-submit" method="get">
+
                             <div class="mb-3">
-                                <label class="form-label small fw-bold text-muted">Password</label>
+                                <label class="form-label fw-bold small text-secondary">Full Name</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light"><i class="fas fa-lock"></i></span>
-                                    <input type="password" name="password" class="form-control" placeholder="••••••" required>
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-user"></i></span>
+                                    <input type="text" name="employeeName" class="form-control bg-light border-start-0" placeholder="Enter your name (e.g. Anil Yadav)" required>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-dark w-100 py-2 fw-bold">
-                                <i class="fas fa-sign-in-alt me-2"></i>Secure Access
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-secondary">Corporate Email / Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control bg-light border-start-0" placeholder="user@whitecircle.com">
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small text-secondary">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control bg-light border-start-0" placeholder="••••••">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark w-100 py-2 fw-bold shadow-sm">
+                                <i class="fas fa-sign-in-alt me-2"></i> Secure Access
                             </button>
                         </form>
                     </div>
 
                     <div id="client-form-section" style="display: none;">
-                        <form action="/client" method="get"> <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Registered Phone</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light">+91</span>
-                                <input type="tel" name="phone" class="form-control" placeholder="9876543210" pattern="[0-9]{10}" required>
+                        <form action="/client" method="get">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted">Registered Phone</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">+91</span>
+                                    <input type="tel" name="phone" class="form-control" placeholder="9876543210" pattern="[0-9]{10}" required>
+                                </div>
                             </div>
-                        </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold text-muted">Client / Project ID</label>
                                 <input type="text" name="clientId" class="form-control" placeholder="WCG-2026-001" required>
@@ -221,6 +228,7 @@
                     </div>
 
                 </div>
+
                 <div class="card-footer bg-light text-center py-3 border-0">
                     <small class="text-muted">Need help? Contact <a href="#" class="text-decoration-none fw-bold">IT Support</a></small>
                 </div>
@@ -236,7 +244,7 @@
         document.getElementById('landing-section').style.display = 'none';
         document.getElementById('login-container').style.display = 'flex';
 
-        // Reset forms
+        // Reset forms visibility
         document.getElementById('employee-form-section').style.display = 'none';
         document.getElementById('client-form-section').style.display = 'none';
 
@@ -244,13 +252,11 @@
         if (type === 'employee') {
             document.getElementById('employee-form-section').style.display = 'block';
             document.getElementById('login-title').innerText = "Employee Portal";
-            document.getElementById('login-title').className = "fw-bold text-dark";
             document.getElementById('login-subtitle').innerText = "Authorized personnel only.";
         }
         else if (type === 'client') {
             document.getElementById('client-form-section').style.display = 'block';
             document.getElementById('login-title').innerText = "Client Connect";
-            document.getElementById('login-title').className = "fw-bold text-dark";
             document.getElementById('login-subtitle').innerText = "View project status and invoices.";
         }
     }

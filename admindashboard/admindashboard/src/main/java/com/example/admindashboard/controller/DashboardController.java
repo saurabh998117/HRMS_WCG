@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class DashboardController {
@@ -110,6 +111,15 @@ public class DashboardController {
     // 15. Email Signature Generator Page
     @GetMapping("/email-signature")
     public String showEmailSignaturePage() { return "email-signature"; }
+
+    @GetMapping("/login-submit")
+    public String handleLogin(@RequestParam String employeeName, HttpSession session) {
+        // Save the name into the session so we can use it on other pages
+        session.setAttribute("loggedInUser", employeeName);
+
+        // Redirect to the dashboard
+        return "redirect:/employee/dashboard";
+    }
 
 
     //  The Client Dashboard (Updated to accept data)
