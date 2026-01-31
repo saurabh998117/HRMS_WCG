@@ -191,18 +191,69 @@
         .notif-text { font-size: 0.9rem; font-weight: 600; color: #334155; margin-bottom: 2px; }
         .notif-time { font-size: 0.75rem; color: #94a3b8; }
 
+        /* --- UPDATED DYNAMIC BUTTONS & LINKS --- */
+
+        /* 1. PDF & ACTION BUTTONS */
         .btn-action-sm {
-            padding: 4px 10px; font-size: 0.75rem; border-radius: 4px;
-            text-decoration: none; border: 1px solid #cbd5e1; color: #475569;
-            transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px;
-        }
-        .btn-action-sm:hover {
-            background: #f1f5f9; color: #1e3a8a; border-color: #1e3a8a;
-            text-decoration: underline !important;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            border-radius: 50px; /* Fully rounded pill shape */
+            text-decoration: none;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            background: white;
+            font-weight: 600;
+            display: inline-flex; align-items: center; gap: 6px;
+            /* Smooth bouncy transition */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .compliance-link { text-decoration: none; color: #64748b; transition: all 0.2s; }
-        .compliance-link:hover { color: #1e3a8a; text-decoration: underline !important; }
+        /* HOVER: Fills with Navy Blue (Stand Out Color) */
+        .btn-action-sm:hover {
+            background-color: #1e3a8a;
+            color: white !important;
+            border-color: #1e3a8a;
+            transform: translateY(-3px); /* Lifts up */
+            box-shadow: 0 8px 15px rgba(30, 58, 138, 0.25); /* Glow shadow */
+        }
+
+        /* CLICK: Press Effect */
+        .btn-action-sm:active {
+            transform: translateY(-1px) scale(0.95);
+            box-shadow: 0 2px 5px rgba(30, 58, 138, 0.2);
+        }
+
+        /* FIX: Header Buttons (Inside Navy Header) need to turn White on hover, not Navy */
+        .panel-header .btn-action-sm:hover {
+            background-color: white;
+            color: #1e3a8a !important;
+            border-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* 2. FOOTER LINKS (Form 16 / Tax) */
+        .compliance-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            padding: 8px 16px; /* Added padding for button feel */
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: inline-flex; align-items: center;
+        }
+
+        /* HOVER: Light Blue Background Pill */
+        .compliance-link:hover {
+            background-color: #eff6ff; /* Light Blue BG */
+            color: #1e3a8a; /* Navy Text */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.1);
+        }
+
+        .compliance-link:active {
+            transform: scale(0.96);
+        }
 
     </style>
 </head>
