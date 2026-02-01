@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root {
@@ -19,113 +21,153 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: #334155;
-            padding-top: 80px;
+            padding-top: 70px;
+            min-height: 100vh;
         }
 
-        /* --- HEADER --- */
+        /* --- NAV BAR --- */
         .top-nav-bar {
             position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             background: white;
-            height: 90px;
+            height: 80px;
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 30px;
             border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.1),
-                        0 8px 10px -6px rgba(30, 58, 138, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .brand-section {
             display: flex; align-items: center;
-            color: #1e3a8a; font-weight: 700; font-size: 1.5rem; min-width: 250px;
+            color: #1e3a8a; font-weight: 700; font-size: 1.6rem;
         }
 
         .btn-back {
             background: #1e3a8a; color: white;
-            padding: 8px 20px; border-radius: 6px; font-size: 0.85rem; text-decoration: none;
+            padding: 8px 20px; border-radius: 6px; font-size: 0.95rem; text-decoration: none;
             border: none; transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(30, 58, 138, 0.2);
         }
         .btn-back:hover { background: #172554; color: white; transform: translateY(-1px); }
 
-        /* --- MAIN CARD --- */
-        .signature-card {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            border: 2px solid var(--bs-primary);
-            padding: 35px;
-
-            /* Enhanced Shadow & Transition */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-            /* FIX: Ensures the card expands to fit content */
-            height: auto;
-            overflow: hidden;
-        }
-
-        /* Hover Effect */
-        .signature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(30, 58, 138, 0.15);
-        }
-
-        .card-title { color: var(--bs-primary); font-weight: 800; margin-bottom: 20px; }
-
-        /* --- FORM STYLES --- */
-        .form-label { font-weight: 600; color: #475569; font-size: 0.9rem; }
-        .form-control { background: #f8fafc; border: 1px solid #cbd5e1; }
-        .form-control:focus {
-            background: white; box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1); border-color: var(--bs-primary);
-        }
-
-        /* --- PREVIEW BOX (FIXED) --- */
+        /* --- PREVIEW CONTAINER (Updated Size) --- */
         .preview-container {
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 8px;
-            padding: 25px;
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+        }
 
-            /* FIX: Removed 'height: 100%' so it grows with content */
-            min-height: 100%;
+        /* --- PREVIEW CARD (Updated Border & Padding) --- */
+        .preview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 60px; /* Increased padding */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+
+            /* UPDATED: Navy Blue Border */
+            border: 2px solid #1e3a8a;
 
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-x: auto; /* Handles horizontal overflow */
         }
 
-        /* The Actual Signature Style */
-        .sig-box {
+        /* --- SIGNATURE DESIGN --- */
+        .signature-box {
             background: white;
-            padding: 25px;
-            border-left: 5px solid #1e3a8a;
-            font-family: Arial, sans-serif;
-            width: 100%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            display: inline-block;
+            text-align: left;
         }
 
-        .sig-name { font-size: 20px; font-weight: bold; color: #1e3a8a; margin: 0; }
-        .sig-role { font-size: 15px; color: #64748b; margin-bottom: 10px; display: block; }
-        .sig-divider { height: 1px; background: #e2e8f0; margin: 12px 0; }
-        .sig-contact { font-size: 14px; color: #334155; margin-bottom: 5px; display: flex; align-items: center; white-space: nowrap; }
-        .sig-contact i { color: #1e3a8a; width: 22px; }
-
-        .sig-slogan { font-size: 12px; color: #94a3b8; font-style: italic; margin-top: 8px; }
-
-        /* --- INTERACTIVE BUTTONS --- */
-        .btn-interactive { transition: all 0.2s; position: relative; }
-        .btn-interactive:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .btn-interactive:active { transform: scale(0.98); }
-
-        /* Toast Notification */
-        .toast-custom {
-            position: fixed; bottom: 30px; right: 30px;
-            background: #1e3a8a; color: white; padding: 12px 25px;
-            border-radius: 50px; box-shadow: 0 5px 15px rgba(30,58,138,0.3);
-            display: none; align-items: center; gap: 10px; z-index: 2000;
+        .sig-content {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border-left: 4px solid #1e3a8a;
+            padding-left: 20px;
         }
+
+        .sig-details h3 { margin: 0; color: #1e3a8a; font-size: 1.4rem; font-weight: 700; }
+        .sig-details p { margin: 2px 0 10px; color: #64748b; font-size: 0.9rem; }
+
+        .sig-contact { font-size: 0.85rem; color: #334155; line-height: 1.6; }
+        .sig-contact i { color: #1e3a8a; width: 20px; text-align: center; margin-right: 5px; }
+
+        .company-logo {
+            margin-top: 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .company-logo img { height: 35px; }
+        .company-slogan { font-size: 0.75rem; font-style: italic; color: #94a3b8; }
+
+        /* --- COPY BUTTON (With Shining Effect) --- */
+        .btn-copy {
+            margin-top: 40px;
+            background: #1e3a8a; color: white;
+            border: none; padding: 14px 35px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
+            position: relative;
+            overflow: hidden; /* Essential for shine */
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3);
+            background-color: #172554;
+            color: white;
+        }
+        .btn-copy:active { transform: scale(0.98); }
+
+        /* SHINING ANIMATION */
+        .btn-copy::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        /* Auto-run shine every 3 seconds logic would need JS,
+           but CSS hover or continuous animation is easier.
+           Let's do a continuous slow pass. */
+        .btn-copy::before {
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; } /* Fast pass */
+            100% { left: 100%; } /* Wait */
+        }
+
+        /* Toast */
+        #toast-message {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+        }
+        #toast-message.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
     </style>
 </head>
@@ -133,135 +175,92 @@
 
 <nav class="top-nav-bar">
     <div class="brand-section">
-        <img src="/images/wcg-logo.jpg" alt="WhiteCircle Logo" height="55" class="me-3">
-        EMAIL SIGNATURE
+        <img src="/images/wcg-logo.jpg" alt="Logo" height="60" class="me-3">
+        Email Signature
     </div>
     <a href="/employee/dashboard" class="btn-back">
         <i class="fas fa-arrow-left me-2"></i>Back to Home
     </a>
 </nav>
 
-<div class="container mb-5" style="margin-top: 50px;">
+<div class="container">
+    <div class="preview-container">
 
-    <div class="signature-card">
-        <div class="row g-5">
+        <h3 class="fw-bold mb-3" style="color: #1e3a8a;">Your Official Signature</h3>
 
-            <div class="col-md-5">
-                <h4 class="card-title">Edit Details</h4>
+        <p class="text-muted mb-4 mx-auto" style="max-width: 700px; font-size: 0.95rem;">
+            Use the button below to copy your official company signature.
+            This image format ensures consistent branding, fonts, and layout across all email clients.
+        </p>
 
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">Employee Name</label>
-                        <input type="text" class="form-control" id="inpName" value="Anil Yadav" oninput="updatePreview()">
+        <div class="preview-card">
+
+            <div id="signature-capture-area" class="signature-box">
+                <div class="sig-content">
+                    <div class="sig-details">
+                        <h3 th:text="${session.loggedInUser}">Employee Name</h3>
+                        <p>Software Engineer</p> <div class="sig-contact">
+                        <div><i class="fas fa-phone"></i> +91 98765 43210</div>
+                        <div><i class="fas fa-envelope"></i> employee@whitecirclegroup.com</div>
+                        <div><i class="fas fa-globe"></i> www.whitecirclegroup.com</div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Role / Designation</label>
-                        <input type="text" class="form-control" id="inpRole" value="Junior Java Developer" oninput="updatePreview()">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Mobile Number</label>
-                        <input type="text" class="form-control" id="inpMobile" value="+91 98765 43210" oninput="updatePreview()">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Company Slogan</label>
-                        <input type="text" class="form-control bg-light" value="Innovating the Future" readonly>
-                        <div class="form-text small">Company slogan is standard for all employees.</div>
-                    </div>
-
-                    <div class="mt-5">
-                        <button type="button" class="btn btn-primary w-100 fw-bold py-3 btn-interactive" onclick="copySignature()">
-                            <i class="far fa-copy me-2"></i>Copy Signature to Clipboard
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="col-md-7 d-flex flex-column">
-                <h4 class="card-title">Live Preview</h4>
-                <div class="preview-container flex-grow-1">
-
-                    <div id="signature-wrapper">
-                        <div class="sig-box">
-                            <table border="0" cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; width: 100%;">
-                                <tr>
-                                    <td>
-                                        <h3 id="prevName" class="sig-name">Anil Yadav</h3>
-                                        <span id="prevRole" class="sig-role">Junior Java Developer</span>
-
-                                        <div class="sig-divider"></div>
-
-                                        <div class="sig-contact">
-                                            <i class="fas fa-phone-alt"></i>
-                                            <span id="prevMobile">+91 98765 43210</span>
-                                        </div>
-                                        <div class="sig-contact">
-                                            <i class="fas fa-envelope"></i>
-                                            <span>anil@whitecirclegroup.com</span>
-                                        </div>
-                                        <div class="sig-contact">
-                                            <i class="fas fa-globe"></i>
-                                            <span>www.whitecircle.com</span>
-                                        </div>
-
-                                        <div style="margin-top: 18px;">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-circle text-primary fs-3 me-2"></i>
-                                                <span class="fw-bold text-dark" style="font-size: 16px;">WhiteCircle Group</span>
-                                            </div>
-                                            <div class="sig-slogan">"Innovating the Future"</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="company-logo">
+                            <img src="/images/wcg-logo.jpg" alt="WhiteCircle">
+                            <span class="fw-bold text-dark">WhiteCircle Group</span>
                         </div>
+                        <div class="company-slogan mt-1">"Innovating the Future"</div>
                     </div>
-
                 </div>
             </div>
+            <button class="btn-copy" onclick="copyAsImage()">
+                <i class="fas fa-camera"></i> Copy Signature as Image
+            </button>
 
         </div>
     </div>
 </div>
 
-<div id="copyToast" class="toast-custom">
-    <i class="fas fa-check-circle"></i> Signature copied successfully!
-</div>
+<div id="toast-message">Signature Image Copied to Clipboard!</div>
 
 <script>
-    function updatePreview() {
-        document.getElementById('prevName').textContent = document.getElementById('inpName').value;
-        document.getElementById('prevRole').textContent = document.getElementById('inpRole').value;
-        document.getElementById('prevMobile').textContent = document.getElementById('inpMobile').value;
-    }
+    function copyAsImage() {
+        const captureElement = document.getElementById('signature-capture-area');
+        const btn = document.querySelector('.btn-copy');
 
-    function copySignature() {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        const element = document.getElementById('signature-wrapper');
+        // Feedback
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-        selection.removeAllRanges();
-        range.selectNodeContents(element);
-        selection.addRange(range);
+        html2canvas(captureElement, {
+            backgroundColor: "#ffffff",
+            scale: 2 // High res
+        }).then(canvas => {
+            canvas.toBlob(function(blob) {
+                try {
+                    const item = new ClipboardItem({ "image/png": blob });
+                    navigator.clipboard.write([item]);
 
-        try {
-            document.execCommand('copy');
-            showToast();
-        } catch (err) {
-            alert('Failed to copy. Please try manually selecting and copying.');
-        }
+                    showToast();
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
 
-        selection.removeAllRanges();
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                    }, 2000);
+
+                } catch (err) {
+                    console.error("Failed to copy: ", err);
+                    alert("Browser restriction detected. Please right-click the image to copy.");
+                    btn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
+                }
+            });
+        });
     }
 
     function showToast() {
-        const toast = document.getElementById('copyToast');
-        toast.style.display = 'flex';
-        setTimeout(() => {
-            toast.style.display = 'none';
-        }, 3000);
+        var x = document.getElementById("toast-message");
+        x.className = "show";
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
     }
 </script>
 
