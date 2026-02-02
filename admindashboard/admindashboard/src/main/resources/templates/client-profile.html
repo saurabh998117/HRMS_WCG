@@ -54,7 +54,7 @@
         .side-nav-bar {
             position: fixed;
             left: 15px;
-            top: 95px;
+            top: 90px;
             bottom: 15px;
             width: 90px;
             background: var(--card-bg);
@@ -139,13 +139,29 @@
         .nav-icon.logout { color: #ef4444; margin-bottom: 0; }
         .nav-icon.logout:hover { background-color: #fef2f2; }
 
+        /* --- SHAKE ANIMATION DEFINITION --- */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* APPLY SHAKE ON HOVER */
+        /* When you hover the .nav-icon link, the <i> icon inside it shakes */
+        .nav-icon:hover i {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            color: var(--bs-primary); /* Ensures it turns blue while shaking */
+        }
+
     </style>
 </head>
 <body>
 
 <nav class="top-nav-bar">
     <div class="brand-section">
-        <img src="/images/wcg-logo.jpg" alt="Logo" height="60" class="me-3" style="border-radius: 6px;">
+        <img src="/images/wcg-logo.jpg" alt="Logo" height="60" class="me-4" style="border-radius: 6px;">
         CLIENT PROFILE
     </div>
 
