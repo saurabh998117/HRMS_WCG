@@ -39,76 +39,77 @@ public class DashboardController {
         }
     }
 
-    // 3. The Employee Portal
+    // -- The Employee Portal Controllers --
+
     @GetMapping("/employee")
     public String showEmployeePortal() {
         return "employee"; // This looks for employee.html
     }
 
-    // 4. My Profile Section of the Employee portal
+    // 1. My Profile Section of the Employee portal
     @GetMapping("/my-profile")
     public String showProfilePage() {
         // This returns "my-profile.html" from the templates folder
         return "my-profile";
     }
 
-    // 5.  "Back to Home" button
+    // 2.  "Back to Home" button
     @GetMapping("/employee/dashboard")
     public String showEmployeeDashboard() {
         return "employee"; // This loads employee.html
     }
 
-    //6. "Apply for Leave" Page controller
+    // 3. "Apply for Leave" Page controller
     @GetMapping("/apply-leave")
     public String showLeavePage() {
         return "apply-leave";
     }
 
-    // 7. "Conference Room" Page controller
+    // 4. "Conference Room" Page controller
     @GetMapping("/conference-room")
     public String showConferencePage() {
         return "conference-room";
     }
 
-    // 8. "My Approvals" Page controller
+    // 5. "My Approvals" Page controller
     @GetMapping("/my-approvals")
     public String showApprovalsPage() {
         return "my-approvals";
     }
 
-    // 9. "My WhiteCircle" Page controller
+    // 6. "My WhiteCircle" Page controller
     @GetMapping("/my-whitecircle")
     public String showMyWhiteCircle() {
         return "my-whitecircle";
     }
 
-    // 10. "Time Sheet" Page controller
+    // 7. "Time Sheet" Page controller
     @GetMapping("/timesheet")
     public String showTimesheetPage() {
         return "timesheet";
     }
 
-    // 11. "Attendance Regulation" Page Controller
+    // 8. "Attendance Regulation" Page Controller
     @GetMapping("/attendance")
     public String showAttendancePage() {
         return "attendance";
     }
 
-    // 12. "Password Reset" Page controller
+    // 9. "Password Reset" Page controller
     @GetMapping("/password-reset")
     public String showPasswordResetPage() {
         return "password-reset";
     }
 
-    // 13. Payroll Page
+    // 10. Payroll Page
     @GetMapping("/payroll")
     public String showPayrollPage() { return "payroll"; }
 
-    // 14. Log Tickets / Helpdesk Page
+    // 11. Log Tickets / Helpdesk Page
     @GetMapping("/tickets")
     public String showTicketsPage() { return "tickets"; }
 
-    // 15. Email Signature Generator Page
+    // 12. Email Signature Generator Page
     @GetMapping("/email-signature")
     public String showEmailSignaturePage() { return "email-signature"; }
 
@@ -122,20 +123,39 @@ public class DashboardController {
     }
 
 
-    //  The Client Dashboard (Updated to accept data)
-    @GetMapping("/client")
-    public String clientDashboard(@RequestParam String clientName,
-                                  @RequestParam String phone,
-                                  @RequestParam String pan,
-                                  Model model) {
+    // --- CLIENT PORTAL CONTROLLERS ---
 
-        // Send these values to the HTML page
-        model.addAttribute("name", clientName);
-        model.addAttribute("phone", "+91 " + phone);
-        model.addAttribute("pan", pan);
+    @GetMapping("/client")
+    public String handleClientLogin(@RequestParam String clientId, HttpSession session) {
+
+        // Setting a static name for now (Phase 1)
+        // In Phase 2, we will fetch the real Company Name from the Database using 'clientId'
+        session.setAttribute("loggedInUser", "Global Tech Solutions");
+        session.setAttribute("userRole", "CLIENT");
+
+        return "redirect:/client/dashboard";
+    }
+
+    // 1. Display the Client Dashboard Page
+    @GetMapping("/client/dashboard")
+    public String showClientDashboard(HttpSession session) {
+
+        // Optional: Simple security check
+        // If no user is logged in, send them back to login page
+        if (session.getAttribute("loggedInUser") == null) {
+            return "redirect:/";
+        }
 
         return "client-dashboard";
     }
+
+
+
+
+
+
+
+
 
     //  The Notification Center Route
     @GetMapping("/notifications")
