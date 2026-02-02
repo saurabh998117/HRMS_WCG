@@ -10,96 +10,81 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class DashboardController {
 
-    // 1. The Entry Point (Login Page)
+    // The Entry Point (Login Page)
     @GetMapping("/")
     public String loginPage() {
         return "index";
     }
 
-    // 2. The Logic to Check Password (UPDATED: Accepts ANY valid input)
-    @PostMapping("/login")
-    public String verifyLogin(@RequestParam String username,
-                              @RequestParam String password,
-                              Model model) {
+    // --- UNIFIED LOGIN METHOD (Handles Admin & Employee) ---
+    @GetMapping("/login-submit")
+    public String handleLogin(@RequestParam String userId, @RequestParam String password, HttpSession session) {
 
-        // TEMPORARY LOGIC:
-        // Instead of checking for "admin", we just check if the fields are NOT empty.
-        // Once the Database is added, we will check if "username" exists in the DB.
+        // Normalize input to Uppercase (e.g., "adm001" -> "ADM001")
+        String upperId = userId.trim().toUpperCase();
 
-        if (username != null && !username.trim().isEmpty() &&
-                password != null && !password.trim().isEmpty()) {
+        // A. ADMIN CHECK (Starts with "ADM" or is "ADMIN")
+        if (upperId.equals("ADMIN") || upperId.startsWith("ADM")) {
+            session.setAttribute("loggedInUser", "Administrator");
+            session.setAttribute("userRole", "ADMIN");
+            return "redirect:/admin/dashboard";
+        }
 
-            // Input is valid (not empty) -> Let them in!
-            return "redirect:/dashboard";
-
-        } else {
-            // Input is empty -> Block them.
-            model.addAttribute("error", "Username and Password cannot be empty");
-            return "index";
+        // B. EMPLOYEE CHECK (Default for all other IDs)
+        else {
+            session.setAttribute("loggedInUser", "Anil Yadav"); // Dummy name for now
+            session.setAttribute("userRole", "EMPLOYEE");
+            return "redirect:/employee/dashboard";
         }
     }
 
-    // -- The Employee Portal Controllers --
+    // --- ADMIN DASHBOARD ROUTE ---
+    @GetMapping("/admin/dashboard")
+    public String showAdminDashboard() {
+        return "admin-dashboard"; // This looks for admin-dashboard.html in templates
+    }
 
+    // -- EMPLOYEE PORTAL ROUTE --
     @GetMapping("/employee")
     public String showEmployeePortal() {
-        return "employee"; // This looks for employee.html
+        return "employee"; // This looks for employee.html in templates
     }
 
     // 1. My Profile Section of the Employee portal
     @GetMapping("/my-profile")
-    public String showProfilePage() {
-        // This returns "my-profile.html" from the templates folder
-        return "my-profile";
-    }
+    public String showProfilePage() { return "my-profile"; }  // This returns "my-profile.html" from the templates folder
 
     // 2.  "Back to Home" button
     @GetMapping("/employee/dashboard")
-    public String showEmployeeDashboard() {
-        return "employee"; // This loads employee.html
-    }
+    public String showEmployeeDashboard() { return "employee"; }  // This loads employee.html
 
     // 3. "Apply for Leave" Page controller
     @GetMapping("/apply-leave")
-    public String showLeavePage() {
-        return "apply-leave";
-    }
+    public String showLeavePage() { return "apply-leave"; }
 
     // 4. "Conference Room" Page controller
     @GetMapping("/conference-room")
-    public String showConferencePage() {
-        return "conference-room";
-    }
+    public String showConferencePage() { return "conference-room"; }
 
     // 5. "My Approvals" Page controller
     @GetMapping("/my-approvals")
-    public String showApprovalsPage() {
-        return "my-approvals";
-    }
+    public String showApprovalsPage() { return "my-approvals"; }
 
     // 6. "My WhiteCircle" Page controller
     @GetMapping("/my-whitecircle")
-    public String showMyWhiteCircle() {
-        return "my-whitecircle";
-    }
+    public String showMyWhiteCircle() { return "my-whitecircle"; }
 
     // 7. "Time Sheet" Page controller
     @GetMapping("/timesheet")
-    public String showTimesheetPage() {
-        return "timesheet";
-    }
+    public String showTimesheetPage() { return "timesheet"; }
 
     // 8. "Attendance Regulation" Page Controller
     @GetMapping("/attendance")
-    public String showAttendancePage() {
-        return "attendance";
-    }
+    public String showAttendancePage() { return "attendance"; }
 
     // 9. "Password Reset" Page controller
     @GetMapping("/password-reset")
-    public String showPasswordResetPage() {
-        return "password-reset";
-    }
+    public String showPasswordResetPage() { return "password-reset"; }
 
     // 10. Payroll Page
     @GetMapping("/payroll")
@@ -113,15 +98,6 @@ public class DashboardController {
     @GetMapping("/email-signature")
     public String showEmailSignaturePage() { return "email-signature"; }
 
-    @GetMapping("/login-submit")
-    public String handleLogin(@RequestParam String employeeName, HttpSession session) {
-        // Save the name into the session so we can use it on other pages
-        session.setAttribute("loggedInUser", employeeName);
-
-        // Redirect to the dashboard
-        return "redirect:/employee/dashboard";
-    }
-
 
     // --- CLIENT PORTAL CONTROLLERS ---
 
@@ -132,20 +108,17 @@ public class DashboardController {
         // In Phase 2, we will fetch the real Company Name from the Database using 'clientId'
         session.setAttribute("loggedInUser", "Global Tech Solutions");
         session.setAttribute("userRole", "CLIENT");
-
         return "redirect:/client/dashboard";
     }
 
     // 1. Display the Client Dashboard Page
     @GetMapping("/client/dashboard")
     public String showClientDashboard(HttpSession session) {
-
         // Optional: Simple security check
         // If no user is logged in, send them back to login page
         if (session.getAttribute("loggedInUser") == null) {
             return "redirect:/";
         }
-
         return "client-dashboard";
     }
 

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - WhiteCircle</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bs-primary: #1e3a8a; /* WhiteCircle Navy */
+            --bs-secondary: #64748b;
+            --bg-color: #f1f5f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* --- 1. ADMIN SIDEBAR (Fixed Left) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #0f172a; /* Darker Navy for Admin */
+            color: #fff;
+            position: fixed; top: 0; bottom: 0; left: 0;
+            padding: 20px;
+            display: flex; flex-direction: column;
+            z-index: 1000;
+        }
+
+        .brand {
+            font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;
+            margin-bottom: 40px; display: flex; align-items: center; gap: 10px;
+            color: #fff; text-decoration: none;
+        }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 15px;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        /* --- 2. MAIN CONTENT AREA --- */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* Header */
+        .header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+
+        .icon-square {
+            width: 48px; height: 48px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+        }
+
+        /* Data Tables */
+        .admin-table-card {
+            background: white; border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .table thead th {
+            background: #f8fafc;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .table tbody td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            color: #334155;
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="sidebar">
+    <a href="#" class="brand">
+        <i class="fas fa-shield-alt text-primary"></i> WhiteCircle <span class="badge bg-primary ms-2" style="font-size: 0.6rem;">ADMIN</span>
+    </a>
+
+    <div class="d-flex flex-column flex-grow-1">
+        <small class="text-muted text-uppercase fw-bold mb-3" style="font-size: 0.7rem; letter-spacing: 1px;">Management</small>
+
+        <a href="#" class="nav-item active"><i class="fas fa-chart-line" style="width:20px"></i> Dashboard</a>
+        <a href="#" class="nav-item"><i class="fas fa-users" style="width:20px"></i> Employees</a>
+        <a href="#" class="nav-item"><i class="fas fa-building" style="width:20px"></i> Clients & Projects</a>
+        <a href="#" class="nav-item"><i class="fas fa-file-invoice-dollar" style="width:20px"></i> Payroll & Billing</a>
+
+        <small class="text-muted text-uppercase fw-bold mt-4 mb-3" style="font-size: 0.7rem; letter-spacing: 1px;">System</small>
+
+        <a href="#" class="nav-item"><i class="fas fa-cog" style="width:20px"></i> Settings</a>
+        <a href="/" class="nav-item mt-auto text-danger"><i class="fas fa-sign-out-alt" style="width:20px"></i> Logout</a>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+
+    <div class="header-bar">
+        <div>
+            <h3 class="fw-bold text-dark m-0">Admin Overview</h3>
+            <p class="text-muted m-0 small">Welcome back, Administrator.</p>
+        </div>
+        <div>
+            <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New Employee</button>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between">
+                    <div class="icon-square bg-primary bg-opacity-10 text-primary"><i class="fas fa-user-tie"></i></div>
+                    <span class="text-success small fw-bold"><i class="fas fa-arrow-up"></i> 12%</span>
+                </div>
+                <h2 class="fw-bold mb-0">124</h2>
+                <p class="text-muted small m-0">Active Employees</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="icon-square bg-info bg-opacity-10 text-info"><i class="fas fa-layer-group"></i></div>
+                <h2 class="fw-bold mb-0">8</h2>
+                <p class="text-muted small m-0">Live Projects</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="icon-square bg-warning bg-opacity-10 text-warning"><i class="fas fa-file-invoice"></i></div>
+                <h2 class="fw-bold mb-0">₹ 4.5L</h2>
+                <p class="text-muted small m-0">Pending Payments</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="icon-square bg-danger bg-opacity-10 text-danger"><i class="fas fa-bell"></i></div>
+                <h2 class="fw-bold mb-0">3</h2>
+                <p class="text-muted small m-0">Urgent Alerts</p>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="fw-bold text-dark mb-3">Client Project Status</h5>
+    <div class="admin-table-card">
+        <table class="table table-hover mb-0">
+            <thead>
+            <tr>
+                <th>Client Name</th>
+                <th>Project</th>
+                <th>Current Stage</th>
+                <th>Progress</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="fw-bold">Global Tech Solutions</td>
+                <td>E-Commerce Revamp</td>
+                <td><span class="badge bg-primary">UAT Phase</span></td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="progress flex-grow-1" style="height: 6px; width: 80px;">
+                            <div class="progress-bar" style="width: 75%"></div>
+                        </div>
+                        <span class="small fw-bold">75%</span>
+                    </div>
+                </td>
+                <td><button class="btn btn-sm btn-outline-secondary">Manage</button></td>
+            </tr>
+            <tr>
+                <td class="fw-bold">FinCorp Systems</td>
+                <td>Banking Security</td>
+                <td><span class="badge bg-success">Deployed</span></td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="progress flex-grow-1" style="height: 6px; width: 80px;">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                        <span class="small fw-bold">100%</span>
+                    </div>
+                </td>
+                <td><button class="btn btn-sm btn-outline-secondary">Manage</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
