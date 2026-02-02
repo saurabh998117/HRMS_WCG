@@ -149,6 +149,12 @@ public class DashboardController {
         return "client-dashboard";
     }
 
+    // 2. Client profile page controller
+    @GetMapping("/client/profile")
+    public String showClientProfile() {
+        return "client-profile";
+    }
+
 
 
 

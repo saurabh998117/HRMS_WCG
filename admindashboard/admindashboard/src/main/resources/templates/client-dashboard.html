@@ -35,7 +35,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             padding-top: 95px; /* Space for header */
-            padding-left: 90px; /* Space for sidebar */
+            padding-left: 105px; /* Space for sidebar */
             transition: background-color 0.3s, color 0.3s;
         }
 
@@ -76,7 +76,7 @@
             left: 15px; /* Floating from left edge */
             top: 90px; /* Gap from the top bar (80px header + 10px gap) */
             bottom: 15px;
-            width: 75px;
+            width: 90px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 17px;
@@ -186,12 +186,18 @@
 
 <div class="side-nav-bar">
     <div>
-        <a href="#" class="nav-icon active" title="Home"><i class="fas fa-home"></i></a>
-        <a href="#" class="nav-icon" title="My Profile"><i class="fas fa-user"></i></a>
-    </div>
+        <a href="/client/dashboard" class="nav-icon active" title="Home">
+            <i class="fas fa-home"></i>
+        </a>
 
+        <a href="/client/profile" class="nav-icon" title="My Profile">
+            <i class="fas fa-user"></i>
+        </a>
+    </div>
     <div>
-        <a href="/" class="nav-icon logout" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+        <a href="/" class="nav-icon logout" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
     </div>
 </div>
 
@@ -264,7 +270,7 @@
 
     <div class="row g-4">
 
-        <div class="col-lg-8">
+        <div class="col-lg-8 ">
             <div class="timeline-card p-4 rounded-4 h-100 hover-card" style="min-height: 300px;">
                 <h5 class="fw-bold mb-4" style="color: var(--bs-primary)"><i class="fas fa-stream me-2"></i>Project Status</h5>
 
@@ -347,7 +353,7 @@
                         <i class="far fa-star" onclick="setRating(5)" id="star5"></i>
                     </div>
 
-                    <textarea class="form-control bg-light border-0" rows="3" placeholder="Leave a comment (optional)..."></textarea>
+                    <textarea class="form-control bg-light border-0" rows="3" placeholder="Leave a comment..."></textarea>
                 </div>
                 <div class="modal-footer border-top-0 justify-content-center pb-4">
                     <button type="button" class="btn btn-primary rounded-pill px-5 fw-bold" data-bs-dismiss="modal">Submit Feedback</button>
