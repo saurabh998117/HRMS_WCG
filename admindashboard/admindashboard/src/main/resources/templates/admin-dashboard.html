@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Dashboard - WhiteCircle</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -24,10 +24,10 @@
             display: flex;
         }
 
-        /* --- 1. ADMIN SIDEBAR (Fixed Left) --- */
+        /* --- 1. ADMIN SIDEBAR (Desktop) --- */
         .sidebar {
             width: var(--sidebar-width);
-            background: #0f172a; /* Darker Navy for Admin */
+            background: #0f172a;
             color: #fff;
             position: fixed; top: 0; bottom: 0; left: 0;
             padding: 20px;
@@ -89,7 +89,7 @@
             margin-bottom: 16px;
         }
 
-        /* Data Tables */
+        /* Table Styling */
         .admin-table-card {
             background: white; border-radius: 12px;
             border: 1px solid #e2e8f0;
@@ -112,6 +112,123 @@
             font-size: 0.9rem;
         }
 
+        /* ==========================================================================
+           MOBILE RESPONSIVENESS PATCH (Applies ONLY to Screens < 991px)
+           ========================================================================== */
+        @media (max-width: 991px) {
+
+            /* 1. RESET BODY */
+            body {
+                padding-bottom: 90px !important;
+                overflow-x: hidden;
+            }
+
+            /* 2. TRANSFORM SIDEBAR TO BOTTOM APP BAR */
+            .sidebar {
+                top: auto !important; bottom: 0 !important; left: 0 !important;
+                width: 100% !important; height: 65px !important;
+                flex-direction: row !important;
+                padding: 0 10px !important;
+                background: #0f172a !important;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+                justify-content: space-between;
+            }
+
+            .sidebar .brand, .sidebar small { display: none !important; }
+
+            .sidebar > div {
+                flex-direction: row !important;
+                width: 100% !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                margin-top: 0 !important;
+            }
+
+            .nav-item {
+                flex-direction: column !important;
+                padding: 8px !important;
+                margin-bottom: 0 !important;
+                gap: 0 !important;
+                border-radius: 8px !important;
+                font-size: 0 !important;
+            }
+
+            .nav-item i {
+                font-size: 1.3rem !important;
+                margin: 0 !important;
+                color: #94a3b8;
+            }
+
+            .nav-item.active i { color: #fff !important; }
+            .nav-item.active { background: rgba(255,255,255,0.15) !important; }
+
+            /* 3. MAIN CONTENT FIXES */
+            .main-wrapper { margin-left: 0 !important; padding: 20px 15px !important; }
+
+            /* 4. HEADER FIX */
+            .header-bar {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 15px;
+            }
+            .header-bar button { width: 100% !important; }
+
+            /* 5. STAT CARDS STACKING */
+            .row { margin-left: 0 !important; margin-right: 0 !important; }
+            .col-md-3 { width: 100% !important; padding: 0 !important; margin-bottom: 15px !important; }
+
+            /* 6. TABLE TO CARD TRANSFORMATION (FIXED OVERLAP) */
+            .admin-table-card { background: transparent !important; border: none !important; box-shadow: none !important; }
+            .table { background: transparent !important; }
+
+            .table thead { display: none; }
+
+            .table tbody, .table tr, .table td { display: block; width: 100%; }
+
+            .table tr {
+                background: white;
+                margin-bottom: 15px;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                border: 1px solid #e2e8f0;
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px; /* Space between rows inside the card */
+            }
+
+            .table td {
+                padding: 5px 0;
+                text-align: right;
+                border-bottom: 1px solid #f1f5f9;
+                display: flex;
+                justify-content: space-between; /* Pushes Label Left, Value Right */
+                align-items: center;
+                width: 100%;
+            }
+
+            .table td:last-child { border-bottom: none; padding-bottom: 0; justify-content: flex-end; }
+
+            /* LABEL STYLING (The fix) */
+            .table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #64748b;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                text-align: left;
+                margin-right: 15px; /* Buffer space */
+                flex-shrink: 0; /* Prevents label from squishing */
+            }
+
+            /* Specific fix for Progress bar container */
+            .table td .d-flex {
+                justify-content: flex-end;
+                width: 60%; /* Limit width so it doesn't hit label */
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -127,7 +244,7 @@
         <a href="#" class="nav-item active"><i class="fas fa-chart-line" style="width:20px"></i> Dashboard</a>
         <a href="#" class="nav-item"><i class="fas fa-users" style="width:20px"></i> Employees</a>
         <a href="#" class="nav-item"><i class="fas fa-building" style="width:20px"></i> Clients & Projects</a>
-        <a href="#" class="nav-item"><i class="fas fa-file-invoice-dollar" style="width:20px"></i> Payroll & Billing</a>
+        <a href="#" class="nav-item"><i class="fas fa-file-invoice-dollar" style="width:20px"></i> Payroll</a>
 
         <small class="text-muted text-uppercase fw-bold mt-4 mb-3" style="font-size: 0.7rem; letter-spacing: 1px;">System</small>
 
@@ -159,7 +276,6 @@
                 <p class="text-muted small m-0">Active Employees</p>
             </div>
         </div>
-
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="icon-square bg-info bg-opacity-10 text-info"><i class="fas fa-layer-group"></i></div>
@@ -167,7 +283,6 @@
                 <p class="text-muted small m-0">Live Projects</p>
             </div>
         </div>
-
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="icon-square bg-warning bg-opacity-10 text-warning"><i class="fas fa-file-invoice"></i></div>
@@ -175,7 +290,6 @@
                 <p class="text-muted small m-0">Pending Payments</p>
             </div>
         </div>
-
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="icon-square bg-danger bg-opacity-10 text-danger"><i class="fas fa-bell"></i></div>
@@ -186,6 +300,7 @@
     </div>
 
     <h5 class="fw-bold text-dark mb-3">Client Project Status</h5>
+
     <div class="admin-table-card">
         <table class="table table-hover mb-0">
             <thead>
@@ -199,10 +314,10 @@
             </thead>
             <tbody>
             <tr>
-                <td class="fw-bold">Global Tech Solutions</td>
-                <td>E-Commerce Revamp</td>
-                <td><span class="badge bg-primary">UAT Phase</span></td>
-                <td>
+                <td data-label="Client Name" class="fw-bold">Global Tech Solutions</td>
+                <td data-label="Project">E-Commerce Revamp</td>
+                <td data-label="Current Stage"><span class="badge bg-primary">UAT Phase</span></td>
+                <td data-label="Progress">
                     <div class="d-flex align-items-center gap-2">
                         <div class="progress flex-grow-1" style="height: 6px; width: 80px;">
                             <div class="progress-bar" style="width: 75%"></div>
@@ -210,13 +325,13 @@
                         <span class="small fw-bold">75%</span>
                     </div>
                 </td>
-                <td><button class="btn btn-sm btn-outline-secondary">Manage</button></td>
+                <td data-label="Action"><button class="btn btn-sm btn-outline-secondary">Manage</button></td>
             </tr>
             <tr>
-                <td class="fw-bold">FinCorp Systems</td>
-                <td>Banking Security</td>
-                <td><span class="badge bg-success">Deployed</span></td>
-                <td>
+                <td data-label="Client Name" class="fw-bold">FinCorp Systems</td>
+                <td data-label="Project">Banking Security</td>
+                <td data-label="Current Stage"><span class="badge bg-success">Deployed</span></td>
+                <td data-label="Progress">
                     <div class="d-flex align-items-center gap-2">
                         <div class="progress flex-grow-1" style="height: 6px; width: 80px;">
                             <div class="progress-bar bg-success" style="width: 100%"></div>
@@ -224,7 +339,7 @@
                         <span class="small fw-bold">100%</span>
                     </div>
                 </td>
-                <td><button class="btn btn-sm btn-outline-secondary">Manage</button></td>
+                <td data-label="Action"><button class="btn btn-sm btn-outline-secondary">Manage</button></td>
             </tr>
             </tbody>
         </table>
