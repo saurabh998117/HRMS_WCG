@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Client Portal - WhiteCircle</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --smooth-curve: cubic-bezier(0.25, 0.8, 0.25, 1); /* Professional Ease-Out */
+            --smooth-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         body {
@@ -26,9 +26,9 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             padding-top: 95px;
-            padding-left: 120px;
+            padding-left: 120px; /* DESKTOP PADDING */
             padding-right: 10px;
-            transition: background-color 0.4s ease, color 0.4s ease; /* Smoother theme switch */
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
         /* --- 1. TOP NAVIGATION BAR --- */
@@ -49,7 +49,7 @@
             letter-spacing: -0.5px;
         }
 
-        /* --- 2. FLOATING SIDEBAR --- */
+        /* --- 2. SIDEBAR NAVIGATION (Desktop) --- */
         .side-nav-bar {
             position: fixed;
             left: 15px;
@@ -59,13 +59,22 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 17px;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column; /* Vertical Stack */
             align-items: center;
             padding: 20px 0;
             box-shadow: var(--shadow);
             z-index: 999;
-            justify-content: space-between;
+            justify-content: space-between; /* Spreads Top Group and Logout */
             transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        /* Helper Class for Icon Grouping */
+        .nav-group {
+            display: flex;
+            flex-direction: column; /* Desktop: Vertical */
+            align-items: center;
+            width: 100%;
         }
 
         .nav-icon {
@@ -74,35 +83,24 @@
             width: 45px; height: 45px;
             display: flex; align-items: center; justify-content: center;
             border-radius: 50%;
-            transition: all 0.3s var(--smooth-curve); /* Smoother hover fill */
+            transition: all 0.3s var(--smooth-curve);
             margin-bottom: 10px;
             text-decoration: none;
         }
         .nav-icon:hover, .nav-icon.active {
-            background-color: #eff6ff; color: var(--bs-primary); }
-
-        /* Navy Blue Border Utility */
-        .border-navy {
-            border: 2px solid var(--bs-primary) !important;
+            background-color: #eff6ff; color: var(--bs-primary);
         }
 
-        /* --- DASHBOARD CARDS (Base Styles + Unified Transitions) --- */
+        /* Navy Blue Border Utility */
+        .border-navy { border: 2px solid var(--bs-primary) !important; }
+
+        /* --- DASHBOARD CARDS --- */
         .client-hero, .kpi-card, .timeline-card, .updates-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow);
-
-            /* PERFORMANCE OPTIMIZATION: */
-            /* 1. Define transition on the element itself, not just on hover */
-            transition:
-                transform 0.4s var(--smooth-curve),
-                box-shadow 0.4s var(--smooth-curve),
-                border-color 0.3s ease,
-                background-color 0.4s ease;
-
-            /* 2. Hint to browser to use GPU */
+            transition: transform 0.4s var(--smooth-curve), box-shadow 0.4s var(--smooth-curve);
             will-change: transform, box-shadow;
-            /* 3. Fix for sub-pixel rendering jitter */
             transform: translateZ(0);
         }
 
@@ -114,32 +112,13 @@
         .update-content h6 { color: var(--text-color); }
         .update-content p { color: var(--text-muted); }
 
-        /* --- HOVER EFFECTS --- */
-        /* Since transition is defined in the base class, we only set the final state here */
         .hover-card:hover {
             transform: translateY(-8px) translateZ(0);
             box-shadow: 0 20px 40px rgba(30, 58, 138, 0.12) !important;
             border-color: #cbd5e1;
         }
 
-        /* Progress Circle Fix */
-        .progress-inner {
-            background: var(--card-bg);
-            color: var(--bs-primary);
-            transition: background 0.3s;
-        }
-
-        /* Modal Star Rating */
-        .star-rating {
-            font-size: 2rem;
-            color: #cbd5e1;
-            cursor: pointer;
-            display: inline-block;
-        }
-        .star-rating i { transition: color 0.2s ease-out; }
-        .star-rating i.active, .star-rating i:hover { color: #fbbf24; }
-
-        /* --- SHAKE ANIMATION --- */
+        /* Animation */
         @keyframes shake {
             0% { transform: rotate(0deg); }
             25% { transform: rotate(-15deg); }
@@ -152,134 +131,153 @@
             color: var(--bs-primary);
         }
 
-        /* --- NEW ALIGNMENT & REVIEW CARD STYLES --- */
-        /*  Header Alignment Enforcer */
+        /* --- COMPONENT STYLES --- */
         .card-header-fixed {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px; /* Consistent gap below title */
-            min-height: 25px;    /* Forces height even if no badge exists */
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; min-height: 25px;
         }
 
-        /* Professional Review Card Design */
-        .review-score-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .big-score {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--bs-primary);
-            line-height: 1;
-        }
-        .review-stars-box {
-            display: flex;
-            flex-direction: column;
-        }
+        .review-score-container { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .big-score { font-size: 3rem; font-weight: 800; color: var(--bs-primary); line-height: 1; }
+        .review-stars-box { display: flex; flex-direction: column; }
 
         .quote-box {
-            background-color: #f8fafc;
-            border-left: 4px solid var(--bs-primary);
-            padding: 12px 15px;
-            border-radius: 0 8px 8px 0;
-            font-style: italic;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
+            background-color: #f8fafc; border-left: 4px solid var(--bs-primary);
+            padding: 12px 15px; border-radius: 0 8px 8px 0;
+            font-style: italic; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;
         }
-        /* --- NEW PROFESSIONAL FEEDBACK MODAL --- */
-    .feedback-modal .modal-content {
-        border: none;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        overflow: hidden;
-    }
 
-    .feedback-header {
-        background: var(--bs-primary);
-        color: white;
-        padding: 25px 30px;
-        text-align: center;
-        position: relative;
-    }
+        /* --- FEEDBACK MODAL --- */
+        .feedback-modal .modal-content {
+            border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden;
+        }
+        .feedback-header {
+            background: var(--bs-primary); color: white; padding: 25px 30px; text-align: center; position: relative;
+        }
+        .milestone-badge {
+            background: rgba(255,255,255,0.2); color: white; padding: 5px 15px;
+            border-radius: 30px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 10px;
+        }
+        .star-rating-lg { display: flex; justify-content: center; gap: 15px; margin: 25px 0 10px; }
+        .star-rating-lg i {
+            font-size: 2.5rem; color: #e2e8f0; cursor: pointer; transition: transform 0.2s, color 0.2s;
+        }
+        .star-rating-lg i.active, .star-rating-lg i:hover { color: #fbbf24; transform: scale(1.2); }
 
-    .milestone-badge {
-        background: rgba(255,255,255,0.2);
-        color: white;
-        padding: 5px 15px;
-        border-radius: 30px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
+        .feedback-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        .feedback-tag {
+            border: 1px solid var(--border-color); background: #f8fafc; color: var(--text-muted);
+            padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; font-weight: 500;
+        }
+        .feedback-tag:hover { background: #e2e8f0; transform: translateY(-2px); }
+        .feedback-tag.selected {
+            background: #eff6ff; border-color: var(--bs-primary); color: var(--bs-primary); font-weight: 600;
+        }
+        .modal-footer-custom {
+            padding: 20px 30px; background: #f8fafc; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
 
-    /* Large Interactive Stars */
-    .star-rating-lg {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin: 25px 0 10px;
-    }
-    .star-rating-lg i {
-        font-size: 2.5rem;
-        color: #e2e8f0; /* Inactive Color */
-        cursor: pointer;
-        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s;
-    }
-    .star-rating-lg i.active, .star-rating-lg i:hover {
-        color: #fbbf24;
-        transform: scale(1.2); /* Pop effect */
-    }
+        /* ==========================================================================
+           MOBILE RESPONSIVENESS PATCH (Applies ONLY to Screens < 991px)
+           ========================================================================== */
+        @media (max-width: 991px) {
 
-    /* Quick Feedback Tags */
-    .feedback-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
+            /* 1. RESET BODY PADDING & SCROLLING */
+            html, body {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                padding-bottom: 80px !important; /* Space for bottom nav */
+                overflow-x: hidden !important;
+                width: 100% !important;
+            }
 
-    .feedback-tag {
-        border: 1px solid var(--border-color);
-        background: #f8fafc;
-        color: var(--text-muted);
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-weight: 500;
-    }
+            /* 2. TRANSFORM SIDEBAR TO BOTTOM APP BAR */
+            .side-nav-bar {
+                top: auto !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 60px !important;
+                border-radius: 0 !important;
+                flex-direction: row !important; /* Mobile: Horizontal Bar */
+                justify-content: space-around !important;
+                align-items: center !important;
+                background: #fff !important;
+                border: none !important;
+                border-top: 1px solid #e2e8f0 !important;
+                box-shadow: 0 -4px 10px rgba(0,0,0,0.05) !important;
+                padding: 0 10px !important;
+            }
 
-    .feedback-tag:hover {
-        background: #e2e8f0;
-        transform: translateY(-2px);
-    }
+            /* 3. FIX FOR ICONS: Horizontal Grouping */
+            .nav-group {
+                flex-direction: row !important; /* Mobile: Icons side-by-side */
+                width: auto !important;
+                gap: 20px;
+            }
 
-    /* Selected State for Tags */
-    .feedback-tag.selected {
-        background: #eff6ff;
-        border-color: var(--bs-primary);
-        color: var(--bs-primary);
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(30, 58, 138, 0.1);
-    }
+            .nav-icon {
+                margin-bottom: 0 !important;
+                width: 100% !important;
+                border-radius: 0 !important;
+            }
 
-    .modal-footer-custom {
-        padding: 20px 30px;
-        background: #f8fafc;
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+            /* 4. FIX TOP NAVIGATION */
+            .top-nav-bar {
+                padding: 0 15px !important;
+                justify-content: space-between !important;
+                height: 70px !important;
+            }
+            .brand-section img { height: 35px !important; margin-right: 10px !important; }
+            .brand-section { font-size: 1.1rem !important; }
 
+            /* 5. HERO SECTION FIX (Split Layout for Mobile) */
+            .client-hero {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+                height: auto !important;
+                padding: 20px !important;
+            }
+            .client-hero > div:last-child {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding-top: 12px;
+                border-top: 1px solid #f1f5f9;
+                margin-top: 5px;
+            }
+            .client-hero .d-flex.gap-3 { gap: 10px !important; }
+
+            /* 6. FORCE STACKING OF CARDS (Fix Scattering) */
+            .row {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            .col-md-4, .col-lg-8, .col-lg-4 {
+                width: 100% !important;
+                margin-bottom: 15px !important;
+            }
+
+            /* 7. CONTAINER WIDTH FIX */
+            .container, .container-fluid, .row > div {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+                max-width: 100% !important;
+            }
+
+            /* 8. HIDE DESKTOP ELEMENTS */
+            .d-none-mobile { display: none !important; }
+
+            /* 9. TIMELINE SCROLLING */
+            .timeline-card .d-flex.position-relative {
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            .step-label { font-size: 0.6rem !important; }
+        }
     </style>
 
 </head>
@@ -296,150 +294,141 @@
             <div class="fw-bold" style="color: var(--text-color)">Switch to Dark Mode</div>
         </div>
 
-        <button class="theme-toggle" onclick="toggleTheme()">
+        <button class="theme-toggle btn btn-light rounded-circle" onclick="toggleTheme()">
             <i class="fas fa-moon" id="theme-icon"></i>
         </button>
     </div>
 </nav>
 
 <div class="side-nav-bar">
-    <div>
+    <div class="nav-group">
         <a href="/client/dashboard" class="nav-icon active" title="Home">
             <i class="fas fa-home"></i>
         </a>
-
         <a href="/client/profile" class="nav-icon" title="My Profile">
             <i class="fas fa-user"></i>
         </a>
     </div>
-    <div>
+    <div class="nav-group">
         <a href="/" class="nav-icon logout" title="Logout">
             <i class="fas fa-sign-out-alt"></i>
         </a>
     </div>
 </div>
 
-<div class="client-hero hover-card py-3 px-4 rounded-4 mb-4 d-flex justify-content-between align-items-center">
+<div class="container-fluid mt-2">
 
-    <div class="client-info">
-        <h4 class="fw-bold mb-1">Project Dashboard</h4>
-        <p class="mb-0">Overview of <strong class="text-dark">"E-Commerce App Revamp"</strong></p>
-    </div>
-    <div class="d-flex align-items-center gap-4">
-        <div class="border-start border-2 h-100" style="height: 40px;"></div>
-        <div class="d-flex align-items-center gap-3">
-            <div class="text-end lh-1">
-                <div class="small text-muted">Project Manager</div>
-                <div class="fw-bold text-dark" style="font-size: 0.9rem;">Amit Verma</div>
+    <div class="client-hero hover-card py-3 px-4 rounded-4 mb-4 d-flex justify-content-between align-items-center">
+        <div class="client-info">
+            <h4 class="fw-bold mb-1">Project Dashboard</h4>
+            <p class="mb-0">Overview of <strong class="text-dark">"E-Commerce App Revamp"</strong></p>
+        </div>
+
+        <div class="d-flex align-items-center gap-4 w-auto">
+            <div class="border-start border-2 h-100 d-none d-md-block" style="height: 40px;"></div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end lh-1">
+                    <div class="small text-muted">Project Manager</div>
+                    <div class="fw-bold text-dark" style="font-size: 0.9rem;">Amit Verma</div>
+                </div>
+                <div class="bg-light rounded-circle border d-flex align-items-center justify-content-center text-primary fw-bold"
+                     style="width: 40px; height: 40px; font-size: 0.85rem;">AV</div>
             </div>
-            <div class="bg-light rounded-circle border d-flex align-items-center justify-content-center text-primary fw-bold"
-                 style="width: 40px; height: 40px; font-size: 0.85rem;">AV</div>
-        </div>
-        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill ms-2">
-                    <i class="fas fa-circle me-2 small"></i>Active
-                </span>
-    </div>
-</div>
-<div class="row g-3 mb-4"> <div class="col-md-4">
-    <div class="kpi-card hover-card border-navy p-3 rounded-4 h-100 d-flex flex-column">
-
-        <div class="card-header-fixed mb-2"> <span class="kpi-title fw-bold small text-uppercase" style="font-size: 0.75rem;">Completion Status</span>
-        </div>
-
-        <div class="d-flex align-items-end mb-2">
-            <span class="display-6 fw-bold text-primary me-2">75%</span> </div>
-
-        <div class="progress mb-3" style="height: 8px; border-radius: 4px;"> <div class="progress-bar" role="progressbar"
-                                                                                  style="width: 75%; background-color: #1e3a8a; border-radius: 6px;">
-        </div>
-        </div>
-
-        <div class="mt-auto pt-2 border-top">
-            <div class="d-flex justify-content-between text-start">
-                <div>
-                    <div class="small text-muted fw-bold" style="font-size: 0.7rem;">NEXT MILESTONE</div>
-                    <div class="text-dark small mt-1">UAT Sign-off</div>
-                </div>
-                <div class="text-end">
-                    <div class="small text-muted fw-bold" style="font-size: 0.7rem;">DUE DATE</div>
-                    <div class="text-danger fw-bold small mt-1">Feb 10, 2026</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-    <div class="col-md-4">
-        <div class="kpi-card hover-card border-navy p-3 rounded-4 h-100 d-flex flex-column">
-
-            <div class="card-header-fixed mb-2">
-                <span class="kpi-title fw-bold small text-uppercase" style="font-size: 0.75rem;">Payment Status</span>
-                <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.7rem;">Paid</span>
-            </div>
-
-            <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-                    <span class="text-muted small fw-bold">Total Budget</span>
-                    <span class="pay-val fw-bold fs-5">₹ 5,00,000</span>
-                </div>
-
-                <div class="d-flex justify-content-between small mb-1">
-                    <span class="text-muted">Paid Amount</span> <span class="pay-val fw-bold text-success">₹ 3,50,000</span>
-                </div>
-                <div class="progress mb-2" style="height: 5px;">
-                    <div class="progress-bar bg-success" style="width: 70%"></div>
-                </div>
-
-                <div class="d-flex justify-content-between small mb-1">
-                    <span class="text-muted">Pending</span> <span class="pay-val fw-bold text-danger">₹ 1,50,000</span>
-                </div>
-                <div class="progress" style="height: 5px;">
-                    <div class="progress-bar bg-danger" style="width: 30%"></div>
-                </div>
-            </div>
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill ms-2">
+                <i class="fas fa-circle me-2 small"></i>Active
+            </span>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="kpi-card hover-card border-navy p-3 rounded-4 h-100 d-flex flex-column">
-
-            <div class="card-header-fixed mb-2">
-                <span class="kpi-title fw-bold small text-uppercase" style="font-size: 0.75rem;">Client Satisfaction</span>
-                <span class="badge bg-warning bg-opacity-10 text-warning text-dark" style="font-size: 0.7rem;">Verified</span>
-            </div>
-
-            <div class="review-score-container mb-3" style="gap: 10px;">
-                <div class="big-score" style="font-size: 2.5rem;">4.0</div> <div class="review-stars-box">
-                <div class="text-warning mb-1" style="font-size: 1rem;">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="kpi-card hover-card border-navy p-3 rounded-4 h-100 d-flex flex-column">
+                <div class="card-header-fixed mb-2">
+                    <span class="kpi-title fw-bold small text-uppercase" style="font-size: 0.75rem;">Completion Status</span>
                 </div>
-                <small class="text-muted" style="font-size: 0.7rem;">Based on 4 Milestones</small>
+                <div class="d-flex align-items-end mb-2">
+                    <span class="display-6 fw-bold text-primary me-2">75%</span>
+                </div>
+                <div class="progress mb-3" style="height: 8px; border-radius: 4px;">
+                    <div class="progress-bar" role="progressbar" style="width: 75%; background-color: #1e3a8a; border-radius: 6px;"></div>
+                </div>
+                <div class="mt-auto pt-2 border-top">
+                    <div class="d-flex justify-content-between text-start">
+                        <div>
+                            <div class="small text-muted fw-bold" style="font-size: 0.7rem;">NEXT MILESTONE</div>
+                            <div class="text-dark small mt-1">UAT Sign-off</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="small text-muted fw-bold" style="font-size: 0.7rem;">DUE DATE</div>
+                            <div class="text-danger fw-bold small mt-1">Feb 10, 2026</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            </div>
+        </div>
 
-            <div class="quote-box py-2 px-3 mb-3" style="font-size: 0.85rem;">
-                <i class="fas fa-quote-left me-2 opacity-50"></i>
-                Great progress on the UI phase. The team is very responsive.
+        <div class="col-md-4">
+            <div class="kpi-card hover-card border-navy p-3 rounded-4 h-100 d-flex flex-column">
+                <div class="card-header-fixed mb-2">
+                    <span class="kpi-title fw-bold small text-uppercase" style="font-size: 0.75rem;">Payment Status</span>
+                    <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.7rem;">Paid</span>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                        <span class="text-muted small fw-bold">Total Budget</span>
+                        <span class="pay-val fw-bold fs-5">₹ 5,00,000</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">Paid Amount</span> <span class="pay-val fw-bold text-success">₹ 3,50,000</span>
+                    </div>
+                    <div class="progress mb-2" style="height: 5px;">
+                        <div class="progress-bar bg-success" style="width: 70%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">Pending</span> <span class="pay-val fw-bold text-danger">₹ 1,50,000</span>
+                    </div>
+                    <div class="progress" style="height: 5px;">
+                        <div class="progress-bar bg-danger" style="width: 30%"></div>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <div class="mt-auto">
-                <button class="btn btn-sm btn-outline-primary w-100 rounded-pill fw-bold"
-                        data-bs-toggle="modal" data-bs-target="#ratingModal">
-                    <i class="fas fa-pen me-2"></i>Write a Review
-                </button>
+        <div class="col-md-4">
+            <div class="kpi-card hover-card border-navy p-3 rounded-4 h-100 d-flex flex-column">
+                <div class="card-header-fixed mb-2">
+                    <span class="kpi-title fw-bold small text-uppercase" style="font-size: 0.75rem;">Client Satisfaction</span>
+                    <span class="badge bg-warning bg-opacity-10 text-warning text-dark" style="font-size: 0.7rem;">Verified</span>
+                </div>
+                <div class="review-score-container mb-3" style="gap: 10px;">
+                    <div class="big-score" style="font-size: 2.5rem;">4.0</div>
+                    <div class="review-stars-box">
+                        <div class="text-warning mb-1" style="font-size: 1rem;">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.7rem;">Based on 4 Milestones</small>
+                    </div>
+                </div>
+                <div class="quote-box py-2 px-3 mb-3" style="font-size: 0.85rem;">
+                    <i class="fas fa-quote-left me-2 opacity-50"></i>
+                    Great progress on the UI phase. The team is very responsive.
+                </div>
+                <div class="mt-auto">
+                    <button class="btn btn-sm btn-outline-primary w-100 rounded-pill fw-bold"
+                            data-bs-toggle="modal" data-bs-target="#ratingModal">
+                        <i class="fas fa-pen me-2"></i>Write a Review
+                    </button>
+                </div>
             </div>
-
         </div>
     </div>
-</div>
+
     <div class="row g-4">
-
-        <div class="col-lg-8 ">
+        <div class="col-lg-8">
             <div class="timeline-card p-4 rounded-4 h-100 hover-card" style="min-height: 300px;">
                 <h5 class="fw-bold mb-4" style="color: var(--bs-primary)"><i class="fas fa-stream me-2"></i>Project Status</h5>
 
-                <div class="d-flex justify-content-between position-relative mt-4">
+                <div class="d-flex justify-content-between position-relative mt-4" style="min-width: 300px;">
                     <div class="position-absolute top-50 start-0 w-100 translate-middle-y" style="height: 2px; background: var(--border-color); z-index: 0;"></div>
 
                     <div class="text-center position-relative z-1">
@@ -498,8 +487,9 @@
                 </ul>
             </div>
         </div>
-
     </div>
+</div>
+
 <div class="modal fade feedback-modal" id="ratingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -545,22 +535,8 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function setRating(n) {
-        // Reset all to empty
-        const stars = document.querySelectorAll('.star-rating i');
-        stars.forEach((star, index) => {
-            if (index < n) {
-                star.classList.remove('far');
-                star.classList.add('fas', 'active');
-            } else {
-                star.classList.remove('fas', 'active');
-                star.classList.add('far');
-            }
-        };
-    }
-    /* --- FEEDBACK MODAL LOGIC --- */
-
     // 1. Star Rating Logic
     function setRating(n) {
         const stars = document.querySelectorAll('#starContainer i');
@@ -577,8 +553,11 @@
         });
 
         // Update Text Label below stars
-        document.getElementById('ratingLabel').innerText = labels[n-1];
-        document.getElementById('ratingLabel').style.color = "#1e3a8a";
+        const label = document.getElementById('ratingLabel');
+        if(label) {
+            label.innerText = labels[n-1];
+            label.style.color = "#1e3a8a";
+        }
     }
 
     // 2. Tag Toggle Logic (Clicking the chips)
@@ -586,9 +565,8 @@
         element.classList.toggle('selected');
     }
 
-    // 3. Submit Button Animation (Optional Simulation)
+    // 3. Submit Button Animation
     function submitFeedback() {
-        // Here you would typically send data to the backend
         const btn = document.querySelector('.modal-footer-custom .btn-primary');
         const originalText = btn.innerHTML;
 
@@ -610,8 +588,12 @@
             }, 500);
         }, 1500);
     }
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    // Theme Toggle Function
+    function toggleTheme() {
+        // Placeholder for theme logic if needed
+        console.log("Theme toggled");
+    }
+</script>
 </body>
 </html>
