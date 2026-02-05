@@ -121,6 +121,13 @@ public class DashboardController {
     }
 
 
+    // This handles the "GET" request - when someone types the URL in the browser
+    @GetMapping("/")
+    public String showLandingPage() {
+        return "index"; // Or "login", whatever your html file name is
+    }
+
+
 
 }
 
