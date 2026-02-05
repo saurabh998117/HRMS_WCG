@@ -71,19 +71,62 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--card-radius);
-            padding: 25px 20px;
+            padding: 30px 20px; /* Increased top padding */
             display: flex; flex-direction: column;
             z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
         }
 
         .sidebar-title {
-            font-size: 0.95rem; font-weight: 800; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 15px; padding-left: 10px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #94a3b8; /* Lighter gray */
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            padding-left: 15px;
         }
 
-        /* --- NEW SIDEBAR FOOTER STYLES --- */
+        .nav-item {
+            display: flex; align-items: center; gap: 15px;
+            padding: 14px 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px; /* Softer corners */
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Bouncy transition */
+            border-left: 4px solid transparent; /* Hidden border for effect */
+        }
+
+        /* Hover: Slide Right + Light Navy BG */
+        .nav-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateX(5px); /* Slide effect */
+        }
+
+        /* Active: Deep Navy + Glow */
+        .nav-item.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3); /* Glowing shadow */
+        }
+
+        .nav-item.active i { color: white; }
+        /* Icon adjustment */
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        /* Icon pops on hover */
+        .nav-item:hover i { transform: scale(1.1); }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+
+        /* --- SIDEBAR FOOTER STYLES --- */
 
         /* 1. My Profile Button (Replaces Text) */
         .profile-btn {
@@ -144,18 +187,74 @@
             100% { transform: rotate(0deg) translateY(-3px); }
         }
 
-        .nav-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 16px; color: var(--text-muted);
-            text-decoration: none; border-radius: 10px;
-            margin-bottom: 5px; font-weight: 600; font-size: 0.95rem;
-            transition: all 0.2s;
+        /* --- SIDEBAR TOGGLE HEADER --- */
+        /* 1. Default State: Spaced out */
+        .toggle-header {
+            min-height: 30px;
+            transition: all 0.3s ease;
         }
-        .nav-item:hover { background-color: var(--primary-light); color: var(--primary); }
-        .nav-item.active { background-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.25); }
-        .nav-item.active i { color: white; }
 
-        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+        /* 2. Collapsed State: Center the button */
+        body.sidebar-collapsed .toggle-header {
+            justify-content: center !important; /* Force center */
+            padding: 0 !important;
+            margin-bottom: 20px !important;
+        }
+
+        /* 3. Button Styling */
+        #sidebarToggle {
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: var(--primary);
+        }
+        #sidebarToggle:hover {
+            transform: scale(1.1); /* Slight pop effect */
+        }
+
+        /* --- COLLAPSIBLE SIDEBAR LOGIC --- */
+        /* 1. The default state is already defined in :root as 280px */
+
+        /* 2. When body has 'sidebar-collapsed' class, override the variable */
+        body.sidebar-collapsed {
+            --sidebar-width: 80px; /* Shrink to icon width */
+        }
+
+        /* 3. Hide Sidebar text (Keep Top Navbar visible) */
+        body.sidebar-collapsed .sidebar .nav-item span,
+        body.sidebar-collapsed .sidebar-title {
+            opacity: 0;
+            pointer-events: none;
+            display: none; /* Removes text from flow */
+        }
+        /* Ensure Navbar Brand stays visible */
+        body.sidebar-collapsed .nav-brand span {
+            display: block !important;
+            opacity: 1 !important;
+        }
+
+        /* 4. Center the icons when collapsed */
+        body.sidebar-collapsed .nav-item {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        body.sidebar-collapsed .nav-item i {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        /* 5. Adjust Footer Icons (Profile/Logout) */
+        body.sidebar-collapsed .sidebar-footer-icons {
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* 6. Smooth Transition for the Width Change */
+        .sidebar, .main-wrapper {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
         .user-profile {
             display: flex; align-items: center; gap: 12px;
             padding: 12px; background: var(--bg-body);
@@ -313,7 +412,7 @@
 
 <nav class="top-navbar">
     <div class="nav-brand">
-        <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 65px; border-radius: 6px;">
+        <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 70px; border-radius: 6px;">
         WHITECIRCLE
     </div>
     <div class="nav-search">
@@ -329,8 +428,13 @@
 </nav>
 
 <aside class="sidebar">
-    <div style="width: 100%;">
-        <div class="sidebar-title">Admin Control</div>
+    <div class="d-flex align-items-center justify-content-between mb-3 px-2 toggle-header">
+        <div class="sidebar-title mb-0">Admin Control</div>
+
+        <button id="sidebarToggle" class="btn btn-link text-primary p-0 text-decoration-none">
+            <i class="fas fa-bars fa-lg"></i>
+        </button>
+    </div>
         <a href="#" class="nav-item active"><i class="fas fa-th-large"></i> <span>Home</span></a>
         <a href="#" class="nav-item"><i class="fas fa-users"></i> <span>Staff</span></a>
         <a href="#" class="nav-item"><i class="fas fa-user-plus"></i> <span>Onboard</span></a>
@@ -518,6 +622,27 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // --- SIDEBAR TOGGLE LOGIC ---
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const body = document.body;
+
+    // 1. Check if user previously collapsed the sidebar (saved in browser)
+    if (localStorage.getItem('sidebarState') === 'collapsed') {
+        body.classList.add('sidebar-collapsed');
+    }
+
+    // 2. Toggle function
+    toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('sidebar-collapsed');
+
+        // 3. Save state to localStorage
+        if (body.classList.contains('sidebar-collapsed')) {
+            localStorage.setItem('sidebarState', 'collapsed');
+        } else {
+            localStorage.setItem('sidebarState', 'expanded');
         }
     });
 </script>
