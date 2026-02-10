@@ -2,163 +2,381 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add New Employee | Admin Portal</title>
+    <title>Onboard New Talent | Admin Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-light">
 
-<nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+    <style>
+        :root {
+            --primary-blue: #1e3a8a; /* White Circle Navy Blue */
+            --bg-light: #f4f6f9;
+            --text-dark: #333;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Navbar Styling */
+        .navbar-custom {
+            background-color: var(--primary-blue);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding-top: 25px;
+            padding-bottom: 25px;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white !important; /* Ensures text stays white */
+        }
+
+        /* Card Styling - Made Compact */
+        .section-card {
+            background: #fff;
+            border: none;
+            border-radius: 8px; /* Slightly tighter radius */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            margin-bottom: 20px; /* Reduced margin */
+            overflow: hidden;
+        }
+
+        .section-header {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 10px 15px; /* Reduced padding */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            font-size: 0.95 rem; /* Slightly smaller font */
+        }
+
+        .section-header i {
+            margin-right: 10px;
+            opacity: 0.9;
+        }
+
+        /* Input Fields - Compact View */
+        .card-body {
+            padding: 1.25rem !important; /* Reduced from p-4 */
+        }
+
+        .form-floating > .form-control {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            height: calc(3.0rem + 2px); /* Slightly shorter inputs */
+            min-height: calc(3.0rem + 2px);
+            line-height: 1.25;
+            font-size: 0.9rem;
+        }
+
+        .form-floating > label {
+            padding: 0.75rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .form-floating > .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.15);
+        }
+
+        /* --- BOTTOM ACTION AREA --- */
+        .action-area {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        /* 1. CREATE EMPLOYEE BUTTON (With Shine Effect) */
+        .btn-submit {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 40px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative; /* Required for the shine */
+            overflow: hidden;   /* Keeps the shine inside the button */
+        }
+
+        /* The Shine Animation Layer */
+        .btn-submit::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        /* Hover State: Moves the shine across */
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.4);
+            color: white;
+        }
+
+        .btn-submit:hover::after {
+            left: 100%; /* Triggers the movement */
+        }
+
+        /* 2. CANCEL BUTTON (Red on Hover) */
+        .btn-cancel {
+            border-radius: 50px;
+            padding: 10px 30px;
+            border: 1px solid #6c757d;
+            color: #6c757d;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background-color: #dc3545; /* Bright Red */
+            border-color: #dc3545;
+            color: white;              /* Text turns white */
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom navbar-dark sticky-top mb-3">
     <div class="container">
-        <span class="navbar-brand mb-0 h1 fw-bold"><i class="fas fa-user-plus me-2"></i>Admin Portal: Onboard Talent</span>
-        <a href="/admin/dashboard" class="btn btn-outline-light btn-sm">Back to Dashboard</a>
+            <span class="navbar-brand mb-0 h1 fw-bold">
+                <i class="fas fa-user-plus me-2"></i> Onboard New Employee
+            </span>
+        <a href="/admin/dashboard" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
     </div>
 </nav>
 
 <div class="container pb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
 
-            <form action="/admin/add-employee-submit" method="post">
+    <div class="text-center mb-4">
+        <h4 class="text-dark fw-bold">New Employee Registration Form</h4>
+        <p class="text-muted small mb-0">Please fill the data/details for the new employee in the fields below. Ensure all mandatory fields are correct.</p>
+    </div>
 
-                <div class="card shadow-sm mb-4 border-0">
-                    <div class="card-header bg-white border-bottom pt-3">
-                        <h5 class="text-primary fw-bold"><i class="fas fa-id-card me-2"></i>Core Identity</h5>
+    <form action="/admin/add-employee-submit" method="post" id="addEmployeeForm">
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="section-card">
+                    <div class="section-header">
+                        <i class="fas fa-id-card"></i> Core Identity
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Employee ID (Username)</label>
-                                <input type="text" name="username" class="form-control bg-light" placeholder="WCG-1001" required>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control fw-bold text-primary" name="username" id="empId" placeholder="ID" required>
+                                    <label for="empId">Employee ID *</label>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Full Name</label>
-                                <input type="text" name="fullName" class="form-control" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Designation</label>
-                                <input type="text" name="designation" class="form-control" placeholder="e.g. Senior Developer">
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="fullName" id="fullName" placeholder="Name" required>
+                                    <label for="fullName">Full Name *</label>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">Official Email</label>
-                                <input type="email" name="email" class="form-control" placeholder="user@whitecircle.com" required>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="designation" id="designation" placeholder="Role">
+                                    <label for="designation">Designation</label>
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">Experience</label>
-                                <input type="text" name="experience" class="form-control" placeholder="e.g. 4 Years">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                                    <label for="email">Official Email *</label>
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted">Date of Joining</label>
-                                <input type="date" name="joiningDate" class="form-control">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="experience" id="experience" placeholder="Exp">
+                                    <label for="experience">Experience</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" name="joiningDate" id="joiningDate">
+                                    <label for="joiningDate">Date of Joining</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card shadow-sm mb-4 border-0">
-                    <div class="card-header bg-white border-bottom pt-3">
-                        <h5 class="text-primary fw-bold"><i class="fas fa-laptop-code me-2"></i>Project & Allocation</h5>
+                <div class="section-card">
+                    <div class="section-header">
+                        <i class="fas fa-laptop-code"></i> Project & Allocation
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">Business Unit</label>
-                                <input type="text" name="businessUnit" class="form-control">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="businessUnit" id="bu" placeholder="BU">
+                                    <label for="bu">Business Unit</label>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">Account Name</label>
-                                <input type="text" name="accountName" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Project Name</label>
-                                <input type="text" name="projectName" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Project Code</label>
-                                <input type="text" name="projectCode" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Team / Group</label>
-                                <input type="text" name="teamGroup" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Customer Name</label>
-                                <input type="text" name="customerName" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Vertical Name</label>
-                                <input type="text" name="verticalName" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted">Domain / Industry</label>
-                                <input type="text" name="domainIndustry" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card shadow-sm mb-4 border-0 h-100">
-                            <div class="card-header bg-white border-bottom pt-3">
-                                <h5 class="text-primary fw-bold"><i class="fas fa-map-marker-alt me-2"></i>Contact Details</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold text-muted">Mobile Number</label>
-                                    <input type="text" name="mobileNumber" class="form-control">
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold text-muted">Work Location</label>
-                                    <input type="text" name="workLocation" class="form-control">
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <label class="form-label small fw-bold text-muted">City</label>
-                                        <input type="text" name="city" class="form-control">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label small fw-bold text-muted">Country</label>
-                                        <input type="text" name="country" class="form-control">
-                                    </div>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="accountName" id="account" placeholder="Acc">
+                                    <label for="account">Account Name</label>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="card shadow-sm mb-4 border-0 h-100">
-                            <div class="card-header bg-white border-bottom pt-3">
-                                <h5 class="text-primary fw-bold"><i class="fas fa-sitemap me-2"></i>Reporting Lines</h5>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="projectName" id="projName" placeholder="Proj">
+                                    <label for="projName">Project Name</label>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold text-muted">Reporting Manager</label>
-                                    <input type="text" name="reportingManager" class="form-control">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="projectCode" id="projCode" placeholder="Code">
+                                    <label for="projCode">Project Code</label>
                                 </div>
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold text-muted">Project Manager</label>
-                                    <input type="text" name="projectManager" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="teamGroup" id="team" placeholder="Team">
+                                    <label for="team">Team / Group</label>
                                 </div>
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold text-muted">BU-HR Contact</label>
-                                    <input type="text" name="buHrContact" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="customerName" id="customer" placeholder="Cust">
+                                    <label for="customer">Customer Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="verticalName" id="vertical" placeholder="Vert">
+                                    <label for="vertical">Vertical Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="domainIndustry" id="domain" placeholder="Dom">
+                                    <label for="domain">Domain / Industry</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-dark btn-lg fw-bold shadow">
-                        <i class="fas fa-check-circle me-2"></i>Confirm & Onboard Employee
-                    </button>
+            <div class="col-lg-4">
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <i class="fas fa-map-marker-alt"></i> Contact Details
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="mobileNumber" id="mobile" placeholder="Mobile">
+                                    <label for="mobile">Mobile Number</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="workLocation" id="location" placeholder="Loc">
+                                    <label for="location">Work Location</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="city" id="city" placeholder="City">
+                                    <label for="city">City</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="country" id="country" placeholder="Country">
+                                    <label for="country">Country</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-            </form>
+                <div class="section-card">
+                    <div class="section-header">
+                        <i class="fas fa-sitemap"></i> Reporting Lines
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="reportingManager" id="rm" placeholder="RM">
+                                    <label for="rm">Reporting Manager</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="projectManager" id="pm" placeholder="PM">
+                                    <label for="pm">Project Manager</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="buHrContact" id="hr" placeholder="HR">
+                                    <label for="hr">BU-HR Contact</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="action-area">
+            <button type="button" class="btn btn-primary btn-submit shadow" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                <i class="fas fa-check-circle me-2"></i>Create Employee
+            </button>
+            <a href="/admin/dashboard" class="btn btn-outline-secondary btn-cancel ms-2">Cancel</a>
+        </div>
+
+    </form>
+</div>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-light border-0">
+                <h5 class="modal-title fw-bold text-primary">
+                    <i class="fas fa-info-circle me-2"></i>Confirmation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="mb-0 fs-5 text-dark">Are you sure you want to add this employee?</p>
+                <p class="text-muted small">Please verify all details before confirming.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-edit me-2"></i>Edit Details
+                </button>
+                <button type="button" class="btn btn-primary px-4" onclick="document.getElementById('addEmployeeForm').submit()">
+                    <i class="fas fa-check me-2"></i>Yes, Confirm
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
