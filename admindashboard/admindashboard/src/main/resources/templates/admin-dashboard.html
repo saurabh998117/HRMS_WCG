@@ -343,7 +343,7 @@
             background: var(--bg-body); border: 1px solid var(--border);
             border-radius: 8px; padding: 10px 15px;
             display: flex; flex-direction: row; align-items: center; gap: 10px;
-            text-align: left; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+            text-align: left; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; text-decoration: none;
         }
         .feature-btn:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(30, 58, 138, 0.12); }
         .feature-btn i { font-size: 1.4rem; color: var(--primary); }
@@ -509,12 +509,12 @@
             <div class="card-header-navy"><i class="fas fa-bolt"></i>Quick Actions</div>
             <div class="card-body-flex">
                 <div class="feature-grid">
-                    <div class="feature-btn"><i class="fas fa-user-plus"></i><span>Add Employee</span></div>
-                    <div class="feature-btn"><i class="fas fa-handshake"></i><span>Conference Room</span></div>
-                    <div class="feature-btn"><i class="fas fa-plane-departure"></i><span>Approve Leave</span></div>
-                    <div class="feature-btn"><i class="fas fa-calendar-check"></i><span>Approve Timesheet</span></div>
-                    <div class="feature-btn"><i class="fas fa-signature"></i><span>Email Signature</span></div>
-                    <div class="feature-btn"><i class="fas fa-key"></i><span>Reset Password</span></div>
+                    <a href="/admin/add-employee" class="feature-btn"><i class="fas fa-user-plus"></i><span>Add New Employee</span></a>
+                    <a href=" " class="feature-btn"><i class="fas fa-handshake"></i><span>Conference Room</span></a>
+                    <a href=" " class="feature-btn"><i class="fas fa-plane-departure"></i><span>Approve Leave</span></a>
+                    <a href=" " class="feature-btn"><i class="fas fa-calendar-check"></i><span>Approve Timesheet</span></a>
+                    <a href=" " class="feature-btn"><i class="fas fa-signature"></i><span>Email Signature</span></a>
+                    <a href=" " class="feature-btn"><i class="fas fa-key"></i><span>Reset Password</span></a>
 
                 </div>
             </div>

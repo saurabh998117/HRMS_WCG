@@ -1,14 +1,25 @@
 package com.example.admindashboard.controller;
 
-import jakarta.servlet.http.HttpServletRequest; // Added for Role Checking
+import com.example.admindashboard.model.User;
+import com.example.admindashboard.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.security.Principal;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class DashboardController {
 
-    // --- 1. LOGIN PAGE MAPPINGS ---
+    @Autowired
+    private UserRepository userRepository;
 
+    // --- 1. LOGIN PAGE MAPPINGS ---
     // Maps localhost:8080/ to the login page
     @GetMapping("/")
     public String rootRedirect() {
@@ -44,7 +55,23 @@ public class DashboardController {
     public String showClientDashboard() { return "client-dashboard"; }
 
     @GetMapping("/employee/dashboard")
-    public String showEmployeeDashboard() { return "employee"; }
+    public String showEmployeeDashboard() { return "employee-dashboard"; }
+
+    // --- EMPLOYEE PROFILE SECTION ---
+    @GetMapping("/employee/profile")
+    public String viewProfile(Model model, Principal principal) {
+        // 1. Get the username of the person currently logged in
+        String username = principal.getName();
+
+        // 2. Find their data in the database
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        // 3. Send this data to the HTML page
+        model.addAttribute("user", user);
+
+        // 4. Open the profile page
+        return "employee-profile";
+    }
 
 
     // -- EMPLOYEE PORTAL PAGES --
@@ -88,5 +115,26 @@ public class DashboardController {
     @GetMapping("/client/profile")
     public String showClientProfile() {
         return "client-profile";
+    }
+
+
+    // -- ADMIN PORTAL PAGE CONTROLLER--
+
+    @GetMapping("/admin/add-employee")
+    public String showAddEmployeeForm() {
+        return "add-employee";
+    }
+
+    @PostMapping("/admin/add-employee-submit")
+    public String addEmployee(@ModelAttribute User user) {
+        // 1. Set Default Security Fields
+        user.setPassword("{noop}welcome123"); // Default Password
+        user.setRole("ROLE_USER");            // Default Role for this form
+
+        // 2. Save the complex user object (PostgreSQL handles the new columns automatically)
+        userRepository.save(user);
+
+        // 3. Redirect to dashboard
+        return "redirect:/admin/dashboard";
     }
 }

@@ -189,9 +189,7 @@
         </span>
     </div>
     <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-outline-success fw-bold px-4 rounded-pill">
-            <i class="fas fa-check me-2"></i>Save Changes
-        </button>
+
         <a href="/employee/dashboard" class="btn-back-home">
             <i class="fas fa-arrow-left me-2"></i> Back to Home
         </a>
@@ -200,95 +198,96 @@
 
 <div class="profile-container">
     <form>
-        <div class="row g-4 align-items-stretch"> <div class="col-lg-8 d-flex flex-column">
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-8 d-flex flex-column">
 
-            <div class="pro-card identity-card-bg">
-                <div class="pro-card-body d-flex flex-column flex-md-row align-items-center gap-4">
-                    <div class="text-center">
-                        <div class="profile-photo-wrapper">
-                            <img src="https://ui-avatars.com/api/?name=Anil+Yadav&background=1e3a8a&color=fff&size=200" class="profile-img" alt="User">
-                            <div class="edit-photo-btn"><i class="fas fa-camera fa-xs"></i></div>
-                        </div>
-                        <div class="badge bg-primary text-white rounded-pill px-3 py-2 shadow-sm">Active</div>
-                    </div>
-                    <div class="row g-3 w-100">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control fw-bold text-primary" id="empName" placeholder="Name"
-                                       th:value="${session.loggedInUser}" readonly>
-                                <label for="empName">Employee Name</label>
+                <div class="pro-card identity-card-bg">
+                    <div class="pro-card-body d-flex flex-column flex-md-row align-items-center gap-4">
+                        <div class="text-center">
+                            <div class="profile-photo-wrapper">
+                                <img th:src="@{'https://ui-avatars.com/api/?name=' + ${user.fullName} + '&background=1e3a8a&color=fff&size=200'}"
+                                     class="profile-img" alt="User">
+                                <div class="edit-photo-btn"><i class="fas fa-camera fa-xs"></i></div>
                             </div>
+                            <div class="badge bg-primary text-white rounded-pill px-3 py-2 shadow-sm">Active</div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control fw-bold" id="empDesig" placeholder="Designation" value="">
-                                <label for="empDesig">Designation</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="empId" placeholder="ID" value="WCG-1001" readonly>
-                                <label for="empId">Employee ID</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="empExp" placeholder="Exp">
-                                <label for="empExp">Experience (Years/Months)</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pro-card">
-                <div class="pro-card-header"><i class="fas fa-laptop-code"></i> Project & Allocation</div>
-                <div class="pro-card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="buName" placeholder="BU"><label for="buName">Business Unit</label></div></div>
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="accName" placeholder="Account"><label for="accName">Account Name</label></div></div>
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="projName" placeholder="Project"><label for="projName">Project Name</label></div></div>
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="projCode" placeholder="Code"><label for="projCode">Project Code</label></div></div>
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="teamName" placeholder="Team"><label for="teamName">Team / Group</label></div></div>
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="custName" placeholder="Customer"><label for="custName">Customer Name</label></div></div>
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="vertical" placeholder="Vertical"><label for="vertical">Vertical Name</label></div></div>
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="domain" placeholder="Domain"><label for="domain">Domain/Industry</label></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pro-card">
-                <div class="pro-card-header"><i class="fas fa-file-pdf"></i> Resume / CV Upload</div>
-                <div class="pro-card-body">
-                    <div class="resume-box">
-                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
-                        <h6 class="fw-bold mb-1">Upload New Resume</h6>
-                        <p class="text-muted small mb-3">Drag & drop or click to upload</p>
-                        <input type="file" class="form-control form-control-sm visually-hidden" id="resumeUpload">
-                        <label for="resumeUpload" class="btn btn-outline-primary btn-sm px-4">Choose File</label>
-
-                        <div class="mt-4 pt-3 border-top d-flex align-items-center justify-content-between bg-white p-2 rounded border">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-file-alt text-danger me-2 fa-lg"></i>
-                                <div>
-                                    <span class="d-block small text-muted" style="line-height: 1;">Current File:</span>
-                                    <a href="#" class="fw-bold text-dark text-decoration-none small"></a>
+                        <div class="row g-3 w-100">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control fw-bold text-primary" id="empName"
+                                           th:value="${user.fullName}" readonly>
+                                    <label for="empName">Employee Name</label>
                                 </div>
                             </div>
-                            <div class="d-flex gap-1">
-                                <button type="button" class="btn action-icon-btn text-replace" title="Replace File">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                                <button type="button" class="btn action-icon-btn text-delete" title="Delete File">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control fw-bold" id="empDesig"
+                                           th:value="${user.designation}" readonly>
+                                    <label for="empDesig">Designation</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="empId"
+                                           th:value="${user.username}" readonly>
+                                    <label for="empId">Employee ID</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="empExp"
+                                           th:value="${user.experience}" readonly>
+                                    <label for="empExp">Experience</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
+                <div class="pro-card">
+                    <div class="pro-card-header"><i class="fas fa-laptop-code"></i> Project & Allocation</div>
+                    <div class="pro-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.businessUnit}" readonly><label>Business Unit</label></div></div>
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.accountName}" readonly><label>Account Name</label></div></div>
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.projectName}" readonly><label>Project Name</label></div></div>
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.projectCode}" readonly><label>Project Code</label></div></div>
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.teamGroup}" readonly><label>Team / Group</label></div></div>
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.customerName}" readonly><label>Customer Name</label></div></div>
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.verticalName}" readonly><label>Vertical Name</label></div></div>
+                            <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.domainIndustry}" readonly><label>Domain/Industry</label></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pro-card">
+                    <div class="pro-card-header"><i class="fas fa-file-pdf"></i> Resume / CV Upload</div>
+                    <div class="pro-card-body">
+                        <div class="resume-box">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <h6 class="fw-bold mb-1">Upload New Resume</h6>
+                            <p class="text-muted small mb-3">Drag & drop or click to upload</p>
+                            <input type="file" class="form-control form-control-sm visually-hidden" id="resumeUpload">
+                            <label for="resumeUpload" class="btn btn-outline-primary btn-sm px-4">Choose File</label>
+
+                            <div class="mt-4 pt-3 border-top d-flex align-items-center justify-content-between bg-white p-2 rounded border">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file-alt text-danger me-2 fa-lg"></i>
+                                    <div>
+                                        <span class="d-block small text-muted" style="line-height: 1;">Current File:</span>
+                                        <a href="#" class="fw-bold text-dark text-decoration-none small">resume_v1.pdf</a>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button type="button" class="btn action-icon-btn text-replace" title="Replace File"><i class="fas fa-sync-alt"></i></button>
+                                    <button type="button" class="btn action-icon-btn text-delete" title="Delete File"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
 
             <div class="col-lg-4 d-flex flex-column">
 
@@ -297,16 +296,16 @@
                     <div class="pro-card-body d-flex flex-column justify-content-center">
                         <div class="d-flex flex-column gap-3">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="email" placeholder="Email" value="user@whitecircle.com" readonly>
-                                <label for="email">Official Email</label>
+                                <input type="email" class="form-control" th:value="${user.email}" readonly>
+                                <label>Official Email</label>
                             </div>
-                            <div class="form-floating"><input type="tel" class="form-control" id="mobile" placeholder="Mobile"><label for="mobile">Mobile Number</label></div>
-                            <div class="form-floating"><input type="text" class="form-control" id="location" placeholder="Loc"><label for="location">Work Location</label></div>
+                            <div class="form-floating"><input type="tel" class="form-control" th:value="${user.mobileNumber}" readonly><label>Mobile Number</label></div>
+                            <div class="form-floating"><input type="text" class="form-control" th:value="${user.workLocation}" readonly><label>Work Location</label></div>
                             <div class="row g-2">
-                                <div class="col-6"><div class="form-floating"><input type="text" class="form-control" id="city" placeholder="City"><label for="city">City</label></div></div>
-                                <div class="col-6"><div class="form-floating"><input type="text" class="form-control" id="country" placeholder="Country"><label for="country">Country</label></div></div>
+                                <div class="col-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.city}" readonly><label>City</label></div></div>
+                                <div class="col-6"><div class="form-floating"><input type="text" class="form-control" th:value="${user.country}" readonly><label>Country</label></div></div>
                             </div>
-                            <div class="form-floating"><input type="date" class="form-control" id="doj" placeholder="Date"><label for="doj">Date of Joining</label></div>
+                            <div class="form-floating"><input type="text" class="form-control" th:value="${user.joiningDate}" readonly><label>Date of Joining</label></div>
                         </div>
                     </div>
                 </div>
@@ -315,9 +314,9 @@
                     <div class="pro-card-header"><i class="fas fa-sitemap"></i> Reporting Lines</div>
                     <div class="pro-card-body d-flex flex-column justify-content-center">
                         <div class="d-flex flex-column gap-3">
-                            <div class="form-floating"><input type="text" class="form-control" id="repManager" placeholder="Manager"><label for="repManager">Reporting Manager</label></div>
-                            <div class="form-floating"><input type="text" class="form-control" id="projManager" placeholder="PM"><label for="projManager">Project Manager</label></div>
-                            <div class="form-floating"><input type="text" class="form-control" id="hrContact" placeholder="HR"><label for="hrContact">BU-HR Contact</label></div>
+                            <div class="form-floating"><input type="text" class="form-control" th:value="${user.reportingManager}" readonly><label>Reporting Manager</label></div>
+                            <div class="form-floating"><input type="text" class="form-control" th:value="${user.projectManager}" readonly><label>Project Manager</label></div>
+                            <div class="form-floating"><input type="text" class="form-control" th:value="${user.buHrContact}" readonly><label>BU-HR Contact</label></div>
                         </div>
                     </div>
                 </div>
