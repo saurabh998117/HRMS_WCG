@@ -1,38 +1,50 @@
 package com.example.admindashboard.controller;
 
 import com.example.admindashboard.model.Timesheet;
-import com.example.admindashboard.service.TimesheetService;
+import com.example.admindashboard.repository.TimesheetRepository; // Direct Repo access for simplicity
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin/timesheet")
 public class AdminTimesheetController {
 
     @Autowired
-    private TimesheetService timesheetService;
+    private TimesheetRepository timesheetRepository;
 
-    // API: View all Pending Timesheets
-    @GetMapping("/pending")
-    public ResponseEntity<List<Timesheet>> getPendingTimesheets() {
-        return ResponseEntity.ok(timesheetService.getPendingTimesheets());
+    // 1. GET List (We did this yesterday)
+    @GetMapping("/list")
+    public ResponseEntity<List<Timesheet>> getTimesheetsByStatus(@RequestParam String status) {
+        return ResponseEntity.ok(timesheetRepository.findByStatus(status));
     }
 
-    // API: Approve a Timesheet
-    @PutMapping("/approve/{id}")
-    public ResponseEntity<String> approveTimesheet(@PathVariable Long id) {
-        String result = timesheetService.approveTimesheet(id);
-        return ResponseEntity.ok(result);
-    }
+    // 2. POST Update Status (THIS WAS MISSING!)
+    // Usage: /api/admin/timesheet/5/Approved
+    @PostMapping("/{id}/{status}")
+    public ResponseEntity<?> updateStatus(
+            @PathVariable Long id,
+            @PathVariable String status,
+            @RequestParam(required = false) String comments) {
 
-    // API: Reject a Timesheet (Pass reason in body or query param)
-    // Example usage: PUT /api/admin/timesheet/reject/5?reason=Incomplete+Data
-    @PutMapping("/reject/{id}")
-    public ResponseEntity<String> rejectTimesheet(@PathVariable Long id, @RequestParam String reason) {
-        String result = timesheetService.rejectTimesheet(id, reason);
-        return ResponseEntity.ok(result);
+        Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(id);
+
+        if (optionalTimesheet.isPresent()) {
+            Timesheet t = optionalTimesheet.get();
+            t.setStatus(status);
+
+            // If there's a comment (like for Rejection), save it
+            if (comments != null && !comments.isEmpty()) {
+                t.setComments(comments);
+            }
+
+            timesheetRepository.save(t);
+            return ResponseEntity.ok("Status updated successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

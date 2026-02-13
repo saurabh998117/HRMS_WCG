@@ -140,4 +140,9 @@ public class TimesheetService {
         }
         return "Timesheet Rejected.";
     }
+
+    // Helper method for Admin Controller to filter by status
+    public List<Timesheet> getTimesheetsByStatus(String status) {
+        return timesheetRepository.findByStatus(status);
+    }
 }

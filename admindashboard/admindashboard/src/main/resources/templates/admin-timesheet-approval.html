@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timesheet Approvals | Admin Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- THEME COLORS --- */
+        :root {
+            --primary-blue: #1a237e;
+            --bg-light: #f4f6f9;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* 1. Navbar Styling */
+        .navbar-custom {
+            background-color: var(--primary-blue);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding-top: 25px;
+            padding-bottom: 25px;
+        }
+
+        /* 2. Main Card Styling (Compact) */
+        .card-custom {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+            background-color: white;
+            margin-bottom: 20px;
+        }
+
+        .card-header-custom {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 12px 20px; /* Reduced padding */
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 3. Tab Styling */
+        .nav-pills .nav-link {
+            color: #555;
+            font-weight: 600;
+            padding: 8px 25px; /* Reduced padding */
+            border-radius: 50px;
+            margin: 0 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-pills .nav-link:hover { background-color: #e2e6ea; color: var(--primary-blue); }
+
+        /* --- ACTIVE TAB COLORS --- */
+        #tab-pending.active { background-color: #0d6efd; color: white; box-shadow: 0 3px 6px rgba(13, 110, 253, 0.4); }
+        #tab-approved.active { background-color: #198754; color: white; box-shadow: 0 3px 6px rgba(25, 135, 84, 0.4); }
+        #tab-rejected.active { background-color: #dc3545; color: white; box-shadow: 0 3px 6px rgba(220, 53, 69, 0.4); }
+
+        /* 4. List Item Row Design (COMPACT VERSION) */
+        .timesheet-row {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px 15px; /* SIGNIFICANTLY REDUCED from 20px */
+            margin-bottom: 8px; /* Reduced from 12px */
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .timesheet-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-color: #dfe6ed;
+        }
+
+        /* Compact Avatar */
+        .avatar-circle {
+            width: 40px; height: 40px; /* Reduced from 50px */
+            background-color: #e8eaf6;
+            color: var(--primary-blue);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1rem; /* Reduced font */
+            margin-right: 12px;
+        }
+
+        /* Compact Buttons */
+        .btn-custom {
+            padding: 4px 15px; /* Smaller buttons */
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-custom-approve { background-color: #d1e7dd; color: #198754; }
+        .btn-custom-approve:hover { background-color: #198754; color: white; }
+
+        .btn-custom-reject { background-color: #f8d7da; color: #dc3545; }
+        .btn-custom-reject:hover { background-color: #dc3545; color: white; }
+
+        .btn-custom-view {
+            width: 30px; height: 30px; /* Smaller View Icon */
+            border-radius: 50%;
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            display: flex; align-items: center; justify-content: center;
+            border: none;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .btn-custom-view:hover { background-color: #0d6efd; color: white; }
+
+        /* --- MODAL STYLING --- */
+        .modal-header { background-color: var(--primary-blue); color: white; padding: 10px 20px; }
+        .modal-user-info { display: flex; align-items: center; margin-bottom: 15px; }
+        .modal-avatar {
+            width: 50px; height: 50px; background: white; color: var(--primary-blue);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: bold; margin-right: 15px; border: 2px solid #e3f2fd;
+        }
+        .info-card { background-color: #f8f9fa; border-radius: 6px; padding: 10px; text-align: center; }
+        .info-label { font-size: 0.75rem; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-value { font-size: 1rem; font-weight: bold; color: #2c3e50; }
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom navbar-dark mb-4">
+    <div class="container">
+        <span class="navbar-brand fw-bold fs-4">
+            <i class="fas fa-user-tie me-2"></i> HR Admin Portal
+        </span>
+        <a href="/admin/dashboard" class="btn btn-outline-light btn-sm px-4 rounded-0 fw-bold">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark mb-1">Timesheet Approvals</h3>
+        <p class="text-muted small">Review, approve, and manage employee weekly timesheets</p>
+    </div>
+
+    <div class="d-flex justify-content-center mb-3">
+        <div class="nav nav-pills bg-white p-2 rounded-pill shadow-sm">
+            <button class="nav-link active" id="tab-pending" onclick="loadTimesheets('Submitted')">
+                <i class="fas fa-hourglass-half me-2"></i>Pending
+            </button>
+            <button class="nav-link" id="tab-approved" onclick="loadTimesheets('Approved')">
+                <i class="fas fa-check-circle me-2"></i>Approved
+            </button>
+            <button class="nav-link" id="tab-rejected" onclick="loadTimesheets('Rejected')">
+                <i class="fas fa-times-circle me-2"></i>Rejected
+            </button>
+        </div>
+    </div>
+
+    <div class="card card-custom">
+        <div class="card-header-custom">
+            <i class="fas fa-list me-2"></i> <span id="listHeader">Request List</span>
+        </div>
+        <div class="card-body p-3" style="min-height: 300px; background-color: white;">
+            <div id="timesheetList">
+                <div class="text-center mt-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Loading requests...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold"><i class="fas fa-file-invoice me-2"></i> Timesheet Details</h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="modalContent">Loading...</div>
+            </div>
+            <div class="modal-footer bg-light border-0 py-2">
+                <button type="button" class="btn btn-secondary btn-sm px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let currentData = [];
+    let activeStatus = 'Submitted';
+
+    document.addEventListener("DOMContentLoaded", () => loadTimesheets('Submitted'));
+
+    function loadTimesheets(status) {
+        activeStatus = status;
+
+        // Reset Tabs
+        document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+
+        // Set Active Color
+        if(status === 'Submitted') document.getElementById('tab-pending').classList.add('active');
+        if(status === 'Approved') document.getElementById('tab-approved').classList.add('active');
+        if(status === 'Rejected') document.getElementById('tab-rejected').classList.add('active');
+
+        // Update Header
+        const headerMap = {
+            'Submitted': 'Pending Requests',
+            'Approved': 'Approved Timesheets History',
+            'Rejected': 'Rejected Timesheets History'
+        };
+        document.getElementById('listHeader').innerText = headerMap[status];
+
+        const container = document.getElementById('timesheetList');
+        container.innerHTML = '<div class="text-center mt-5"><div class="spinner-border text-primary"></div></div>';
+
+        fetch(`/api/admin/timesheet/list?status=${status}`)
+            .then(res => res.json())
+            .then(data => {
+                currentData = data;
+                renderCards(data);
+            })
+            .catch(err => {
+                console.error(err);
+                container.innerHTML = '<div class="alert alert-danger text-center">Failed to load data.</div>';
+            });
+    }
+
+    function renderCards(data) {
+        const container = document.getElementById('timesheetList');
+        container.innerHTML = '';
+
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-folder-open fa-3x mb-3 opacity-25"></i>
+                    <h5>No records found</h5>
+                    <p>There are no ${activeStatus.toLowerCase()} timesheets at the moment.</p>
+                </div>`;
+            return;
+        }
+
+        data.forEach(item => {
+            const userName = item.user ? (item.user.fullName || item.user.username) : "Unknown User";
+            const initials = userName.substring(0, 2).toUpperCase();
+
+            let badgeClass = 'bg-secondary';
+            if (item.status === 'Approved') badgeClass = 'bg-success';
+            if (item.status === 'Rejected') badgeClass = 'bg-danger';
+
+            // COMPACT ROW DESIGN
+            const card = `
+                <div class="timesheet-row">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle">${initials}</div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.95rem;">${userName}</h6>
+                            <small class="text-muted" style="font-size: 0.8rem;">
+                                <i class="far fa-calendar-alt me-1"></i> ${item.weekStartDate} to ${item.weekEndDate}
+                                <span class="mx-2">•</span>
+                                <strong class="text-dark">${item.totalWeekHours || 0} Hrs</strong>
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <button class="btn-custom-view me-2" onclick="viewDetails(${item.id})" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+
+                        ${item.status === 'Submitted' ? `
+                             <button class="btn-custom btn-custom-approve me-2" onclick="updateStatus(${item.id}, 'Approved')">
+                                <i class="fas fa-check"></i> Approve
+                             </button>
+                             <button class="btn-custom btn-custom-reject" onclick="updateStatus(${item.id}, 'Rejected')">
+                                <i class="fas fa-times"></i> Reject
+                             </button>
+                        ` : `
+                             <span class="badge ${badgeClass} rounded-pill px-3 py-1" style="font-size: 0.8rem;">${item.status}</span>
+                        `}
+                    </div>
+                </div>
+            `;
+            container.innerHTML += card;
+        });
+    }
+
+    function viewDetails(id) {
+        const item = currentData.find(t => t.id === id);
+        if (!item) return;
+
+        const userName = item.user ? (item.user.fullName || item.user.username) : "Unknown";
+        const userInitials = userName.substring(0,2).toUpperCase();
+        const userRole = item.user && item.user.role ? item.user.role : "Employee";
+
+        let entriesHtml = `
+            <table class="table table-hover table-bordered mt-2 table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 25%;">Date</th>
+                        <th>Task Description</th>
+                        <th style="width: 15%; text-align: center;">Hours</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+        if (item.entries && item.entries.length > 0) {
+            item.entries.forEach(e => {
+                entriesHtml += `
+                    <tr>
+                        <td class="fw-bold text-secondary small">${e.date}</td>
+                        <td class="small">${e.taskDescription}</td>
+                        <td class="text-center fw-bold small">${e.hours}</td>
+                    </tr>`;
+            });
+        } else {
+            entriesHtml += '<tr><td colspan="3" class="text-center text-muted small">No daily entries found</td></tr>';
+        }
+        entriesHtml += '</tbody></table>';
+
+        const modalBody = `
+            <div class="modal-user-info">
+                <div class="modal-avatar">${userInitials}</div>
+                <div>
+                    <h5 class="mb-0 fw-bold text-dark">${userName}</h5>
+                    <span class="badge bg-secondary" style="font-size: 0.7rem;">${userRole}</span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <div class="info-label">Week Start</div>
+                        <div class="info-value text-primary">${item.weekStartDate}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <div class="info-label">Week End</div>
+                        <div class="info-value text-primary">${item.weekEndDate}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-card">
+                        <div class="info-label">Total Hours</div>
+                        <div class="info-value text-success">${item.totalWeekHours || 0} Hrs</div>
+                    </div>
+                </div>
+            </div>
+
+            ${item.comments ? `
+                <div class="alert alert-warning d-flex align-items-center mb-3 p-2">
+                    <i class="fas fa-comment-dots me-2"></i>
+                    <div class="small"><strong>HR Note:</strong> ${item.comments}</div>
+                </div>` : ''}
+
+            <h6 class="fw-bold text-secondary mb-2 small"><i class="fas fa-calendar-week me-2"></i>Daily Breakdown</h6>
+            ${entriesHtml}
+        `;
+
+        document.getElementById('modalContent').innerHTML = modalBody;
+        new bootstrap.Modal(document.getElementById('detailsModal')).show();
+    }
+
+    function updateStatus(id, newStatus) {
+        if (!confirm(`Are you sure you want to ${newStatus === 'Approved' ? 'APPROVE' : 'REJECT'} this timesheet?`)) return;
+
+        let url = `/api/admin/timesheet/${id}/${newStatus}`;
+        if (newStatus === 'Rejected') {
+            const reason = prompt("Please enter the reason for rejection:");
+            if (!reason) return;
+            url += `?comments=${encodeURIComponent(reason)}`;
+        }
+
+        fetch(url, { method: 'POST' })
+            .then(res => {
+                if (res.ok) {
+                    loadTimesheets('Submitted');
+                } else {
+                    alert("Error updating status");
+                }
+            });
+    }
+</script>
+
+</body>
+</html>

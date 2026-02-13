@@ -118,6 +118,7 @@ public class DashboardController {
 
     // -- ADMIN PORTAL PAGE CONTROLLER--
 
+    // Add New Employee page
     @GetMapping("/admin/add-employee")
     public String showAddEmployeeForm() {
         return "add-employee";
@@ -134,5 +135,11 @@ public class DashboardController {
 
         // 3. Redirect to dashboard
         return "redirect:/admin/dashboard";
+    }
+
+    // Timesheet Approval Page
+    @GetMapping("/admin/timesheet-approvals")
+    public String showTimesheetApprovals() {
+        return "admin-timesheet-approval"; // This looks for admin-timesheet-approval.html
     }
 }
