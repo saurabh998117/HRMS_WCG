@@ -126,20 +126,20 @@ public class DashboardController {
 
     @PostMapping("/admin/add-employee-submit")
     public String addEmployee(@ModelAttribute User user) {
-        // 1. Set Default Security Fields
-        user.setPassword("{noop}welcome123"); // Default Password
-        user.setRole("ROLE_USER");            // Default Role for this form
+        user.setPassword("{noop}welcome123");
 
-        // 2. Save the complex user object (PostgreSQL handles the new columns automatically)
+        // CHANGE THIS: From "ROLE_USER" to "EMPLOYEE"
+        // (Spring Security adds the ROLE_ prefix automatically)
+        user.setRole("EMPLOYEE");
+
         userRepository.save(user);
-
-        // 3. Redirect to dashboard
         return "redirect:/admin/dashboard";
     }
 
     // Timesheet Approval Page
-    @GetMapping("/admin/timesheet-approvals")
-    public String showTimesheetApprovals() {
-        return "admin-timesheet-approval"; // This looks for admin-timesheet-approval.html
+    @GetMapping("/admin/timesheet-approval")
+    public String showTimesheetApprovalPage() {
+        // FIXED: Added dashes to match admin-timesheet-approval.html
+        return "admin-timesheet-approval";
     }
 }
