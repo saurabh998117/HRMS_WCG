@@ -435,12 +435,11 @@
             <i class="fas fa-bars fa-lg"></i>
         </button>
     </div>
-        <a href="#" class="nav-item active"><i class="fas fa-th-large"></i> <span>Home</span></a>
-        <a href="#" class="nav-item"><i class="fas fa-users"></i> <span>Staff</span></a>
-        <a href="#" class="nav-item"><i class="fas fa-user-plus"></i> <span>Onboard</span></a>
-        <a href="#" class="nav-item"><i class="fas fa-clock"></i> <span>Attend</span></a>
-        <a href="#" class="nav-item"><i class="fas fa-cog"></i> <span>Settings</span></a>
-    </div>
+    <a href="#" class="nav-item active"><i class="fas fa-th-large"></i> <span>Home</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-users"></i> <span>Staff</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-user-plus"></i> <span>Onboard</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-clock"></i> <span>Attend</span></a>
+    <a href="#" class="nav-item"><i class="fas fa-cog"></i> <span>Settings</span></a>
 
     <div class="sidebar-footer">
         <div class="sidebar-footer-icons">
@@ -511,9 +510,9 @@
                     <a href="/admin/add-employee" class="feature-btn"><i class="fas fa-user-plus"></i><span>Add New Employee</span></a>
                     <a href=" " class="feature-btn"><i class="fas fa-plane-departure"></i><span>Approve Leave</span></a>
                     <a href="/admin/timesheet-approval " class="feature-btn"><i class="fas fa-calendar-check"></i><span>Approve Timesheet</span></a>
+                    <a href="/admin/attendance-regularization" class="feature-btn"><i class="fas fa-history"></i><span>Attendance Regularization</span></a>
+                    <a href=" " class="feature-btn"><i class="fas fa-file-invoice-dollar"></i><span>Manage Payroll</span></a>
                     <a href=" " class="feature-btn"><i class="fas fa-handshake"></i><span>Conference Room</span></a>
-                    <a href=" " class="feature-btn"><i class="fas fa-signature"></i><span>Email Signature</span></a>
-                    <a href=" " class="feature-btn"><i class="fas fa-key"></i><span>Reset Password</span></a>
 
                 </div>
             </div>
@@ -542,7 +541,7 @@
                             <div class="admin-text"><h6 class="m-0 small fw-bold">Employee Master Report</h6></div>
                         </div>
                         <div class="d-flex gap-2">
-                           
+
                         </div>
                     </div>
                     <div class="admin-item">
@@ -566,10 +565,10 @@
 
         <div class="dashboard-card col-40">
             <div class="d-flex justify-content-center">
-            <h5> Card Empty for now</h5>
+                <h5> Card Empty for now</h5>
 
+            </div>
         </div>
-    </div>
 
 </main>
 
@@ -596,28 +595,8 @@
         }
     });
 
-    // 2. Revenue Chart
-    const ctx2 = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'line',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [{
-                label: 'Revenue (Lakhs)',
-                data: [2.5, 5.0, 8.2, 12.5],
-                borderColor: '#1e3a8a',
-                backgroundColor: 'rgba(30, 58, 138, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } }
-        }
-    });
+    // NOTE: Removed Revenue Chart script because the HTML element was removed.
+    // This was causing the Sidebar script to crash.
 
     // --- SIDEBAR TOGGLE LOGIC ---
     const toggleBtn = document.getElementById('sidebarToggle');
@@ -629,16 +608,19 @@
     }
 
     // 2. Toggle function
-    toggleBtn.addEventListener('click', () => {
-        body.classList.toggle('sidebar-collapsed');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('sidebar-collapsed');
 
-        // 3. Save state to localStorage
-        if (body.classList.contains('sidebar-collapsed')) {
-            localStorage.setItem('sidebarState', 'collapsed');
-        } else {
-            localStorage.setItem('sidebarState', 'expanded');
-        }
-    });
+            // 3. Save state to localStorage
+            if (body.classList.contains('sidebar-collapsed')) {
+                localStorage.setItem('sidebarState', 'collapsed');
+            } else {
+                localStorage.setItem('sidebarState', 'expanded');
+            }
+        });
+    }
+
 </script>
 </body>
 </html>

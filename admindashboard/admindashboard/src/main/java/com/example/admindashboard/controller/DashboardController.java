@@ -142,4 +142,12 @@ public class DashboardController {
         // FIXED: Added dashes to match admin-timesheet-approval.html
         return "admin-timesheet-approval";
     }
+
+    // Attendance Regularization page
+    @GetMapping("/admin/attendance-regularization")
+    public String showRegularizationPage() {
+        return "admin-attendance-regularization";
+    }
+
+
 }
