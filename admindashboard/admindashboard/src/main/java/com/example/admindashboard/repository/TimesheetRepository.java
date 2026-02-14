@@ -4,6 +4,8 @@ import com.example.admindashboard.model.Timesheet;
 import com.example.admindashboard.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository; // Import this
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository // Add this annotation
@@ -14,4 +16,9 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
 
     // Used by Admin to see lists of Pending/Approved/Rejected
     List<Timesheet> findByStatus(String status);
+
+    // Add inside TimesheetRepository interface
+    List<Timesheet> findByUserAndWeekStartDate(User user, LocalDate weekStartDate);
+
+
 }

@@ -47,8 +47,18 @@ public class DashboardController {
 
     // --- PROTECTED ROUTES (No changes made below this line) ---
 
+    // Shows Admin Dashboard and Updated count for Employees and Clients
     @GetMapping("/admin/dashboard")
-    public String showAdminDashboard() { return "admin-dashboard"; }
+    public String showAdminDashboard(Model model) {
+        // 1. Fetch live counts from the database
+        long totalEmployees = userRepository.countByRole("EMPLOYEE");
+        long totalClients = userRepository.countByRole("CLIENT");
+        // 2. Send the numbers to the HTML page
+        model.addAttribute("empCount", totalEmployees);
+        model.addAttribute("clientCount", totalClients);
+
+        return "admin-dashboard";
+    }
 
     @GetMapping("/client/dashboard")
     public String showClientDashboard() { return "client-dashboard"; }

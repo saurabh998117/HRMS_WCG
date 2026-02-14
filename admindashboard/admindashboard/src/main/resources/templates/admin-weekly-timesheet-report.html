@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Timesheet Report | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Plus Jakarta Sans', sans-serif; } /* Updated Font to match Dashboard */
+
+        /* --- 1. ENHANCED TOP BAR CSS --- */
+        .navbar-custom {
+            background-color: #1e3a8a; /* Deep Navy (Matches Dashboard) */
+            height: 80px; /* Increased Height */
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-size: 1.5rem; /* Larger Title */
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-list { max-height: 600px; overflow-y: auto; background: white; border-radius: 12px; }
+        .user-item { cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f0f0f0; }
+        .user-item:hover { background-color: #e8eaf6; }
+        .user-item.active { background-color: #1e3a8a; color: white; } /* Matches Navbar */
+        .user-item.active small { color: #bfdbfe !important; }
+
+        /* Rectangular Back Button Hover Effect */
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px; /* Slight rounding but rectangular */
+            transition: all 0.3s;
+        }
+        .btn-back:hover {
+            background: white;
+            color: #1e3a8a;
+            transform: translateX(-5px); /* Slide left animation */
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom navbar-dark mb-4">
+    <div class="container-fluid px-4">
+        <span class="navbar-brand fw-bold">
+            <i class="fas fa-chart-pie me-2"></i>Employee Timesheet Reports
+        </span>
+
+        <a href="/admin/dashboard" class="btn btn-back px-3 py-2 fw-bold text-decoration-none">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+    </div>
+</nav>
+
+<div class="container-fluid px-4">
+    <div class="row">
+
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-0">
+
+                    <div class="p-3 border-bottom bg-light rounded-top">
+                        <form action="/admin/report/timesheet" method="get">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
+
+                                <input type="text" name="search" class="form-control border-start-0 border-end-0 ps-0"
+                                       placeholder="Search Name or ID..." th:value="${param.search}">
+
+                                <a th:if="${param.search}" href="/admin/report/timesheet"
+                                   class="btn btn-white border-top border-bottom border-start-0 text-danger"
+                                   title="Clear Search">
+                                    <i class="fas fa-times"></i>
+                                </a>
+
+                                <button class="btn btn-primary" type="submit">Go</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="sidebar-list">
+                        <div th:each="emp : ${employees}"
+                             class="user-item p-3 d-flex align-items-center justify-content-between"
+                             th:onclick="'window.location.href=\'/admin/report/timesheet?userId=' + ${emp.id} + '\''"
+                             th:classappend="${selectedUser != null && selectedUser.id == emp.id} ? 'active' : ''">
+                            <div>
+                                <h6 class="mb-0 fw-bold" th:text="${emp.fullName}">Name</h6>
+                                <small class="text-muted" th:text="${emp.username}">ID</small>
+                            </div>
+                            <i class="fas fa-chevron-right small opacity-50"></i>
+                        </div>
+                        <div th:if="${employees.empty}" class="p-4 text-center text-muted">
+                            <small>No employees found</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm" style="min-height: 500px;">
+                <div class="card-body p-4 text-center d-flex flex-column justify-content-center align-items-center" th:if="${selectedUser == null}">
+                    <div class="bg-light rounded-circle p-4 mb-3">
+                        <i class="fas fa-user-clock fa-3x text-primary opacity-50"></i>
+                    </div>
+                    <h5 class="text-muted">Select an employee to view their Timesheet Report</h5>
+                </div>
+
+                <div th:if="${selectedUser != null}">
+                    <div class="d-flex justify-content-between align-items-center mb-4 p-4 pb-0">
+                        <div>
+                            <h4 class="fw-bold mb-0">
+                                <span class="text-primary" th:text="${selectedUser.fullName}">User</span>'s Weekly Reports
+                            </h4>
+                            <small class="text-muted" th:text="'Employee ID: ' + ${selectedUser.username}">ID: EMP001</small>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-file-excel me-1"></i> Export Excel
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-file-pdf me-1"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive px-4 pb-4">
+                        <table class="table table-hover align-middle border">
+                            <thead class="bg-light">
+                            <tr>
+                                <th class="py-3 ps-3">Week Starting</th>
+                                <th>Status</th>
+                                <th>Total Hours</th>
+                                <th>Tasks Completed</th>
+                                <th class="text-end pe-3">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="sheet : ${timesheets}">
+                                <td class="ps-3 fw-bold text-primary" th:text="${sheet.weekStartDate}">2023-10-01</td>
+
+                                <td>
+                                    <span th:if="${sheet.status == 'Approved'}" class="badge bg-success bg-opacity-10 text-success">Approved</span>
+                                    <span th:if="${sheet.status == 'Pending'}" class="badge bg-warning bg-opacity-10 text-warning">Pending</span>
+                                    <span th:if="${sheet.status == 'Rejected'}" class="badge bg-danger bg-opacity-10 text-danger">Rejected</span>
+                                </td>
+
+                                <td class="fw-bold" th:text="${sheet.totalHours} + ' hrs'">40 hrs</td>
+                                <td>
+                                    <small class="text-muted d-block text-truncate" style="max-width: 250px;"
+                                           th:text="${sheet.mondayTask}">
+                                        Task description...
+                                    </small>
+                                </td>
+
+                                <td class="text-end pe-3">
+                                    <button class="btn btn-sm btn-light border" data-bs-toggle="modal"
+                                            th:data-bs-target="'#modal-' + ${sheet.id}">
+                                        View Details
+                                    </button>
+                                </td>
+
+                                <div class="modal fade" th:id="'modal-' + ${sheet.id}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Week of <span th:text="${sheet.weekStartDate}"></span></h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table class="table table-sm table-bordered">
+                                                    <thead><tr><th>Day</th><th>Hours</th><th>Task</th></tr></thead>
+                                                    <tbody>
+                                                    <tr><td>Mon</td><td th:text="${sheet.mondayHours}"></td><td th:text="${sheet.mondayTask}"></td></tr>
+                                                    <tr><td>Tue</td><td th:text="${sheet.tuesdayHours}"></td><td th:text="${sheet.tuesdayTask}"></td></tr>
+                                                    <tr><td>Wed</td><td th:text="${sheet.wednesdayHours}"></td><td th:text="${sheet.wednesdayTask}"></td></tr>
+                                                    <tr><td>Thu</td><td th:text="${sheet.thursdayHours}"></td><td th:text="${sheet.thursdayTask}"></td></tr>
+                                                    <tr><td>Fri</td><td th:text="${sheet.fridayHours}"></td><td th:text="${sheet.fridayTask}"></td></tr>
+                                                    <tr class="table-light fw-bold"><td>Total</td><td th:text="${sheet.totalHours}"></td><td></td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+
+                            <tr th:if="${timesheets.empty}">
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    <i class="fas fa-folder-open mb-2 d-block fa-2x opacity-25"></i>
+                                    No timesheets found for this employee.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
