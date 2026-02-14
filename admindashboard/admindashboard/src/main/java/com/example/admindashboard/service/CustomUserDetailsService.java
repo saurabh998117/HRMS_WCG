@@ -17,21 +17,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // DEBUG LINE: Print to console
         System.out.println("Attempting login for user: " + username);
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    System.out.println("User NOT found: " + username); // Debug failure
-                    return new UsernameNotFoundException("User not found");
-                });
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        System.out.println("User FOUND! Password is: " + user.getPassword()); // Debug success
-
+        // Ensure the role doesn't have a double prefix
+        String cleanRole = user.getRole().replace("ROLE_", "");
+        System.out.println("User FOUND! Role assigned: ROLE_" + cleanRole);
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .roles(user.getRole().replace("ROLE_", ""))
+                .authorities("ROLE_" + cleanRole)
                 .build();
     }
 

@@ -32,16 +32,17 @@ public class DashboardController {
 
     // --- 2. POST-LOGIN TRAFFIC COP ---
     // SecurityConfig sends successful logins here. We check the role and redirect.
+
     @GetMapping("/default-redirect")
     public String defaultRedirect(HttpServletRequest request) {
         if (request.isUserInRole("ADMIN")) {
             return "redirect:/admin/dashboard";
         } else if (request.isUserInRole("CLIENT")) {
             return "redirect:/client/dashboard";
-        } else {
-            // Default to Employee Dashboard for ROLE_USER
+        } else if (request.isUserInRole("EMPLOYEE")) { // Explicit check
             return "redirect:/employee/dashboard";
         }
+        return "redirect:/login?error=true";
     }
 
     // --- PROTECTED ROUTES (No changes made below this line) ---
