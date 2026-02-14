@@ -53,6 +53,6 @@ public class ReportController {
             }
         }
 
-        return "admin-timesheet-report";
+        return "admin-weekly-timesheet-report";
     }
 }
