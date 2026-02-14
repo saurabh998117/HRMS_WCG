@@ -40,6 +40,8 @@ public class SecurityConfig {
                                 response.sendRedirect("/admin/dashboard");
                             } else if (roles.contains("ROLE_EMPLOYEE")) {
                                 response.sendRedirect("/employee/dashboard");
+                            } else if (roles.contains("ROLE_CLIENT")) { // ADDED THIS LINE
+                                    response.sendRedirect("/client/dashboard");
                             } else {
                                 response.sendRedirect("/login");
                             }
