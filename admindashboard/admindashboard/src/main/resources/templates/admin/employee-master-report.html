@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Master Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        .navbar-custom {
+        background-color: #1e3a8a;
+        height: 75px;
+        display: flex;
+        align-items: center;
+    }
+
+        /* Req: Rectangular outlined button with sharp corners like image_7a2102.png */
+        .btn-dashboard-back {
+            color: white;
+            background-color: transparent;
+            border: 1px solid white;
+            border-radius: 4px; /* Slight rounding for a clean rectangular look */
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-dashboard-back:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-color: white;
+
+        /* Filter Card */
+        .filter-card { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 8px; }
+        .form-label-sm { font-size: 0.8rem; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Table Styling */
+        .table-hover tbody tr:hover { background-color: #f8f9fa; }
+
+        /* Modal Profile Styling */
+        .profile-label { font-size: 0.75rem; color: #8898aa; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .profile-value { font-size: 1rem; font-weight: 500; color: #32325d; }
+        .modal-header-custom { background: linear-gradient(87deg, #1e3a8a 0, #1e3a8a 100%) !important; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-custom navbar-dark mb-4">
+    <div class="container-fluid px-5 d-flex justify-content-between align-items-center">
+        <span class="navbar-brand fw-bold d-flex align-items-center m-0">
+            <i class="fas fa-users-cog me-3 fs-4"></i>
+            <span class="fs-4">Employee Master Report</span>
+        </span>
+
+        <a href="/admin/dashboard" class="btn-dashboard-back">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+    </div>
+</nav>
+
+<div class="container-fluid px-4">
+
+    <div class="card filter-card mb-4">
+        <div class="card-body p-4">
+            <form action="/admin/reports" method="get">
+                <input type="hidden" name="type" value="employee">
+
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label-sm">Search Employee</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white text-muted border-end-0"><i class="fas fa-search"></i></span>
+                            <input type="text" name="search" class="form-control border-start-0 ps-0"
+                                   placeholder="Enter Name or EMP ID " th:value="${currentSearch}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label-sm">Sort By ID</label>
+                        <select class="form-select" name="sortDir">
+                            <option value="asc" th:selected="${currentSortDir == 'asc'}">Ascending </option>
+                            <option value="desc" th:selected="${currentSortDir == 'desc'}">Descending </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end">
+                        <div class="d-flex gap-2 w-100">
+                            <button type="submit" class="btn btn-primary px-4"><i class="fas fa-filter me-2"></i>Apply Filter</button>
+                            <a href="/admin/reports?type=employee" class="btn btn-light border">Clear/Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">ID</th>
+                        <th class="py-3 text-uppercase small fw-bold text-muted">Name of Employee</th>
+                        <th class="py-3 text-uppercase small fw-bold text-muted">Email</th>
+                        <th class="py-3 text-uppercase small fw-bold text-muted">Status</th>
+                        <th class="text-end pe-4 py-3 text-uppercase small fw-bold text-muted">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="emp : ${dataPage.content}">
+                        <td class="ps-4 fw-bold text-primary" th:text="${emp.username}">EMP001</td>
+                        <td class="fw-bold text-dark" th:text="${emp.fullName}">Full Name</td>
+                        <td th:text="${emp.email != null ? emp.email : emp.username + '@whitecircle.com'}">mail</td>
+                        <td><span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Active</span></td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-outline-primary px-3 rounded-pill"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="'#modal-emp-' + ${emp.id}">
+                                <i class="fas fa-eye me-1"></i> View Details
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${dataPage.empty}"><td colspan="5" class="text-center py-5 text-muted">No employees found.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white py-3 border-top-0" th:if="${dataPage.totalPages > 0}">
+            <nav class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Showing page <span th:text="${currentPage + 1}">1</span> of <span th:text="${dataPage.totalPages}">10</span></small>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link border-0" th:href="@{/admin/reports(type='employee', page=${currentPage - 1}, search=${currentSearch}, sortDir=${currentSortDir})}">Previous</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage + 1 == dataPage.totalPages} ? 'disabled'">
+                        <a class="page-link border-0" th:href="@{/admin/reports(type='employee', page=${currentPage + 1}, search=${currentSearch}, sortDir=${currentSortDir})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4 mb-5">
+        <a th:href="@{/admin/reports/download(type='employee', format='excel')}"
+           class="btn btn-success text-white px-4 py-2 shadow-lg d-flex align-items-center">
+            <i class="fas fa-file-excel me-2 fs-5"></i>
+            <span class="fw-bold">Export Report </span>
+        </a>
+    </div>
+
+</div>
+
+<div th:if="${dataPage != null}">
+    <div th:each="emp : ${dataPage.content}">
+        <div class="modal fade" th:id="'modal-emp-' + ${emp.id}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius: 12px;">
+
+                    <div class="modal-header modal-header-custom text-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="modal-title fw-bold m-0"><i class="fas fa-id-badge me-2"></i>Employee Profile</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-0">
+                        <div class="row g-0">
+                            <div class="col-md-4 bg-light border-end text-center p-5">
+                                <div class="bg-white rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3 shadow-sm"
+                                     style="width: 100px; height: 100px; font-size: 2.5rem; color: #1e3a8a; font-weight: bold;">
+                                    <span th:text="${#strings.substring(emp.username,0,1)}">A</span>
+                                </div>
+                                <h4 class="fw-bold mb-1 text-dark" th:text="${emp.fullName}">Name</h4>
+                                <span class="badge bg-primary px-3 py-2 mt-2" th:text="${emp.username}">EMP001</span>
+                            </div>
+
+                            <div class="col-md-8 p-5 position-relative">
+                                <h6 class="text-muted text-uppercase fw-bold mb-4 border-bottom pb-2">Professional Details</h6>
+                                <div class="row g-4">
+                                    <div class="col-6">
+                                        <div class="mb-4">
+                                            <div class="profile-label">Department</div>
+                                            <div class="profile-value">IT Department</div>
+                                        </div>
+                                        <div>
+                                            <div class="profile-label">Contact Number</div>
+                                            <div class="profile-value">+91 98765 43210</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-4">
+                                            <div class="profile-label">Designation</div>
+                                            <div class="profile-value">Software Engineer</div>
+                                        </div>
+                                        <div>
+                                            <div class="profile-label">Official Email</div>
+                                            <div class="profile-value text-break" th:text="${emp.email != null ? emp.email : emp.username+'@whitecircle.com'}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h6 class="text-muted text-uppercase fw-bold mb-3 mt-4 border-bottom pb-2">Additional Info</h6>
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="profile-label">Current Address</div>
+                                        <div class="profile-value"><i class="fas fa-map-marker-alt text-muted me-2"></i> 123, Tech Park, Bangalore, India - 560001</div>
+                                    </div>
+                                </div>
+
+                                <div class="text-end mt-4">
+                                    <button type="button" class="btn btn-secondary px-4 py-2" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

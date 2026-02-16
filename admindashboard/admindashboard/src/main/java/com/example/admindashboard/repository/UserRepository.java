@@ -1,30 +1,40 @@
 package com.example.admindashboard.repository;
-//DATABASE CONNECTOR
 
 import com.example.admindashboard.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import java.util.Optional;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    // This simple line creates a complete SQL query behind the scenes
+
+    // --- 1. AUTHENTICATION ---
     Optional<User> findByUsername(String username);
 
-    // 1. Find ALL Employees (for the default list)
+    // --- 2. DASHBOARD WIDGETS (This was missing!) ---
+    // This is used by DashboardController to count Total Employees/Clients
+    long countByRole(String role);
+
+    // --- 3. EXISTING LIST METHODS (For Dropdowns & Old Reports) ---
+    List<User> findByRole(String role);
+
     List<User> findByRoleOrderByUsernameAsc(String role);
 
-    // 2. SEARCH only within Employees (Custom Query)
-    // "Select users where Role is X AND (Name matches OR ID matches)"
-    @Query("SELECT u FROM User u WHERE u.role = :role AND " +
-            "(LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(u.username) LIKE LOWER(CONCAT('%', :search, '%'))) " +
-            "ORDER BY u.username ASC")
-    List<User> searchByRole(@Param("role") String role, @Param("search") String search);
+    // Used for the search bar in the simplified report view
+    List<User> findByRoleAndFullNameContainingIgnoreCase(String role, String keyword);
 
-    // Add this inside the interface
-    long countByRole(String role);
+    // --- 4. NEW PAGINATION METHODS (For the New Report Dashboard) ---
+
+    // Fetch page of employees (for the default view)
+    Page<User> findByRole(String role, Pageable pageable);
+
+    // Search for employees with Pagination (Custom Query)
+    @Query("SELECT u FROM User u WHERE u.role = 'EMPLOYEE' AND (" +
+            "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<User> searchEmployees(@Param("keyword") String keyword, Pageable pageable);
 }
-
-

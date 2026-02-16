@@ -1,5 +1,6 @@
 package com.example.admindashboard.model;
 
+import java.time.LocalDate;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,7 +22,8 @@ public class User {
     private String email;
     private String designation;
     private String experience;    // e.g. "5 Years"
-    private String joiningDate;   // e.g. "2026-01-15"
+    @Column(name = "joining_date") // Maps to SQL column
+    private LocalDate joiningDate; // e.g. "2026-01-15"
 
     // --- SECTION 2: PROJECT & ALLOCATION ---
     private String businessUnit;
@@ -46,34 +48,22 @@ public class User {
 
     // --- GETTERS AND SETTERS ---
 
-    public String getJoiningDate() {
-        return joiningDate;
-    }
-
-    public void setJoiningDate(String joiningDate) {
-        this.joiningDate = joiningDate;
-    }
+    public LocalDate getJoiningDate() { return joiningDate; }
+    public void setJoiningDate(LocalDate joiningDate) { this.joiningDate = joiningDate; }
 
     public String getDesignation() {
         return designation;
     }
-
     public void setDesignation(String designation) {
         this.designation = designation;
     }
 
-    public String getExperience() {
-        return experience;
-    }
-
+    public String getExperience() { return experience; }
     public void setExperience(String experience) {
         this.experience = experience;
     }
 
-    public String getBusinessUnit() {
-        return businessUnit;
-    }
-
+    public String getBusinessUnit() { return businessUnit; }
     public void setBusinessUnit(String businessUnit) {
         this.businessUnit = businessUnit;
     }
@@ -81,7 +71,6 @@ public class User {
     public String getProjectName() {
         return projectName;
     }
-
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
@@ -89,7 +78,6 @@ public class User {
     public String getAccountName() {
         return accountName;
     }
-
     public void setAccountName(String accountName) {
         this.accountName = accountName;
     }
@@ -97,15 +85,11 @@ public class User {
     public String getProjectCode() {
         return projectCode;
     }
-
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
     }
 
-    public String getTeamGroup() {
-        return teamGroup;
-    }
-
+    public String getTeamGroup() { return teamGroup; }
     public void setTeamGroup(String teamGroup) {
         this.teamGroup = teamGroup;
     }
@@ -113,7 +97,6 @@ public class User {
     public String getVerticalName() {
         return verticalName;
     }
-
     public void setVerticalName(String verticalName) {
         this.verticalName = verticalName;
     }
@@ -121,7 +104,6 @@ public class User {
     public String getCustomerName() {
         return customerName;
     }
-
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
@@ -129,7 +111,6 @@ public class User {
     public String getDomainIndustry() {
         return domainIndustry;
     }
-
     public void setDomainIndustry(String domainIndustry) {
         this.domainIndustry = domainIndustry;
     }
@@ -137,15 +118,11 @@ public class User {
     public String getMobileNumber() {
         return mobileNumber;
     }
-
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getCity() {
-        return city;
-    }
-
+    public String getCity() { return city; }
     public void setCity(String city) {
         this.city = city;
     }
@@ -153,7 +130,6 @@ public class User {
     public String getWorkLocation() {
         return workLocation;
     }
-
     public void setWorkLocation(String workLocation) {
         this.workLocation = workLocation;
     }
@@ -161,7 +137,6 @@ public class User {
     public String getCountry() {
         return country;
     }
-
     public void setCountry(String country) {
         this.country = country;
     }
@@ -169,7 +144,6 @@ public class User {
     public String getReportingManager() {
         return reportingManager;
     }
-
     public void setReportingManager(String reportingManager) {
         this.reportingManager = reportingManager;
     }
@@ -177,7 +151,6 @@ public class User {
     public String getProjectManager() {
         return projectManager;
     }
-
     public void setProjectManager(String projectManager) {
         this.projectManager = projectManager;
     }
@@ -185,7 +158,6 @@ public class User {
     public String getBuHrContact() {
         return buHrContact;
     }
-
     public void setBuHrContact(String buHrContact) {
         this.buHrContact = buHrContact;
     }
