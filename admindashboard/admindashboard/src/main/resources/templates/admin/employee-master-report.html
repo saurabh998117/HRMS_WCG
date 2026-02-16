@@ -9,11 +9,11 @@
         body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
         .navbar-custom {
-        background-color: #1e3a8a;
-        height: 75px;
-        display: flex;
-        align-items: center;
-    }
+            background-color: #1e3a8a;
+            height: 85px;
+            display: flex;
+            align-items: center;
+        }
 
         /* Req: Rectangular outlined button with sharp corners like image_7a2102.png */
         .btn-dashboard-back {
@@ -34,6 +34,7 @@
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
             border-color: white;
+        }
 
         /* Filter Card */
         .filter-card { border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 8px; }
@@ -46,6 +47,26 @@
         .profile-label { font-size: 0.75rem; color: #8898aa; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
         .profile-value { font-size: 1rem; font-weight: 500; color: #32325d; }
         .modal-header-custom { background: linear-gradient(87deg, #1e3a8a 0, #1e3a8a 100%) !important; }
+
+        /* New: Highlight search box when results are filtered */
+        .search-input-active {
+            border-color: #1e3a8a !important;
+            background-color: #f0f7ff !important; /* Soft blue highlight */
+            box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.1);
+            font-weight: 600;
+        }
+
+        /* Styling for the clear X icon */
+        #clearSearch:hover i {
+            color: #dc3545 !important;
+            cursor: pointer;
+        }
+
+        /* Ensures icons inside active search follow the theme */
+        .search-input-active ~ #clearSearch, .search-input-active ~ .input-group-text {
+            border-color: #1e3a8a !important;
+            background-color: #f0f7ff !important;
+        }
     </style>
 </head>
 <body>
@@ -67,16 +88,26 @@
 
     <div class="card filter-card mb-4">
         <div class="card-body p-4">
-            <form action="/admin/reports" method="get">
+            <form action="/admin/reports" method="get" id="searchForm">
                 <input type="hidden" name="type" value="employee">
 
                 <div class="row g-3">
                     <div class="col-md-5">
                         <label class="form-label-sm">Search Employee</label>
-                        <div class="input-group">
+                        <div class="input-group search-container">
                             <span class="input-group-text bg-white text-muted border-end-0"><i class="fas fa-search"></i></span>
-                            <input type="text" name="search" class="form-control border-start-0 ps-0"
+
+                            <input type="text" id="employeeSearch" name="search"
+                                   class="form-control border-start-0 ps-0"
+                                   th:classappend="${currentSearch != null and !currentSearch.isEmpty()} ? 'search-input-active' : ''"
                                    placeholder="Enter Name or EMP ID " th:value="${currentSearch}">
+
+                            <span class="input-group-text bg-white border-start-0"
+                                  id="clearSearch"
+                                  style="cursor: pointer;"
+                                  th:styleappend="${currentSearch != null and !currentSearch.isEmpty()} ? 'display: flex;' : 'display: none;'">
+                                <i class="fas fa-times text-muted"></i>
+                            </span>
                         </div>
                     </div>
 
@@ -91,7 +122,7 @@
                     <div class="col-md-4 d-flex align-items-end">
                         <div class="d-flex gap-2 w-100">
                             <button type="submit" class="btn btn-primary px-4"><i class="fas fa-filter me-2"></i>Apply Filter</button>
-                            <a href="/admin/reports?type=employee" class="btn btn-light border">Clear/Reset</a>
+                            <a href="/admin/reports?type=employee" class="btn btn-light border">Clear</a>
                         </div>
                     </div>
                 </div>
@@ -225,5 +256,28 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('employeeSearch');
+        const clearBtn = document.getElementById('clearSearch');
+
+        // Handles X button click
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                searchInput.closest('form').submit(); // Refresh results immediately
+            });
+        }
+
+        // Dynamically show/hide X button while typing
+        searchInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                clearBtn.style.setProperty('display', 'flex', 'important');
+            } else {
+                clearBtn.style.setProperty('display', 'none', 'important');
+            }
+        });
+    });
+</script>
 </body>
 </html>

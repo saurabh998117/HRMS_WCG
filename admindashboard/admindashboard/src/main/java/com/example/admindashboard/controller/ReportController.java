@@ -42,16 +42,25 @@ public class ReportController {
             @RequestParam(defaultValue = "employee") String type,
             @RequestParam(defaultValue = "") String search,
             @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
 
+        // If the user doesn't pick a date, we default to the current month.
+        if (from == null) from = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+        if (to == null) to = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
 
         // 1. Add Common Attributes (So filters stick in UI)
         model.addAttribute("currentType", type);
         model.addAttribute("currentSearch", search);
         model.addAttribute("currentSortDir", sortDir);
+        model.addAttribute("fromDate", from);
+        model.addAttribute("toDate", to);
         model.addAttribute("currentPage", page);
+
+        String keyword = (search != null) ? search : "";
 
         // 2. LOGIC SWITCHER (Routes to the 4 separate pages)
         switch (type) {
@@ -74,11 +83,20 @@ public class ReportController {
                 return "admin/employee-master-report";
 
             case "timesheet":
+                // 1. Standard Pagination & Sorting
                 Pageable timePageable = PageRequest.of(page, size, Sort.by("weekStartDate").descending());
-                Page<Timesheet> timesheetPage;
 
+                // 2. Prepare Keyword
+                keyword = (search != null) ? search : "";
 
+                // 3. Fetch Data from Repository
+                Page<Timesheet> timesheetPage = timesheetRepository.searchTimesheets(from, to, keyword, timePageable);
+
+                // 4. Send to UI (We will handle the "Week Range" display in the HTML instead)
+                model.addAttribute("dataPage", timesheetPage);
                 return "admin/timesheets-report";
+
+
 
             case "attendance":
                 // return "admin/attendance-report"; // Create this file to avoid errors

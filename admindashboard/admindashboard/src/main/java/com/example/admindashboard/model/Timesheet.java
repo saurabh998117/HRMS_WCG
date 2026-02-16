@@ -20,6 +20,8 @@ public class Timesheet {
 
     private LocalDate weekStartDate;
     private LocalDate weekEndDate;
+    @Column(name = "submitted_on")
+    private LocalDate submittedOn;
     private String status;
     private String comments;
 
@@ -117,4 +119,7 @@ public class Timesheet {
 
     public List<TimesheetEntry> getEntries() { return entries; }
     public void setEntries(List<TimesheetEntry> entries) { this.entries = entries; }
+
+    public LocalDate getSubmittedOn() { return submittedOn; }
+    public void setSubmittedOn(LocalDate submittedOn) { this.submittedOn = submittedOn; }
 }
