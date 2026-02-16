@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -36,6 +37,17 @@ public class ReportController {
     // TODO: Uncomment when Attendance/Leave Repositories are created
     // @Autowired private AttendanceRepository attendanceRepository;
     // @Autowired private LeaveRepository leaveRepository;
+
+    @GetMapping("/admin/timesheets/view")
+    public String showWeeklyTimesheetView(Model model) {
+        List<User> employees = userRepository.findByRoleOrderByUsernameAsc("EMPLOYEE");
+        model.addAttribute("employees", employees);
+
+        List<Timesheet> allTimesheets = timesheetRepository.findAll();
+        model.addAttribute("allTimesheets", allTimesheets != null ? allTimesheets : new ArrayList<>());
+
+        return "admin/admin-weekly-timesheet-report";
+    }
 
     @GetMapping("/admin/reports")
     public String showReportsDashboard(
@@ -100,11 +112,11 @@ public class ReportController {
 
             case "attendance":
                 // return "admin/attendance-report"; // Create this file to avoid errors
-                return "redirect:/admin/reports?type=employee"; // Temporary fallback
+                return "admin/attendance-report"; // Temporary fallback
 
             case "leave":
                 // return "admin/leave-report"; // Create this file to avoid errors
-                return "redirect:/admin/reports?type=employee"; // Temporary fallback
+                return "admin/leave-report"; // Temporary fallback
 
             default:
                 return "redirect:/admin/reports?type=employee";
