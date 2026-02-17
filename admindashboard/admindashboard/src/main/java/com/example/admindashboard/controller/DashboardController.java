@@ -1,5 +1,6 @@
 package com.example.admindashboard.controller;
 
+import com.example.admindashboard.model.Timesheet;
 import com.example.admindashboard.model.User;
 import com.example.admindashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import com.example.admindashboard.repository.TimesheetRepository;
 
 @Controller
 public class DashboardController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TimesheetRepository timesheetRepository;
 
     // --- 1. LOGIN PAGE MAPPINGS ---
     // Maps localhost:8080/ to the login page
@@ -174,6 +180,29 @@ public class DashboardController {
     public String showRegularizationPage() {
         return "admin-attendance-regularization";
     }
+
+    @PostMapping("/admin/timesheets/approve/{id}")
+    public String approveTimesheet(@PathVariable Long id, java.security.Principal principal) {
+        // 1. Find the timesheet
+        Timesheet timesheet = timesheetRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid timesheet Id:" + id));
+
+        // 2. Update Status
+        timesheet.setStatus("Approved");
+
+        // 3. CAPTURE ADMIN NAME (Fixes the blank "Approved By" column)
+        if (principal != null) {
+            // This saves "ADM001" or whatever username you logged in with
+            timesheet.setApprovedBy(principal.getName());
+        } else {
+            timesheet.setApprovedBy("Admin");
+        }
+
+        // 4. Save to Database
+        timesheetRepository.save(timesheet);
+        return "redirect:/admin/timesheet-approval";
+    }
+
 
 
 }

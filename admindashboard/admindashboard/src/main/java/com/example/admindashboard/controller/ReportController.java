@@ -143,6 +143,13 @@ public class ReportController {
             List<User> allEmployees = userRepository.findByRoleOrderByUsernameAsc("EMPLOYEE");
             exportService.exportEmployeeReportToExcel(response, allEmployees);
         }
-        // Add other export logic here later
+
+        else if ("timesheet".equals(type)) {
+            // Fetch data filtered by the Date Range
+            List<Timesheet> timesheets = timesheetRepository.findByWeekStartDateBetween(from, to);
+            exportService.exportTimesheetReportToExcel(response, timesheets);
+        }
+
+        // Add other export logic from here later
     }
 }

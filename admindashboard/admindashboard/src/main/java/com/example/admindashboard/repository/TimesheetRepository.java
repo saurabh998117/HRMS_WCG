@@ -37,6 +37,8 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
     // 2. Default fetch for Date Range only (when search is empty)
     Page<Timesheet> findByWeekStartDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
+    List<Timesheet> findByWeekStartDateBetween(LocalDate from, LocalDate to);
+
 
 
 

@@ -25,6 +25,12 @@ public class Timesheet {
     private String status;
     private String comments;
 
+    @Column(name = "submission_date")
+    private LocalDate submissionDate;
+
+    @Column(name = "approved_by")
+    private String approvedBy;
+
     // --- ONLY KEEP THESE ONCE ---
     @Column(name = "total_hours")
     private Double totalHours;
@@ -82,6 +88,14 @@ public class Timesheet {
 
     public String getComments() { return comments; }
     public void setComments(String comments) { this.comments = comments; }
+
+    public LocalDate getSubmissionDate() {return submissionDate;}
+
+    public void setSubmissionDate(LocalDate submissionDate) {this.submissionDate = submissionDate; }
+
+    public String getApprovedBy() {return approvedBy;}
+
+    public void setApprovedBy(String approvedBy) {this.approvedBy = approvedBy;}
 
     // Matches the field 'totalHours'
     public Double getTotalHours() { return totalHours; }
