@@ -30,6 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Used for the search bar in the simplified report view
     List<User> findByRoleAndFullNameContainingIgnoreCase(String role, String keyword);
 
+    List<User> findByFullNameContainingIgnoreCaseOrUsernameContainingIgnoreCase(String fullName, String username);
+
     // --- 4. NEW PAGINATION METHODS (For the New Report Dashboard) ---
 
     // Fetch page of employees (for the default view)

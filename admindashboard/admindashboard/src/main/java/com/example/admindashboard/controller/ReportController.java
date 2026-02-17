@@ -77,33 +77,26 @@ public class ReportController {
         // 2. LOGIC SWITCHER (Routes to the 4 separate pages)
         switch (type) {
             case "employee":
-                // 1. DYNAMIC SORTING LOGIC
                 Sort sort = sortDir.equalsIgnoreCase("asc") ?
-                        Sort.by("username").ascending() :
-                        Sort.by("username").descending();
-
+                        Sort.by("username").ascending() : Sort.by("username").descending();
                 Pageable empPageable = PageRequest.of(page, size, sort);
-                Page<User> employeePage;
 
-                if (search.isEmpty()) {
-                    employeePage = userRepository.findByRole("EMPLOYEE", empPageable);
-                } else {
-                    // This method already searches Name OR Username (EMP ID)
-                    employeePage = userRepository.searchEmployees(search, empPageable);
-                }
+                // Ensure we are fetching real data and passing the search term correctly
+                Page<User> employeePage = (search == null || search.isEmpty()) ?
+                        userRepository.findByRole("EMPLOYEE", empPageable) :
+                        userRepository.searchEmployees(search, empPageable);
+
                 model.addAttribute("dataPage", employeePage);
                 return "admin/employee-master-report";
+
 
             case "timesheet":
                 // 1. Standard Pagination & Sorting
                 Pageable timePageable = PageRequest.of(page, size, Sort.by("weekStartDate").descending());
-
                 // 2. Prepare Keyword
                 keyword = (search != null) ? search : "";
-
                 // 3. Fetch Data from Repository
                 Page<Timesheet> timesheetPage = timesheetRepository.searchTimesheets(from, to, keyword, timePageable);
-
                 // 4. Send to UI (We will handle the "Week Range" display in the HTML instead)
                 model.addAttribute("dataPage", timesheetPage);
                 return "admin/timesheets-report";
@@ -123,33 +116,44 @@ public class ReportController {
         }
     }
 
+
     @GetMapping("/admin/reports/download")
     public void downloadReport(
             @RequestParam String type,
-            @RequestParam(defaultValue = "excel") String format,
+            @RequestParam(required = false) String search, // ADDED: Capture search term
             @RequestParam(required = false) LocalDate from,
             @RequestParam(required = false) LocalDate to,
             HttpServletResponse response) throws IOException {
 
+        // Standardize Date Range
         if (from == null) from = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
         if (to == null) to = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
 
         response.setContentType("application/octet-stream");
-        String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=" + type + "_report.xlsx";
-        response.setHeader(headerKey, headerValue);
+        response.setHeader("Content-Disposition", headerValue);
 
         if ("employee".equals(type)) {
-            List<User> allEmployees = userRepository.findByRoleOrderByUsernameAsc("EMPLOYEE");
-            exportService.exportEmployeeReportToExcel(response, allEmployees);
+            List<User> exportList;
+            if (search != null && !search.isEmpty()) {
+                // Fetch ONLY the searched employees for the Excel
+                exportList = userRepository.findByFullNameContainingIgnoreCaseOrUsernameContainingIgnoreCase(search, search);
+                // Filter list to only include EMPLOYEES
+                exportList = exportList.stream().filter(u -> "EMPLOYEE".equals(u.getRole())).toList();
+            } else {
+                exportList = userRepository.findByRoleOrderByUsernameAsc("EMPLOYEE");
+            }
+            exportService.exportEmployeeReportToExcel(response, exportList);
         }
 
         else if ("timesheet".equals(type)) {
-            // Fetch data filtered by the Date Range
-            List<Timesheet> timesheets = timesheetRepository.findByWeekStartDateBetween(from, to);
-            exportService.exportTimesheetReportToExcel(response, timesheets);
-        }
+            List<Timesheet> exportList;
+            String keyword = (search != null) ? search : "";
 
-        // Add other export logic from here later
+            // Use the same search logic as the UI to ensure Excel matches the screen
+            exportList = timesheetRepository.findTimesheetsBySearchCriteria(from, to, keyword);
+
+            exportService.exportTimesheetReportToExcel(response, exportList);
+        }
     }
 }

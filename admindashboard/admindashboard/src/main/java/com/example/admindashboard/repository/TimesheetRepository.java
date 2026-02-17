@@ -24,6 +24,15 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
     // Add inside TimesheetRepository interface
     List<Timesheet> findByUserAndWeekStartDate(User user, LocalDate weekStartDate);
 
+    @Query("SELECT t FROM Timesheet t WHERE t.weekStartDate BETWEEN :from AND :to " +
+            "AND (LOWER(t.user.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(t.user.username) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<Timesheet> findTimesheetsBySearchCriteria(
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to,
+            @Param("keyword") String keyword
+    );
+
     @Query("SELECT t FROM Timesheet t JOIN t.user u WHERE " +
             "(LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
@@ -34,7 +43,8 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
             @Param("keyword") String keyword,
             Pageable pageable);
 
-    // 2. Default fetch for Date Range only (when search is empty)
+
+    //  Default fetch for Date Range only (when search is empty)
     Page<Timesheet> findByWeekStartDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
     List<Timesheet> findByWeekStartDateBetween(LocalDate from, LocalDate to);
