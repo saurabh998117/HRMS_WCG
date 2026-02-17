@@ -5,13 +5,12 @@ import com.example.admindashboard.model.User;
 import com.example.admindashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.security.Principal;
+import java.util.List;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import com.example.admindashboard.repository.TimesheetRepository;
 
 @Controller
@@ -201,6 +200,23 @@ public class DashboardController {
         // 4. Save to Database
         timesheetRepository.save(timesheet);
         return "redirect:/admin/timesheet-approval";
+    }
+
+    @GetMapping("/admin/staff")
+    public String showStaffDirectory(Model model, @RequestParam(required = false) String keyword) {
+        List<User> staffList;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            // Simple search by name if they type in the search bar
+            staffList = userRepository.findByRoleAndFullNameContainingIgnoreCase("EMPLOYEE", keyword);
+        } else {
+            // Default: Show all employees sorted alphabetically
+            staffList = userRepository.findByRoleOrderByUsernameAsc("EMPLOYEE");
+        }
+
+        model.addAttribute("staffList", staffList);
+        model.addAttribute("keyword", keyword); // Keep search term in box
+        return "admin-staff";
     }
 
 
