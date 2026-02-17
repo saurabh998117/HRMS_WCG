@@ -10,7 +10,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    boolean existsByUsername(String username);
 
     // --- 1. AUTHENTICATION ---
     Optional<User> findByUsername(String username);

@@ -131,20 +131,35 @@ public class DashboardController {
 
     // Add New Employee page
     @GetMapping("/admin/add-employee")
-    public String showAddEmployeeForm() {
+    public String showAddEmployeeForm(Model model) {
+        // We add a new User object so the form has something to hold the data
+        model.addAttribute("user", new User());
         return "add-employee";
     }
 
     @PostMapping("/admin/add-employee-submit")
-    public String addEmployee(@ModelAttribute User user) {
+    public String addEmployee(@ModelAttribute User user, Model model) {
+
+        // If the ID (username) already exists in the database...
+        if (userRepository.existsByUsername(user.getUsername())) {
+
+            // Add the error message to display in the red alert box
+            model.addAttribute("errorMessage", "Employee ID already exists. Please use a different ID.");
+
+            // Return to the SAME page (not redirect) so the user doesn't lose their other inputs
+            return "add-employee";
+        }
+
+        // If ID is unique, proceed with setting defaults and saving
         user.setPassword("{noop}welcome123");
 
         // CHANGE THIS: From "ROLE_USER" to "EMPLOYEE"
         // (Spring Security adds the ROLE_ prefix automatically)
         user.setRole("EMPLOYEE");
-
         userRepository.save(user);
-        return "redirect:/admin/dashboard";
+
+        // Redirect to the Employee Report so they can see the new entry immediately
+        return "redirect:/admin/reports?type=employee";
     }
 
     // Timesheet Approval Page
