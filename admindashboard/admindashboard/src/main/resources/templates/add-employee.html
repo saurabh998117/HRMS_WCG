@@ -211,8 +211,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" name="designation" id="designation" placeholder="Role" th:value="${user?.designation}">
-                                    <label for="designation">Designation</label>
+                                    <input type="text" class="form-control" name="designation" id="designation" placeholder="Role" required th:value="${user?.designation}">
+                                    <label for="designation">Designation *</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -306,8 +306,8 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" name="mobileNumber" id="mobile" placeholder="Mobile">
-                                    <label for="mobile">Mobile Number</label>
+                                    <input type="text" name="mobileNumber" class="form-control" id="mobileNumber" placeholder="Mobile Number" required th:value="${user?.mobileNumber}">
+                                    <label for="mobileNumber">Mobile Number *</label>
                                 </div>
                             </div>
                             <div class="col-12">

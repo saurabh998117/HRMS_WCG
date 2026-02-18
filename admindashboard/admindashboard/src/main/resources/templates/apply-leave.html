@@ -118,20 +118,26 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Employee Name</label>
-                            <input type="text" class="form-control fw-bold" value="EMP" readonly>
+                            <input type="text" class="form-control fw-bold"
+                                   th:value="${user.fullName}" readonly>
                         </div>
+
                         <div class="col-md-6">
                             <label class="form-label">Employee ID</label>
-                            <input type="text" class="form-control" value="WCG-1001" readonly>
+                            <input type="text" class="form-control"
+                                   th:value="${user.username}" readonly>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Department</label>
-                            <input type="text" class="form-control" value="IT - Software Development" readonly>
+                            <input type="text" class="form-control"
+                                   th:value="${user.businessUnit != null ? user.businessUnit : 'General'}" readonly>
                         </div>
+
                         <div class="col-md-6">
                             <label class="form-label">Reporting Manager</label>
-                            <input type="text" class="form-control" value="Amit Sharma" readonly>
+                            <input type="text" class="form-control"
+                                   th:value="${user.reportingManager != null ? user.reportingManager : 'N/A'}" readonly>
                         </div>
                     </div>
                 </div>
@@ -227,7 +233,7 @@
                                 <span class="badge badge-status status-pending">Pending</span>
                             </div>
                             <small class="text-muted d-block mb-1">27 Jan - 29 Jan (3 Days)</small>
-                            <small class="text-secondary" style="font-size: 0.75rem;">Approver: Amit Sharma</small>
+                            <small class="text-secondary" style="font-size: 0.75rem;"> Approver: <span th:text="${user.reportingManager}">Manager Name</span></small>
                         </div>
 
                         <div class="list-group-item p-3">
@@ -236,7 +242,7 @@
                                 <span class="badge badge-status status-approved">Approved</span>
                             </div>
                             <small class="text-muted d-block mb-1">10 Jan (1 Day)</small>
-                            <small class="text-secondary" style="font-size: 0.75rem;">Approver: Amit Sharma</small>
+                            <small class="text-secondary" style="font-size: 0.75rem;"> Approver: <span th:text="${user.reportingManager}">Manager Name</span></small>
                         </div>
 
                         <div class="list-group-item p-3">

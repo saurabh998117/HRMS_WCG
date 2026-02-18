@@ -5,6 +5,8 @@ import com.example.admindashboard.model.User;
 import com.example.admindashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -94,7 +96,20 @@ public class DashboardController {
     public String showProfilePage() { return "my-profile"; }
 
     @GetMapping("/apply-leave")
-    public String showLeavePage() { return "apply-leave"; }
+    public String showApplyLeavePage(Model model, Principal principal) {
+        String username = principal.getName();
+
+        // Use .orElse(null) to handle the Optional return type
+        User currentUser = userRepository.findByUsername(username).orElse(null);
+
+        if (currentUser == null) {
+            // Handle the case where the user isn't in the DB (optional)
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", currentUser);
+        return "apply-leave";
+    }
 
     @GetMapping("/conference-room")
     public String showConferencePage() { return "conference-room"; }
@@ -109,7 +124,21 @@ public class DashboardController {
     public String showTimesheetPage() { return "timesheet"; }
 
     @GetMapping("/attendance")
-    public String showAttendancePage() { return "attendance"; }
+    public String showAttendanceRegulation(Model model, Principal principal) {
+        // 1. Identify the logged-in user
+        String username = principal.getName();
+
+        // 2. Fetch user from DB using the fixed Repository (Optional handle)
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        // 3. Add to model
+        model.addAttribute("user", user);
+
+        // 4. (Optional) Add current week for the date picker
+        model.addAttribute("currentWeek", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-'W'ww")));
+
+        return "attendance";
+    }
 
     @GetMapping("/password-reset")
     public String showPasswordResetPage() { return "password-reset"; }
@@ -154,13 +183,24 @@ public class DashboardController {
             return "add-employee"; // Returns to form with error, keeping user data intact
         }
 
-        // 3. Existing Duplicate Check
+        // 3. NEW: Mandatory Field Validation
+        if (user.getDesignation() == null || user.getDesignation().trim().isEmpty()) {
+            model.addAttribute("errorMessage", "Designation is a mandatory field.");
+            return "add-employee";
+        }
+
+        if (user.getMobileNumber() == null || user.getMobileNumber().trim().isEmpty()) {
+            model.addAttribute("errorMessage", "Mobile Number is a mandatory field.");
+            return "add-employee";
+        }
+
+        // 4. Existing Duplicate Check
         if (userRepository.existsByUsername(rawUsername)) {
             model.addAttribute("errorMessage", "Employee ID '" + rawUsername + "' already exists. Please use a different ID.");
             return "add-employee";
         }
 
-        // 4. If all checks pass, set defaults and save
+        // 5. If all checks pass, set defaults and save
         user.setUsername(rawUsername.toUpperCase()); // Force Uppercase for clean records
         user.setPassword("{noop}welcome123");
         user.setRole("EMPLOYEE");
