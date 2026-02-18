@@ -95,6 +95,10 @@ public class DashboardController {
     @GetMapping("/my-profile")
     public String showProfilePage() { return "my-profile"; }
 
+    @GetMapping("/conference-room")
+    public String showConferencePage() { return "conference-room"; }
+
+
     @GetMapping("/apply-leave")
     public String showApplyLeavePage(Model model, Principal principal) {
         String username = principal.getName();
@@ -110,18 +114,6 @@ public class DashboardController {
         model.addAttribute("user", currentUser);
         return "apply-leave";
     }
-
-    @GetMapping("/conference-room")
-    public String showConferencePage() { return "conference-room"; }
-
-    @GetMapping("/my-approvals")
-    public String showApprovalsPage() { return "my-approvals"; }
-
-    @GetMapping("/my-whitecircle")
-    public String showMyWhiteCircle() { return "my-whitecircle"; }
-
-    @GetMapping("/timesheet")
-    public String showTimesheetPage() { return "timesheet"; }
 
     @GetMapping("/attendance")
     public String showAttendanceRegulation(Model model, Principal principal) {
@@ -140,6 +132,30 @@ public class DashboardController {
         return "attendance";
     }
 
+    @GetMapping("/my-approvals")
+    public String showMyApprovals(Model model, Principal principal) {
+        String username = principal.getName();
+        User currentUser = userRepository.findByUsername(username).orElse(null);
+
+        // Fetch all timesheets for this specific user
+        List<Timesheet> userTimesheets = timesheetRepository.findByUser(currentUser);
+
+        // Filter into categories based on status
+        List<Timesheet> pending = userTimesheets.stream()
+                .filter(t -> "PENDING".equalsIgnoreCase(t.getStatus())).toList();
+        List<Timesheet> approved = userTimesheets.stream()
+                .filter(t -> "APPROVED".equalsIgnoreCase(t.getStatus())).toList();
+        List<Timesheet> denied = userTimesheets.stream()
+                .filter(t -> "DENIED".equalsIgnoreCase(t.getStatus())).toList();
+
+        model.addAttribute("pendingList", pending);
+        model.addAttribute("approvedList", approved);
+        model.addAttribute("deniedList", denied);
+        model.addAttribute("totalCount", userTimesheets.size());
+
+        return "my-approvals";
+    }
+
     @GetMapping("/email-signature")
     public String showEmailSignaturePage(Model model, Principal principal) {
         // 1. Get the username (ID) of the currently logged-in employee
@@ -156,14 +172,21 @@ public class DashboardController {
         return "email-signature";
     }
 
+
     @GetMapping("/password-reset")
     public String showPasswordResetPage() { return "password-reset"; }
 
-    @GetMapping("/payroll")
-    public String showPayrollPage() { return "payroll"; }
+    @GetMapping("/my-whitecircle")
+    public String showMyWhiteCircle() { return "my-whitecircle"; }
+
+    @GetMapping("/timesheet")
+    public String showTimesheetPage() { return "timesheet"; }
 
     @GetMapping("/tickets")
     public String showTicketsPage() { return "tickets"; }
+
+    @GetMapping("/payroll")
+    public String showPayrollPage() { return "payroll"; }
 
 
 

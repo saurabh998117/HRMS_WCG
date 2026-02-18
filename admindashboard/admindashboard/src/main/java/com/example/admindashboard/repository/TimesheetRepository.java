@@ -15,6 +15,8 @@ import java.util.List;
 @Repository // Add this annotation
 public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
 
+    List<Timesheet> findByUser(User user);
+
     // Used by Employee to see their own history
     List<Timesheet> findByUserOrderByWeekStartDateDesc(User user);
 

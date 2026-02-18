@@ -18,64 +18,65 @@ public class Timesheet {
     @JsonIgnoreProperties({"password", "timesheets", "roles", "attendance", "hibernateLazyInitializer", "handler"})
     private User user;
 
-    private LocalDate weekStartDate;
-    private LocalDate weekEndDate;
-    @Column(name = "submitted_on")
-    private LocalDate submittedOn;
-    private String status;
-    private String comments;
+    private String weekRange; // e.g., "Feb Week 3"
+    private String status;    // PENDING, APPROVED, DENIED
 
     @Column(name = "submission_date")
     private LocalDate submissionDate;
 
+    private String rejectionReason; // For the "Denied" tab
+    private String comments;        // General notes
+
+    private LocalDate weekStartDate;
+    private LocalDate weekEndDate;
+
     @Column(name = "approved_by")
     private String approvedBy;
 
-    // --- ONLY KEEP THESE ONCE ---
     @Column(name = "total_hours")
     private Double totalHours;
 
-    @Column(name = "monday_hours")
+    // Daily Hour tracking
     private Double mondayHours;
-
-    @Column(name = "monday_task")
     private String mondayTask;
 
-    @Column(name = "tuesday_hours")
     private Double tuesdayHours;
-
-    @Column(name = "tuesday_task")
     private String tuesdayTask;
 
-    @Column(name = "wednesday_hours")
     private Double wednesdayHours;
-
-    @Column(name = "wednesday_task")
     private String wednesdayTask;
 
-    @Column(name = "thursday_hours")
     private Double thursdayHours;
-
-    @Column(name = "thursday_task")
     private String thursdayTask;
 
-    @Column(name = "friday_hours")
     private Double fridayHours;
-
-    @Column(name = "friday_task")
     private String fridayTask;
 
-    // Keep your entries list if you plan to use it later
     @OneToMany(mappedBy = "timesheet", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("timesheet")
     private List<TimesheetEntry> entries;
 
-    // --- UPDATED GETTERS AND SETTERS ---
+    // --- GETTERS AND SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public String getWeekRange() { return weekRange; }
+    public void setWeekRange(String weekRange) { this.weekRange = weekRange; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public LocalDate getSubmissionDate() { return submissionDate; }
+    public void setSubmissionDate(LocalDate submissionDate) { this.submissionDate = submissionDate; }
+
+    public String getRejectionReason() { return rejectionReason; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
+
+    public String getComments() { return comments; }
+    public void setComments(String comments) { this.comments = comments; }
 
     public LocalDate getWeekStartDate() { return weekStartDate; }
     public void setWeekStartDate(LocalDate weekStartDate) { this.weekStartDate = weekStartDate; }
@@ -83,21 +84,9 @@ public class Timesheet {
     public LocalDate getWeekEndDate() { return weekEndDate; }
     public void setWeekEndDate(LocalDate weekEndDate) { this.weekEndDate = weekEndDate; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getApprovedBy() { return approvedBy; }
+    public void setApprovedBy(String approvedBy) { this.approvedBy = approvedBy; }
 
-    public String getComments() { return comments; }
-    public void setComments(String comments) { this.comments = comments; }
-
-    public LocalDate getSubmissionDate() {return submissionDate;}
-
-    public void setSubmissionDate(LocalDate submissionDate) {this.submissionDate = submissionDate; }
-
-    public String getApprovedBy() {return approvedBy;}
-
-    public void setApprovedBy(String approvedBy) {this.approvedBy = approvedBy;}
-
-    // Matches the field 'totalHours'
     public Double getTotalHours() { return totalHours; }
     public void setTotalHours(Double totalHours) { this.totalHours = totalHours; }
 
@@ -133,7 +122,4 @@ public class Timesheet {
 
     public List<TimesheetEntry> getEntries() { return entries; }
     public void setEntries(List<TimesheetEntry> entries) { this.entries = entries; }
-
-    public LocalDate getSubmittedOn() { return submittedOn; }
-    public void setSubmittedOn(LocalDate submittedOn) { this.submittedOn = submittedOn; }
 }

@@ -116,8 +116,8 @@
     <div class="page-title">
         <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 60px; border-radius: 6px;">
         <span class="fw-bold text-dark" style="border-left: 2px solid #cbd5e1; padding-left: 17px; margin-left: 10px; font-size: 1.5rem; letter-spacing: 0.5px;">
-                MY APPROVALS
-            </span>
+            MY APPROVALS
+        </span>
     </div>
     <a href="/employee/dashboard" class="btn-back-home">
         <i class="fas fa-arrow-left me-2"></i> Back to Home
@@ -126,175 +126,115 @@
 
 <div class="main-container">
 
-    <h5 class="fw-bold text-dark mb-4"><i class="fas fa-check-circle text-primary me-2"></i>Recent Approvals</h5>
+    <h5 class="fw-bold text-dark mb-4">
+        <i class="fas fa-history text-primary me-2"></i>
+        View current status of your submitted reports here
+    </h5>
 
-    <ul class="nav nav-pills mb-4" id="approvalTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="pending-tab" data-bs-toggle="pill" data-bs-target="#pending" type="button" role="tab">
-                <i class="fas fa-hourglass-half me-2"></i>Pending <span class="badge-count">3</span>
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="approved-tab" data-bs-toggle="pill" data-bs-target="#approved" type="button" role="tab">
-                <i class="fas fa-check me-2"></i>Approved <span class="badge-count">12</span>
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="denied-tab" data-bs-toggle="pill" data-bs-target="#denied" type="button" role="tab">
-                <i class="fas fa-times me-2"></i>Denied <span class="badge-count">2</span>
-            </button>
-        </li>
-    </ul>
+    <div th:if="${totalCount == 0}" class="text-center p-5 feature-card bg-white border-0 shadow-sm">
+        <div class="mb-4">
+            <i class="fas fa-clipboard-list fa-4x text-muted opacity-50"></i>
+        </div>
+        <h5 class="text-secondary fw-bold">No approvals till now, first try submitting some reports.</h5>
+    </div>
 
-    <div class="tab-content" id="approvalTabsContent">
+    <div th:if="${totalCount > 0}">
 
-        <div class="tab-pane fade show active" id="pending" role="tabpanel">
+        <ul class="nav nav-pills mb-4" id="approvalTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="pending-tab" data-bs-toggle="pill" data-bs-target="#pending" type="button">
+                    <i class="fas fa-hourglass-half me-2"></i>Pending <span class="badge-count" th:text="${pendingList.size()}">0</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="approved-tab" data-bs-toggle="pill" data-bs-target="#approved" type="button">
+                    <i class="fas fa-check me-2"></i>Approved <span class="badge-count" th:text="${approvedList.size()}">0</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="denied-tab" data-bs-toggle="pill" data-bs-target="#denied" type="button">
+                    <i class="fas fa-times me-2"></i>Denied <span class="badge-count" th:text="${deniedList.size()}">0</span>
+                </button>
+            </li>
+        </ul>
 
-            <div class="approval-card border-leave">
-                <img src="https://ui-avatars.com/api/?name=Rahul+D&background=random" class="requestor-img" alt="User">
-                <div class="req-info">
-                    <div class="req-title">Sick Leave Request (2 Days)</div>
-                    <div class="req-meta">Rahul Deshmukh &bull; Frontend Team</div>
-                    <span class="req-date"><i class="far fa-clock me-1"></i> Requested: Today, 10:30 AM</span>
+        <div class="tab-content" id="approvalTabsContent">
+
+            <div class="tab-pane fade show active" id="pending" role="tabpanel">
+                <div th:if="${#lists.isEmpty(pendingList)}" class="text-center p-4 bg-white rounded shadow-sm text-muted">
+                    <i class="fas fa-info-circle me-2"></i> No pending approvals for now.
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn-action btn-light border" data-bs-toggle="modal" data-bs-target="#detailsModal" title="View Details">
-                        <i class="fas fa-eye text-primary"></i>
+
+                <div th:each="sheet : ${pendingList}" class="approval-card border-timesheet">
+                    <div class="avatar-circle bg-primary text-white me-3">TS</div>
+                    <div class="req-info">
+                        <div class="req-title" th:text="${sheet.weekRange != null ? 'Timesheet: ' + sheet.weekRange : 'Week Starting: ' + sheet.weekStartDate}">Timesheet Submission</div>
+                        <div class="req-meta">Status: Awaiting Manager Review</div>
+                        <span class="req-date"><i class="far fa-clock me-1"></i> Submitted: <span th:text="${sheet.submissionDate}">Date</span></span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" th:attr="data-bs-target='#detailsModal'+${sheet.id}">
+                        View Details
                     </button>
-
-                    <button class="btn-action btn-approve" title="Approve"><i class="fas fa-check"></i></button>
-
-                    <button class="btn-action btn-deny" data-bs-toggle="modal" data-bs-target="#denyModal" title="Deny">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
             </div>
 
-            <div class="approval-card border-timesheet">
-                <img src="https://ui-avatars.com/api/?name=Priya+V&background=random" class="requestor-img" alt="User">
-                <div class="req-info">
-                    <div class="req-title">Timesheet Submission (Jan Week 4)</div>
-                    <div class="req-meta">Priya Verma &bull; Project Manager</div>
-                    <span class="req-date"><i class="far fa-clock me-1"></i> Requested: Yesterday</span>
+            <div class="tab-pane fade" id="approved" role="tabpanel">
+                <div th:if="${#lists.isEmpty(approvedList)}" class="text-center p-4 bg-white rounded shadow-sm text-muted">
+                    <i class="fas fa-info-circle me-2"></i> No approved reports found.
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn-action btn-approve" title="Approve"><i class="fas fa-check"></i></button>
-                    <button class="btn-action btn-deny" title="Deny"><i class="fas fa-times"></i></button>
+
+                <div th:each="sheet : ${approvedList}" class="approval-card border-timesheet opacity-75">
+                    <div class="avatar-circle bg-success text-white me-3"><i class="fas fa-check"></i></div>
+                    <div class="req-info">
+                        <div class="req-title" th:text="${sheet.weekRange != null ? 'Timesheet: ' + sheet.weekRange : 'Week Starting: ' + sheet.weekStartDate}">Timesheet Approved</div>
+                        <div class="req-meta">Processed and verified by Admin</div>
+                    </div>
+                    <span class="status-badge bg-approved">Approved</span>
                 </div>
             </div>
 
-            <div class="approval-card border-expense">
-                <img src="https://ui-avatars.com/api/?name=Amit+S&background=random" class="requestor-img" alt="User">
-                <div class="req-info">
-                    <div class="req-title">Travel Expense Reimbursement</div>
-                    <div class="req-meta">Amit Sharma &bull; ₹ 12,500 for Client Visit</div>
-                    <span class="req-date"><i class="far fa-clock me-1"></i> Requested: 25 Jan 2026</span>
+            <div class="tab-pane fade" id="denied" role="tabpanel">
+                <div th:if="${#lists.isEmpty(deniedList)}" class="text-center p-4 bg-white rounded shadow-sm text-muted">
+                    <i class="fas fa-info-circle me-2"></i> No denied reports for now.
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn-action btn-approve" title="Approve"><i class="fas fa-check"></i></button>
-                    <button class="btn-action btn-deny" title="Deny"><i class="fas fa-times"></i></button>
+
+                <div th:each="sheet : ${deniedList}" class="approval-card border-timesheet opacity-75">
+                    <div class="avatar-circle bg-danger text-white me-3"><i class="fas fa-times"></i></div>
+                    <div class="req-info">
+                        <div class="req-title" th:text="${sheet.weekRange != null ? 'Timesheet: ' + sheet.weekRange : 'Week Starting: ' + sheet.weekStartDate}">Timesheet Denied</div>
+                        <div class="req-date text-danger fw-bold" th:text="'Reason: ' + ${sheet.rejectionReason != null ? sheet.rejectionReason : 'No reason provided'}">Reason...</div>
+                    </div>
+                    <span class="status-badge bg-denied">Denied</span>
                 </div>
-            </div>
-
-        </div>
-
-        <div class="tab-pane fade" id="approved" role="tabpanel">
-            <div class="text-muted small mb-3 text-uppercase fw-bold ls-1">Last 30 Days</div>
-
-            <div class="approval-card border-leave opacity-75">
-                <img src="https://ui-avatars.com/api/?name=Rohan+K&background=random" class="requestor-img" alt="User">
-                <div class="req-info">
-                    <div class="req-title">Casual Leave (1 Day)</div>
-                    <div class="req-meta">Rohan Kumar &bull; Approved on 20 Jan</div>
-                </div>
-                <span class="status-badge bg-approved">Approved</span>
-            </div>
-
-            <div class="approval-card border-timesheet opacity-75">
-                <img src="https://ui-avatars.com/api/?name=Rahul+D&background=random" class="requestor-img" alt="User">
-                <div class="req-info">
-                    <div class="req-title">Timesheet (Jan Week 3)</div>
-                    <div class="req-meta">Rahul Deshmukh &bull; Approved on 18 Jan</div>
-                </div>
-                <span class="status-badge bg-approved">Approved</span>
             </div>
         </div>
-
-        <div class="tab-pane fade" id="denied" role="tabpanel">
-            <div class="approval-card border-leave opacity-75">
-                <img src="https://ui-avatars.com/api/?name=Sneha+P&background=random" class="requestor-img" alt="User">
-                <div class="req-info">
-                    <div class="req-title">WFH Request (5 Days)</div>
-                    <div class="req-meta">Sneha Patil &bull; Denied on 15 Jan</div>
-                    <span class="req-date text-danger">Reason: Critical Project Delivery Phase</span>
-                </div>
-                <span class="status-badge bg-denied">Denied</span>
-            </div>
-        </div>
-
     </div>
 </div>
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+
+<div th:each="sheet : ${pendingList}" class="modal fade" th:id="'detailsModal'+${sheet.id}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-light border-0">
-                <h6 class="modal-title fw-bold" id="modalTitle">Request Details</h6>
+                <h6 class="modal-title fw-bold">Timesheet Details</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="https://ui-avatars.com/api/?name=Rahul+D&background=random" class="rounded-circle me-3" width="50" id="modalImg">
-                    <div>
-                        <h5 class="fw-bold mb-0 text-dark" id="modalName">Rahul Deshmukh</h5>
-                        <small class="text-muted" id="modalRole">Frontend Team</small>
-                    </div>
+                <div class="p-3 bg-light rounded border mb-3">
+                    <small class="text-uppercase fw-bold text-primary" style="font-size: 0.7rem;">Week Period</small>
+                    <div class="fw-bold text-dark" th:text="${sheet.weekRange != null ? sheet.weekRange : sheet.weekStartDate}">Week Range</div>
                 </div>
-
-                <div class="p-3 bg-f0fdf4 rounded border border-success-subtle mb-3">
-                    <small class="text-uppercase fw-bold text-success" style="font-size: 0.7rem;">Request Type</small>
-                    <div class="fw-bold text-dark" id="modalType">Sick Leave Request</div>
-                </div>
-
-                <p class="text-muted small mb-1 fw-bold">Description / Reason:</p>
-                <p class="text-dark bg-light p-3 rounded" style="font-size: 0.9rem;" id="modalReason">
-                    "I have been down with a high fever since last night. The doctor has advised 2 days of complete rest. I will be unavailable on Teams."
+                <p class="text-muted small mb-1 fw-bold">Comments:</p>
+                <p class="text-dark bg-light p-3 rounded" style="font-size: 0.9rem;" th:text="${sheet.comments != null ? sheet.comments : 'No comments submitted.'}">
+                    Notes...
                 </p>
-
-                <div class="d-flex align-items-center p-2 border rounded mt-3">
-                    <i class="fas fa-file-medical text-danger me-3 ps-2"></i>
-                    <div class="flex-grow-1">
-                        <span class="d-block small fw-bold text-dark">Medical_Certificate.pdf</span>
-                        <span class="d-block small text-muted">1.2 MB</span>
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
-                </div>
             </div>
             <div class="modal-footer border-0 bg-light">
-                <button type="button" class="btn btn-outline-danger px-4" data-bs-toggle="modal" data-bs-target="#denyModal">Deny</button>
-                <button type="button" class="btn btn-success px-4 text-white fw-bold">Approve Request</button>
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="denyModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-danger text-white border-0">
-                <h6 class="modal-title fw-bold">Deny Request</h6>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-3">
-                <label class="form-label small fw-bold text-muted">Reason for Rejection <span class="text-danger">*</span></label>
-                <textarea class="form-control" rows="3" placeholder="e.g. Critical project delivery..."></textarea>
-            </div>
-            <div class="modal-footer border-0 p-2">
-                <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-sm btn-danger fw-bold">Confirm Deny</button>
-            </div>
-        </div>
-    </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
