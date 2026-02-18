@@ -145,21 +145,24 @@ public class DashboardController {
     @PostMapping("/admin/add-employee-submit")
     public String addEmployee(@ModelAttribute User user, Model model) {
 
-        // If the ID (username) already exists in the database...
-        if (userRepository.existsByUsername(user.getUsername())) {
+        // 1. Get the username and clean it up
+        String rawUsername = user.getUsername() != null ? user.getUsername().trim() : "";
 
-            // Add the error message to display in the red alert box
-            model.addAttribute("errorMessage", "Employee ID already exists. Please use a different ID.");
+        // 2. NEW: Prefix Validation (Check for 'EMP')
+        if (!rawUsername.toUpperCase().startsWith("EMP")) {
+            model.addAttribute("errorMessage", "Invalid ID Format! Employee IDs must start with 'EMP' (e.g., EMP101). Admin (ADM) IDs cannot be created here.");
+            return "add-employee"; // Returns to form with error, keeping user data intact
+        }
 
-            // Return to the SAME page (not redirect) so the user doesn't lose their other inputs
+        // 3. Existing Duplicate Check
+        if (userRepository.existsByUsername(rawUsername)) {
+            model.addAttribute("errorMessage", "Employee ID '" + rawUsername + "' already exists. Please use a different ID.");
             return "add-employee";
         }
 
-        // If ID is unique, proceed with setting defaults and saving
+        // 4. If all checks pass, set defaults and save
+        user.setUsername(rawUsername.toUpperCase()); // Force Uppercase for clean records
         user.setPassword("{noop}welcome123");
-
-        // CHANGE THIS: From "ROLE_USER" to "EMPLOYEE"
-        // (Spring Security adds the ROLE_ prefix automatically)
         user.setRole("EMPLOYEE");
         userRepository.save(user);
 

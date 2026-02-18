@@ -193,11 +193,13 @@
                                            placeholder="ID"
                                            required
                                            th:value="${user?.username}"
-                                           th:classappend="${errorMessage} ? 'is-invalid' : ''">
+                                           th:classappend="${errorMessage} ? 'is-invalid' : ''"
+                                    oninput="this.value = this.value.toUpperCase().trim()">
+
                                     <label for="empId">Employee ID *</label>
 
-                                    <div class="invalid-feedback fw-bold">
-                                        <i class="fas fa-times-circle me-1"></i> ID already exists.
+                                    <div class="invalid-feedback fw-bold" th:text="${errorMessage}">
+                                        <i class="fas fa-times-circle me-1"></i> Invalid ID or ID already exists.
                                     </div>
                                 </div>
                             </div>
