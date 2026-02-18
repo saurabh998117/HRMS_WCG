@@ -140,6 +140,22 @@ public class DashboardController {
         return "attendance";
     }
 
+    @GetMapping("/email-signature")
+    public String showEmailSignaturePage(Model model, Principal principal) {
+        // 1. Get the username (ID) of the currently logged-in employee
+        String username = principal.getName();
+
+        // 2. Fetch their full profile from the database
+        // Using .orElse(new User()) as a safeguard to prevent crashes if data is missing
+        User currentUser = userRepository.findByUsername(username).orElse(new User());
+
+        // 3. Add the user object to the model so Thymeleaf can use it
+        model.addAttribute("user", currentUser);
+
+        // Return the name of your HTML file
+        return "email-signature";
+    }
+
     @GetMapping("/password-reset")
     public String showPasswordResetPage() { return "password-reset"; }
 
@@ -149,8 +165,6 @@ public class DashboardController {
     @GetMapping("/tickets")
     public String showTicketsPage() { return "tickets"; }
 
-    @GetMapping("/email-signature")
-    public String showEmailSignaturePage() { return "email-signature"; }
 
 
     // -- CLIENT PORTAL PAGES --

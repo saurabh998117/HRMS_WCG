@@ -197,20 +197,29 @@
 
             <div id="signature-capture-area" class="signature-box">
                 <div class="sig-content">
-                    <div class="sig-details">
-                        <h3 th:text="${session.loggedInUser}">Employee Name</h3>
-                        <p>Software Engineer</p> <div class="sig-contact">
-                        <div><i class="fas fa-phone"></i> +91 98765 43210</div>
-                        <div><i class="fas fa-envelope"></i> employee@whitecirclegroup.com</div>
-                        <div><i class="fas fa-globe"></i> www.whitecirclegroup.com</div>
+
+                    <div id="signature-box" th:object="${user}" style="font-family: Arial, sans-serif; color: #333;">
+                        <h3 style="color: #1e3a8a; margin-bottom: 5px;" th:text="*{fullName}">[Employee Name Will appear here]</h3>
+                        <p style="margin: 2px 0; font-weight: bold;" th:text="*{designation?.toUpperCase() ?: 'EMPLOYEE'}">[Designation]</p>
+                        <p style="margin: 2px 0;" th:text="*{businessUnit ?: 'General'}">[Department]</p>
+
+                        <div style="margin-top: 10px; font-size: 0.9rem;">
+                            <p style="margin: 2px 0;">
+                                <strong>Mob:</strong> <span th:text="*{mobileNumber}">[Phone]</span>
+                            </p>
+                            <p style="margin: 2px 0;">
+                                <strong>Email:</strong> <a th:href="'mailto:' + *{email}" th:text="*{email}" style="color: #1e3a8a; text-decoration: none;">[Email]</a>
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center mt-3 pt-2 border-top">
+                            <img src="/images/wcg-logo.jpg" alt="Logo" height="40" class="me-2" style="border-radius: 4px;">
+                            <div>
+                                <span class="fw-bold text-dark d-block" style="line-height: 1;">WhiteCircle Group</span>
+                                <small class="text-muted italic" style="font-size: 0.8rem;">"Innovating the Future"</small>
+                            </div>
+                        </div>
                     </div>
 
-                        <div class="company-logo">
-                            <img src="/images/wcg-logo.jpg" alt="WhiteCircle">
-                            <span class="fw-bold text-dark">WhiteCircle Group</span>
-                        </div>
-                        <div class="company-slogan mt-1">"Innovating the Future"</div>
-                    </div>
                 </div>
             </div>
             <button class="btn-copy" onclick="copyAsImage()">
