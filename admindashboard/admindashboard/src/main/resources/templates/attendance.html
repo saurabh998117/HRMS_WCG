@@ -79,11 +79,11 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small fw-bold text-muted">Employee Name</label>
-                    <input type="text" class="form-control bg-light fw-bold" th:value="${user.fullName}" readonly>
+                    <input type="text" id="empName" class="form-control bg-light fw-bold" th:value="${user.fullName}" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small fw-bold text-muted">Employee ID</label>
-                    <input type="text" class="form-control bg-light" th:value="${user.username}" readonly>
+                    <input type="text" id="empId" class="form-control bg-light" th:value="${user.username}" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small fw-bold text-muted">Select Week</label>
@@ -116,9 +116,9 @@
             <div class="d-flex justify-content-between align-items-center p-3 bg-light border-top">
                 <button class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm">Draft</button>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-secondary px-3 fw-bold">Export PDF</button>
-                    <button class="btn btn-outline-primary px-4 fw-bold">Save Draft</button>
-                    <button class="btn btn-primary px-4 fw-bold">Submit Week</button>
+                    <button type="button" class="btn btn-secondary px-3 fw-bold" onclick="exportToPDF()">Export PDF</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="saveDraft()">Save Draft</button>
+                    <button type="button" class="btn btn-primary" onclick="submitWeek()">Submit Week</button>
                 </div>
             </div>
         </div>
@@ -142,6 +142,8 @@
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <script>
     const holidays = { "26-01": "Republic Day", "15-08": "Independence Day", "02-10": "Gandhi Jayanti" };
 
@@ -221,8 +223,110 @@
         document.getElementById('sum-overtime').innerText = Math.max(0, a - p).toFixed(1);
         document.getElementById('sum-leave').innerText = l + (l === 1 ? " Day" : " Days");
     }
-
     document.addEventListener('DOMContentLoaded', updateTableDates);
+
+
+    // SMARTER HELPER: Finds the row first (row-0), then grabs the input inside it!
+    const getValFromRow = (rowId) => {
+        const row = document.getElementById(rowId);
+        if (row) {
+            // Find the number input inside this specific row
+            const input = row.querySelector('input[type="number"]');
+            return input ? (parseFloat(input.value) || 0) : 0;
+        }
+        return 0;
+    };
+
+    // Helper to convert week format
+    function getWeekStartDate(weekInputValue) {
+        if (!weekInputValue) return null;
+        const [year, week] = weekInputValue.split('-W');
+        const simple = new Date(year, 0, 1 + (week - 1) * 7);
+        const dow = simple.getDay();
+        const ISOweekStart = simple;
+        if (dow <= 4) ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+        else ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+        return ISOweekStart.toISOString().split('T')[0];
+    }
+
+    function gatherTimesheetData() {
+        const rawWeek = document.getElementById("weekInput").value;
+        return {
+            weekStartDate: getWeekStartDate(rawWeek),
+            // Now mapping to your specific row IDs!
+            mondayHours: getValFromRow("row-0"),
+            tuesdayHours: getValFromRow("row-1"),
+            wednesdayHours: getValFromRow("row-2"),
+            thursdayHours: getValFromRow("row-3"),
+            fridayHours: getValFromRow("row-4")
+        };
+    }
+
+    // 4. Save Draft (Now accepts a silent flag)
+    async function saveDraft(showAlert = true) {
+        const data = gatherTimesheetData();
+
+        if (!data.weekStartDate) {
+            if (showAlert) alert("Please select a week first!");
+            return null;
+        }
+
+        try {
+            const response = await fetch('/api/timesheet/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) throw new Error(await response.text());
+
+            const savedTimesheet = await response.json();
+
+            // Only show the alert if the user clicked "Save Draft" directly
+            if (showAlert) {
+                alert("Draft Saved Successfully!");
+            }
+            return savedTimesheet;
+
+        } catch (error) {
+            console.error("Error:", error);
+            if (showAlert) alert("Error saving draft: " + error.message);
+            return null;
+        }
+    }
+
+    // 5. Submit Week
+    async function submitWeek() {
+        // Step 1: Ask for confirmation on the main screen
+        const userConfirmed = confirm("Are you sure you want to submit this timesheet? Once submitted, it cannot be edited.");
+
+        if (!userConfirmed) {
+            return; // Stop the process if they click Cancel
+        }
+
+        // Step 2: Save the draft silently (pass 'false' so the draft alert doesn't pop up)
+        const savedSheet = await saveDraft(false);
+
+        if (savedSheet && savedSheet.id) {
+            try {
+                // Step 3: Hit the submit endpoint
+                const response = await fetch(`/api/timesheet/submit/${savedSheet.id}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    // Step 4: Show final success message and reload
+                    alert("Timesheet Submitted successfully for the approval");
+                    window.location.reload();
+                } else {
+                    alert("Submission failed: " + await response.text());
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+    }
+
 </script>
 </body>
 </html>

@@ -280,7 +280,7 @@
                             <small class="text-muted" style="font-size: 0.8rem;">
                                 <i class="far fa-calendar-alt me-1"></i> ${item.weekStartDate} to ${item.weekEndDate}
                                 <span class="mx-2">•</span>
-                                <strong class="text-dark">${item.totalWeekHours || 0} Hrs</strong>
+                                <strong class="text-dark">${item.totalHours || 0} Hrs</strong>
                             </small>
                         </div>
                     </div>
@@ -313,7 +313,13 @@
 
         const userName = item.user ? (item.user.fullName || item.user.username) : "Unknown";
         const userInitials = userName.substring(0,2).toUpperCase();
-        const userRole = item.user && item.user.role ? item.user.role : "Employee";
+        const userRole = item.user && item.user.designation ? item.user.designation : "EMPLOYEE";
+
+        // FIX: Extract the Employee ID safely
+        const empId = item.user && item.user.username ? item.user.username : "N/A";
+
+        // FIX: Look for 'totalHours', not 'totalWeekHours'
+        const totalHrsDisplay = item.totalHours || item.totalHours || 0;
 
         let entriesHtml = `
             <table class="table table-hover table-bordered mt-2 table-sm">
@@ -331,7 +337,7 @@
                 entriesHtml += `
                     <tr>
                         <td class="fw-bold text-secondary small">${e.date}</td>
-                        <td class="small">${e.taskDescription}</td>
+                        <td class="small">${e.taskDescription || 'Regular Work Hours'}</td>
                         <td class="text-center fw-bold small">${e.hours}</td>
                     </tr>`;
             });
@@ -341,42 +347,47 @@
         entriesHtml += '</tbody></table>';
 
         const modalBody = `
-            <div class="modal-user-info">
-                <div class="modal-avatar">${userInitials}</div>
+            <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-weight: bold; font-size: 1.2rem; border: 2px solid #1e3a8a;">
+                    ${userInitials}
+                </div>
                 <div>
-                    <h5 class="mb-0 fw-bold text-dark">${userName}</h5>
-                    <span class="badge bg-secondary" style="font-size: 0.7rem;">${userRole}</span>
+                    <div class="d-flex align-items-center">
+                        <h5 class="mb-0 fw-bold text-dark me-2">${userName}</h5>
+                        <span class="text-muted fw-bold small me-2">${empId}</span>
+                        <span class="badge bg-secondary" style="font-size: 0.7rem; text-transform: uppercase;">${userRole}</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-4 text-center">
                 <div class="col-md-4">
-                    <div class="info-card">
-                        <div class="info-label">Week Start</div>
-                        <div class="info-value text-primary">${item.weekStartDate}</div>
+                    <div class="bg-light rounded p-2 border">
+                        <div class="text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Week Start</div>
+                        <div class="text-primary fw-bold">${item.weekStartDate}</div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="info-card">
-                        <div class="info-label">Week End</div>
-                        <div class="info-value text-primary">${item.weekEndDate}</div>
+                    <div class="bg-light rounded p-2 border">
+                        <div class="text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Week End</div>
+                        <div class="text-primary fw-bold">${item.weekEndDate}</div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="info-card">
-                        <div class="info-label">Total Hours</div>
-                        <div class="info-value text-success">${item.totalWeekHours || 0} Hrs</div>
+                    <div class="bg-light rounded p-2 border">
+                        <div class="text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Total Hours</div>
+                        <div class="text-success fw-bold">${totalHrsDisplay} Hrs</div>
                     </div>
                 </div>
             </div>
 
             ${item.comments ? `
-                <div class="alert alert-warning d-flex align-items-center mb-3 p-2">
-                    <i class="fas fa-comment-dots me-2"></i>
-                    <div class="small"><strong>HR Note:</strong> ${item.comments}</div>
+                <div class="alert alert-warning d-flex align-items-center mb-3 p-2 shadow-sm border-0" style="background-color: #fff3cd;">
+                    <i class="fas fa-comment-dots me-2 text-warning"></i>
+                    <div class="small text-dark"><strong>HR Note:</strong> ${item.comments}</div>
                 </div>` : ''}
 
-            <h6 class="fw-bold text-secondary mb-2 small"><i class="fas fa-calendar-week me-2"></i>Daily Breakdown</h6>
+            <h6 class="fw-bold text-secondary mb-3 small text-uppercase"><i class="fas fa-calendar-week me-2"></i>Daily Breakdown</h6>
             ${entriesHtml}
         `;
 

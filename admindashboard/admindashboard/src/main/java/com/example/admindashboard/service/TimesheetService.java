@@ -30,38 +30,63 @@ public class TimesheetService {
         if (userOpt.isEmpty()) throw new RuntimeException("User not found");
         User user = userOpt.get();
 
-        // Check if a timesheet already exists for this week start date
         List<Timesheet> existingSheets = timesheetRepository.findByUserOrderByWeekStartDateDesc(user);
         Timesheet timesheet = existingSheets.stream()
                 .filter(t -> t.getWeekStartDate().equals(incomingData.getWeekStartDate()))
                 .findFirst()
                 .orElse(new Timesheet());
 
-        // Set Basic Details
         if (timesheet.getId() == null) {
             timesheet.setUser(user);
             timesheet.setWeekStartDate(incomingData.getWeekStartDate());
             timesheet.setWeekEndDate(incomingData.getWeekStartDate().plusDays(6));
-            timesheet.setStatus("Draft");
         }
 
-        // Prevent editing if already submitted
         if ("Submitted".equalsIgnoreCase(timesheet.getStatus()) || "Approved".equalsIgnoreCase(timesheet.getStatus())) {
             throw new RuntimeException("Cannot edit a submitted timesheet!");
         }
+        timesheet.setStatus("Draft");
 
-        // Update Entries
-        // We clear old entries and add new ones to keep it simple (or you can merge)
-        if (timesheet.getEntries() != null) {
+        // 1. Save Flat Hours
+        timesheet.setMondayHours(incomingData.getMondayHours());
+        timesheet.setTuesdayHours(incomingData.getTuesdayHours());
+        timesheet.setWednesdayHours(incomingData.getWednesdayHours());
+        timesheet.setThursdayHours(incomingData.getThursdayHours());
+        timesheet.setFridayHours(incomingData.getFridayHours());
+
+        // 2. FIX: Auto-Calculate Total Hours instantly
+        double total = 0;
+        Double[] dailyHours = {
+                timesheet.getMondayHours(), timesheet.getTuesdayHours(),
+                timesheet.getWednesdayHours(), timesheet.getThursdayHours(), timesheet.getFridayHours()
+        };
+        for (Double hours : dailyHours) {
+            if (hours != null) total += hours;
+        }
+        timesheet.setTotalHours(total);
+
+        // 3. FIX: Auto-Generate "Entries" for the Admin Modal Table
+        List<TimesheetEntry> autoEntries = new java.util.ArrayList<>();
+        java.time.LocalDate start = timesheet.getWeekStartDate();
+
+        for (int i = 0; i < 5; i++) {
+            if (dailyHours[i] != null && dailyHours[i] > 0) {
+                TimesheetEntry entry = new TimesheetEntry();
+                // Assuming your TimesheetEntry model has these standard fields:
+                entry.setDate(start.plusDays(i));
+                entry.setHours(dailyHours[i]);
+                entry.setTaskDescription("Regular Work Hours"); // Default text since we have no task UI yet
+                entry.setTimesheet(timesheet);
+                autoEntries.add(entry);
+            }
+        }
+        // Attach the generated table entries to the timesheet
+        if (timesheet.getEntries() == null) {
+            timesheet.setEntries(new java.util.ArrayList<>());
+        } else {
             timesheet.getEntries().clear();
         }
-        timesheet.setEntries(incomingData.getEntries());
-
-        // Link every entry back to this timesheet (Foreign Key fix)
-        for (TimesheetEntry entry : timesheet.getEntries()) {
-            entry.setTimesheet(timesheet);
-        }
-
+        timesheet.getEntries().addAll(autoEntries);
         return timesheetRepository.save(timesheet);
     }
 
@@ -72,19 +97,30 @@ public class TimesheetService {
 
         Timesheet sheet = sheetOpt.get();
 
-        // Logic: Calculate Total Hours
+        // --- NEW FIX: Calculate Total Hours from flat fields ---
         double totalHours = 0;
-        for (TimesheetEntry entry : sheet.getEntries()) {
-            totalHours += (entry.getHours() != null ? entry.getHours() : 0);
+        totalHours += (sheet.getMondayHours() != null ? sheet.getMondayHours() : 0);
+        totalHours += (sheet.getTuesdayHours() != null ? sheet.getTuesdayHours() : 0);
+        totalHours += (sheet.getWednesdayHours() != null ? sheet.getWednesdayHours() : 0);
+        totalHours += (sheet.getThursdayHours() != null ? sheet.getThursdayHours() : 0);
+        totalHours += (sheet.getFridayHours() != null ? sheet.getFridayHours() : 0);
+
+        // Fallback if flat fields are empty but entries exist
+        if (totalHours == 0 && sheet.getEntries() != null) {
+            for (TimesheetEntry entry : sheet.getEntries()) {
+                totalHours += (entry.getHours() != null ? entry.getHours() : 0);
+            }
         }
+
+        sheet.setTotalHours(totalHours); // Save calculated total back to the database
 
         // Logic: Cannot submit empty sheet
         if (totalHours == 0) {
             return "Error: Cannot submit an empty timesheet (0 hours).";
         }
-
         sheet.setStatus("Submitted");
         timesheetRepository.save(sheet);
+
         String emailBody = "Employee " + sheet.getUser().getUsername() + " has submitted a timesheet for week: " + sheet.getWeekStartDate();
         emailService.sendSimpleEmail("hr-admin@whitecircle.com", "New Timesheet Submission", emailBody);
 
