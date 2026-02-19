@@ -106,7 +106,7 @@ public class DashboardController {
         User currentEmployee = userService.findByUsername(principal.getName());
         model.addAttribute("employee", currentEmployee);
 
-        return "/edit-my-profile"; // Points to the new HTML file
+        return "edit-my-profile"; // Points to the new HTML file
     }
 
     @PostMapping("/employee/profile/edit")
