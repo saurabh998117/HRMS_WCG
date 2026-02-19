@@ -100,6 +100,30 @@ public class DashboardController {
     @GetMapping("/my-profile")
     public String showProfilePage() { return "my-profile"; }
 
+    @GetMapping("/employee/profile/edit")
+    public String showEditMyProfileForm(Principal principal, Model model) {
+        // Fetch the currently logged-in employee using Principal
+        User currentEmployee = userService.findByUsername(principal.getName());
+        model.addAttribute("employee", currentEmployee);
+
+        return "/edit-my-profile"; // Points to the new HTML file
+    }
+
+    @PostMapping("/employee/profile/edit")
+    public String updateMyProfile(@ModelAttribute("employee") User updatedEmployee,
+                                  Principal principal,
+                                  RedirectAttributes redirectAttributes) {
+
+        // Securely update ONLY personal details using the logged-in user's identity
+        userService.updateEmployeePersonalDetails(principal.getName(), updatedEmployee);
+
+        // Send a success message back to the main profile page
+        redirectAttributes.addFlashAttribute("successMessage", "Your personal details have been updated successfully!");
+
+        return "redirect:/employee/profile";
+    }
+
+
     @GetMapping("/conference-room")
     public String showConferencePage() { return "conference-room"; }
 
