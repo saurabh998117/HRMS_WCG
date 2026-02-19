@@ -8,12 +8,13 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
+import com.example.admindashboard.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.example.admindashboard.repository.TimesheetRepository;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class DashboardController {
@@ -24,7 +25,12 @@ public class DashboardController {
     @Autowired
     private TimesheetRepository timesheetRepository;
 
+    @Autowired
+    private UserService userService; // We will create this next
+
+
     // --- 1. LOGIN PAGE MAPPINGS ---
+
     // Maps localhost:8080/ to the login page
     @GetMapping("/")
     public String rootRedirect() {
@@ -38,8 +44,8 @@ public class DashboardController {
     }
 
     // --- 2. POST-LOGIN TRAFFIC COP ---
-    // SecurityConfig sends successful logins here. We check the role and redirect.
 
+    // SecurityConfig sends successful logins here. We check the role and redirect.
     @GetMapping("/default-redirect")
     public String defaultRedirect(HttpServletRequest request) {
         if (request.isUserInRole("ADMIN")) {
@@ -88,7 +94,6 @@ public class DashboardController {
         // 4. Open the profile page
         return "employee-profile";
     }
-
 
     // -- EMPLOYEE PORTAL PAGES --
 
@@ -297,6 +302,24 @@ public class DashboardController {
         model.addAttribute("staffList", staffList);
         model.addAttribute("keyword", keyword); // Keep search term in box
         return "admin-staff";
+    }
+
+    // 1. Show the Edit Form
+    @GetMapping("/admin/staff/edit/{id}")
+    public String showEditEmployeeForm(@PathVariable("id") Long id, Model model) {
+        User employee = userService.findById(id);
+        model.addAttribute("employee", employee);
+        return "admin/edit-employee";
+    }
+
+    // 2. Handle the Form Submission
+    @PostMapping("/admin/staff/edit/{id}")
+    public String updateEmployee(@PathVariable("id") Long id, @ModelAttribute("employee") User updatedEmployee, RedirectAttributes redirectAttributes) {
+        userService.updateEmployeeProfessionalDetails(id, updatedEmployee);
+        // Add the flash message that will survive the redirect
+        redirectAttributes.addFlashAttribute("successMessage", "Employee Details Updated Successfully!");
+
+        return "redirect:/admin/staff";
     }
 
 
