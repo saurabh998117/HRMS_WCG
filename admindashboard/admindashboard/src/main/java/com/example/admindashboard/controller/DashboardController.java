@@ -1,7 +1,9 @@
 package com.example.admindashboard.controller;
 
+import com.example.admindashboard.model.LeaveRequest;
 import com.example.admindashboard.model.Timesheet;
 import com.example.admindashboard.model.User;
+import com.example.admindashboard.repository.LeaveRequestRepository;
 import com.example.admindashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.security.Principal;
@@ -10,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import com.example.admindashboard.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +29,7 @@ public class DashboardController {
     private TimesheetRepository timesheetRepository;
 
     @Autowired
-    private UserService userService; // We will create this next
+    private UserService userService;
 
     // --- 1. LOGIN PAGE MAPPINGS ---
 
@@ -142,7 +145,7 @@ public class DashboardController {
         model.addAttribute("user", currentUser);
         return "apply-leave";
     }
-
+    
     @GetMapping("/attendance")
     public String showAttendanceRegulation(Model model, Principal principal) {
         // 1. Identify the logged-in user
@@ -349,7 +352,5 @@ public class DashboardController {
 
         return "redirect:/admin/staff";
     }
-
-
 
 }
