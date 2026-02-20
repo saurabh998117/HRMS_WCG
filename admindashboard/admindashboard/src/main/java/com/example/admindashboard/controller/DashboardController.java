@@ -28,7 +28,6 @@ public class DashboardController {
     @Autowired
     private UserService userService; // We will create this next
 
-
     // --- 1. LOGIN PAGE MAPPINGS ---
 
     // Maps localhost:8080/ to the login page
@@ -169,18 +168,23 @@ public class DashboardController {
         // Fetch all timesheets for this specific user
         List<Timesheet> userTimesheets = timesheetRepository.findByUser(currentUser);
 
-        // Filter into categories based on status
+        // FIX: Match the exact status strings saved in your database!
         List<Timesheet> pending = userTimesheets.stream()
-                .filter(t -> "PENDING".equalsIgnoreCase(t.getStatus())).toList();
+                .filter(t -> "Submitted".equalsIgnoreCase(t.getStatus())).toList(); // Changed from PENDING
+
         List<Timesheet> approved = userTimesheets.stream()
-                .filter(t -> "APPROVED".equalsIgnoreCase(t.getStatus())).toList();
+                .filter(t -> "Approved".equalsIgnoreCase(t.getStatus())).toList();  // Remains APPROVED
+
         List<Timesheet> denied = userTimesheets.stream()
-                .filter(t -> "DENIED".equalsIgnoreCase(t.getStatus())).toList();
+                .filter(t -> "Rejected".equalsIgnoreCase(t.getStatus())).toList();  // Changed from DENIED
 
         model.addAttribute("pendingList", pending);
         model.addAttribute("approvedList", approved);
         model.addAttribute("deniedList", denied);
-        model.addAttribute("totalCount", userTimesheets.size());
+
+        // Only count the submitted, approved, and rejected ones (ignore "Drafts")
+        int totalRelevantCount = pending.size() + approved.size() + denied.size();
+        model.addAttribute("totalCount", totalRelevantCount);
 
         return "my-approvals";
     }
