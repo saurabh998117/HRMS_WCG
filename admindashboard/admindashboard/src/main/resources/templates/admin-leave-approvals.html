@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Approvals - WhiteCircle Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bs-primary: #1e3a8a;
+            --bg-color: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #334155;
+        }
+
+        /* --- NEW TOP HEADER --- */
+        .top-header-bar {
+            background-color: var(--bs-primary);
+            /* Increased padding to 30px top/bottom to match the height of the Onboard page */
+            padding: 25px 25px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* This ensures perfect vertical middle alignment */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-back {
+            border: 1px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center; /* Keeps the back arrow perfectly aligned with the text */
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            border-color: white;
+        }
+
+        /* --- PAGE INTRO --- */
+        .page-intro {
+            text-align: center;
+            padding: 30px 0 20px;
+        }
+        .page-intro h5 { font-weight: 700; color: #1e293b; margin-bottom: 5px; }
+        .page-intro p { color: #64748b; font-size: 0.9rem; }
+
+        .main-container { max-width: 1100px; margin: 0 auto 40px; padding: 0 20px; }
+
+        /* --- TABS --- */
+        .nav-pills {
+            background: white; padding: 8px; border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: inline-flex; margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        .nav-pills .nav-link {
+            color: #64748b; font-weight: 600; border-radius: 30px;
+            padding: 8px 25px; transition: all 0.3s ease; margin: 0 3px;
+        }
+        .nav-pills .nav-link:hover { background: #f1f5f9; }
+
+        .nav-pills .nav-link#pending-tab.active { background-color: #0d6efd; color: white; box-shadow: 0 4px 6px rgba(13, 110, 253, 0.3); }
+        .nav-pills .nav-link#approved-tab.active { background-color: #198754; color: white; box-shadow: 0 4px 6px rgba(25, 135, 84, 0.3); }
+        .nav-pills .nav-link#rejected-tab.active { background-color: #dc3545; color: white; box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3); }
+
+        .badge-count {
+            background: white; color: #333; padding: 2px 7px;
+            border-radius: 50%; font-size: 0.75rem; margin-left: 8px; font-weight: 700;
+        }
+        .nav-link.active .badge-count { background: rgba(255,255,255,0.25); color: white; }
+
+        /* --- CARDS --- */
+        .approval-card {
+            background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s; border-left: 5px solid transparent;
+        }
+        .approval-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.03); border-color: #cbd5e1; }
+
+        .border-pending { border-left-color: #0d6efd; }
+        .border-approved { border-left-color: #198754; opacity: 0.85; }
+        .border-rejected { border-left-color: #dc3545; opacity: 0.85; }
+
+        .emp-initials { width: 50px; height: 50px; background: #e0e7ff; color: var(--bs-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; margin-right: 15px; }
+        .req-info { flex-grow: 1; }
+        .emp-name { font-weight: 700; color: #1e293b; font-size: 1.1rem; margin-bottom: 2px; }
+        .emp-id { font-size: 0.8rem; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #64748b; margin-left: 8px; }
+        .leave-details { font-size: 0.9rem; color: #475569; margin-top: 5px; }
+        .leave-dates { font-size: 0.85rem; color: #1e3a8a; font-weight: 600; background: #eff6ff; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-top: 8px; }
+
+        .action-group { display: flex; gap: 10px; align-items: center; }
+        .btn-action { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; border: none; }
+        .btn-view { background: #f1f5f9; color: #475569; }
+        .btn-view:hover { background: #e2e8f0; }
+        .btn-approve { background: #dcfce7; color: #16a34a; }
+        .btn-approve:hover { background: #16a34a; color: white; }
+        .btn-deny { background: #fee2e2; color: #dc2626; }
+        .btn-deny:hover { background: #dc2626; color: white; }
+
+        .status-badge { padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+        .bg-approved { background: #dcfce7; color: #15803d; }
+        .bg-denied { background: #fee2e2; color: #b91c1c; }
+    </style>
+</head>
+<body>
+
+<div class="top-header-bar">
+    <div class="header-title">
+        <i class="fas fa-plane-departure me-3"></i> Leave Approvals
+    </div>
+    <a href="/admin/dashboard" class="btn-back">
+        <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="page-intro">
+    <h5>Manage Employee Leave Requests</h5>
+    <p>Review pending applications, approve valid requests, or reject with comments.</p>
+</div>
+
+<div class="main-container">
+
+    <div class="d-flex justify-content-center">
+        <ul class="nav nav-pills" id="approvalTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="pending-tab" data-bs-toggle="pill" data-bs-target="#pending" type="button">
+                    <i class="fas fa-hourglass-half me-2"></i>Pending <span class="badge-count" th:text="${pendingLeaves != null ? pendingLeaves.size() : 0}">0</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="approved-tab" data-bs-toggle="pill" data-bs-target="#approved" type="button">
+                    <i class="fas fa-check-circle me-2"></i>Approved <span class="badge-count" th:text="${approvedLeaves != null ? approvedLeaves.size() : 0}">0</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="rejected-tab" data-bs-toggle="pill" data-bs-target="#rejected" type="button">
+                    <i class="fas fa-times-circle me-2"></i>Rejected <span class="badge-count" th:text="${rejectedLeaves != null ? rejectedLeaves.size() : 0}">0</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content" id="approvalTabsContent">
+
+        <div class="tab-pane fade show active" id="pending" role="tabpanel">
+            <div th:if="${pendingLeaves == null or pendingLeaves.isEmpty()}" class="text-center p-5 bg-white rounded shadow-sm text-muted border">
+                <i class="fas fa-mug-hot fa-3x mb-3 text-light"></i>
+                <h5>All caught up!</h5>
+                <p>There are no pending leave requests to review.</p>
+            </div>
+
+            <div th:each="leave : ${pendingLeaves}" class="approval-card border-pending">
+                <div class="d-flex align-items-center w-100">
+                    <div class="emp-initials"><i class="fas fa-user"></i></div>
+                    <div class="req-info">
+                        <div class="emp-name" th:text="${leave.user.fullName}">Employee Name <span class="emp-id" th:text="${leave.user.username}">EMP000</span></div>
+                        <div class="leave-details">
+                            <strong th:text="${leave.leaveType}">Leave Type</strong> | <span th:text="${leave.leaveMode}">Mode</span> |
+                            <span class="text-dark fw-bold" th:text="${leave.totalDays} + ' Day(s)'">0 Days</span>
+                        </div>
+                        <div class="leave-dates">
+                            <i class="far fa-calendar-alt me-1"></i>
+                            <span th:text="${leave.fromDate}">Start</span> to <span th:text="${leave.toDate}">End</span>
+                        </div>
+                    </div>
+
+                    <div class="action-group">
+                        <button class="btn-action btn-view" data-bs-toggle="modal" th:attr="data-bs-target='#detailsModal'+${leave.id}">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button class="btn-action btn-approve" th:onclick="|approveLeave(${leave.id})|">
+                            <i class="fas fa-check"></i> Approve
+                        </button>
+                        <button class="btn-action btn-deny" th:onclick="|openRejectModal(${leave.id})|">
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="approved" role="tabpanel">
+            <div th:if="${approvedLeaves == null or approvedLeaves.isEmpty()}" class="text-center p-5 bg-white rounded shadow-sm text-muted border">
+                <p>No approved leaves found.</p>
+            </div>
+
+            <div th:each="leave : ${approvedLeaves}" class="approval-card border-approved">
+                <div class="d-flex align-items-center w-100">
+                    <div class="emp-initials bg-success text-white"><i class="fas fa-check"></i></div>
+                    <div class="req-info">
+                        <div class="emp-name" th:text="${leave.user.fullName}">Employee Name <span class="emp-id" th:text="${leave.user.username}">EMP000</span></div>
+                        <div class="leave-details">
+                            <strong th:text="${leave.leaveType}">Leave Type</strong> | <span th:text="${leave.totalDays} + ' Day(s)'">0 Days</span>
+                        </div>
+                        <div class="leave-dates text-success bg-success bg-opacity-10">
+                            <span th:text="${leave.fromDate}">Start</span> to <span th:text="${leave.toDate}">End</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn-action btn-view" data-bs-toggle="modal" th:attr="data-bs-target='#detailsModal'+${leave.id}">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <span class="status-badge bg-approved">Approved</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="rejected" role="tabpanel">
+            <div th:if="${rejectedLeaves == null or rejectedLeaves.isEmpty()}" class="text-center p-5 bg-white rounded shadow-sm text-muted border">
+                <p>No rejected leaves found.</p>
+            </div>
+
+            <div th:each="leave : ${rejectedLeaves}" class="approval-card border-rejected">
+                <div class="d-flex align-items-center w-100">
+                    <div class="emp-initials bg-danger text-white"><i class="fas fa-times"></i></div>
+                    <div class="req-info">
+                        <div class="emp-name" th:text="${leave.user.fullName}">Employee Name <span class="emp-id" th:text="${leave.user.username}">EMP000</span></div>
+                        <div class="leave-details">
+                            <strong th:text="${leave.leaveType}">Leave Type</strong>
+                        </div>
+                        <div class="text-danger small mt-2 fw-bold" th:text="'Note: ' + ${leave.adminComments != null ? leave.adminComments : 'No reason provided'}">Reason</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn-action btn-view" data-bs-toggle="modal" th:attr="data-bs-target='#detailsModal'+${leave.id}">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <span class="status-badge bg-denied">Rejected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<th:block th:each="leaveList : ${ {pendingLeaves, approvedLeaves, rejectedLeaves} }">
+    <div th:each="leave : ${leaveList}" class="modal fade" th:id="'detailsModal'+${leave.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 550px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden; min-height: 500px; display: flex; flex-direction: column;">
+
+                <div class="modal-header bg-primary text-white" style="padding: 20px 25px;">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-file-signature me-2"></i>Official Leave Request</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4 flex-grow-1 d-flex flex-column justify-content-center">
+
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-2 border-bottom pb-1">Applicant Information</h6>
+                        <div class="row mb-1">
+                            <div class="col-5 text-muted small fw-bold">Employee Name:</div>
+                            <div class="col-7 text-dark fw-bold" th:text="${leave.user.fullName}">Name</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-5 text-muted small fw-bold">Employee ID:</div>
+                            <div class="col-7 text-secondary small fw-bold" th:text="${leave.user.username}">EMP000</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-2 border-bottom pb-1">Leave Details</h6>
+                        <div class="row mb-1">
+                            <div class="col-5 text-muted small fw-bold">Leave Type:</div>
+                            <div class="col-7 text-dark fw-bold" th:text="${leave.leaveType}">Type</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-5 text-muted small fw-bold">Availability Status:</div>
+                            <div class="col-7">
+                                <span class="badge bg-light text-dark border border-secondary-subtle"
+                                      th:text="${leave.leaveMode == 'Offline' ? 'Unavailable (Offline)' : 'Available Remotely (Online)'}">
+                                    Status
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-uppercase text-muted fw-bold small mb-2 border-bottom pb-1">Leave Duration</h6>
+                        <div class="row mb-1">
+                            <div class="col-5 text-muted small fw-bold">Date Range:</div>
+                            <div class="col-7 text-dark fw-bold">
+                                <span th:text="${#temporals.format(leave.fromDate, 'dd-MM-yyyy')}">dd-mm-yyyy</span>
+                                <span class="text-muted mx-1">to</span>
+                                <span th:text="${#temporals.format(leave.toDate, 'dd-MM-yyyy')}">dd-mm-yyyy</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-5 text-muted small fw-bold">Total Days:</div>
+                            <div class="col-7 text-primary fw-bold" th:text="${leave.totalDays} + ' Day(s)'">0 Days</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h6 class="text-uppercase text-muted fw-bold small mb-2 border-bottom pb-1">Reason for Leave</h6>
+                        <div class="bg-light p-3 rounded border border-light-subtle text-dark shadow-sm" style="font-size: 0.95rem; white-space: pre-wrap;" th:text="${leave.reason}">
+                            Detailed reason provided by the employee...
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer bg-light border-0" style="padding: 15px 25px;">
+                    <button type="button" class="btn btn-secondary px-4 fw-bold rounded-pill" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold">Reject Leave Request</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="rejectLeaveId">
+                <label class="form-label fw-bold text-muted small">Reason for Rejection (Optional HR Note)</label>
+                <textarea id="adminNote" class="form-control" rows="3" placeholder="Provide a reason to the employee..."></textarea>
+            </div>
+            <div class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger px-4" onclick="submitRejection()">Confirm Rejection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 1. Approve Leave Action
+    async function approveLeave(id) {
+        if (!confirm("Are you sure you want to approve this leave request?")) return;
+
+        try {
+            const response = await fetch(`/api/admin/leave/approve/${id}`, { method: 'POST' });
+            if (response.ok) {
+                alert("Leave Approved successfully!");
+                window.location.reload();
+            } else {
+                alert("Error approving leave: " + await response.text());
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Connection error.");
+        }
+    }
+
+    // 2. Open Reject Modal
+    function openRejectModal(id) {
+        document.getElementById("rejectLeaveId").value = id;
+        document.getElementById("adminNote").value = ""; // Clear old notes
+        const rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
+        rejectModal.show();
+    }
+
+    // 3. Submit Rejection
+    async function submitRejection() {
+        const id = document.getElementById("rejectLeaveId").value;
+        const note = document.getElementById("adminNote").value;
+
+        const url = `/api/admin/leave/reject/${id}?note=${encodeURIComponent(note)}`;
+
+        try {
+            const response = await fetch(url, { method: 'POST' });
+            if (response.ok) {
+                alert("Leave Request Rejected.");
+                window.location.reload();
+            } else {
+                alert("Error rejecting leave: " + await response.text());
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Connection error.");
+        }
+    }
+</script>
+
+</body>
+</html>
