@@ -1,8 +1,10 @@
 package com.example.admindashboard.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -52,9 +54,9 @@ public class Timesheet {
     private Double fridayHours;
     private String fridayTask;
 
-    @OneToMany(mappedBy = "timesheet", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("timesheet")
-    private List<TimesheetEntry> entries;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "timesheet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TimesheetEntry> entries = new ArrayList<>();
 
     // --- GETTERS AND SETTERS ---
     public Long getId() { return id; }

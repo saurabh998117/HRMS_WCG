@@ -46,6 +46,8 @@ public class TimesheetService {
             throw new RuntimeException("Cannot edit a submitted timesheet!");
         }
         timesheet.setStatus("Draft");
+        timesheet.setComments(null);
+        timesheet.setRejectionReason(null);
 
         // 1. Save Flat Hours
         timesheet.setMondayHours(incomingData.getMondayHours());
@@ -54,7 +56,7 @@ public class TimesheetService {
         timesheet.setThursdayHours(incomingData.getThursdayHours());
         timesheet.setFridayHours(incomingData.getFridayHours());
 
-        // 2. FIX: Auto-Calculate Total Hours instantly
+        // 2. Auto-Calculate Total Hours instantly
         double total = 0;
         Double[] dailyHours = {
                 timesheet.getMondayHours(), timesheet.getTuesdayHours(),
@@ -65,29 +67,30 @@ public class TimesheetService {
         }
         timesheet.setTotalHours(total);
 
-        // 3. FIX: Auto-Generate "Entries" for the Admin Modal Table
-        List<TimesheetEntry> autoEntries = new java.util.ArrayList<>();
+        // 3. FIX: Smart-Update "Entries" for the Admin Modal Table (No Duplicates!)
         java.time.LocalDate start = timesheet.getWeekStartDate();
 
-        for (int i = 0; i < 5; i++) {
-            if (dailyHours[i] != null && dailyHours[i] > 0) {
-                TimesheetEntry entry = new TimesheetEntry();
-                // Assuming your TimesheetEntry model has these standard fields:
-                entry.setDate(start.plusDays(i));
-                entry.setHours(dailyHours[i]);
-                entry.setTaskDescription("Regular Work Hours"); // Default text since we have no task UI yet
-                entry.setTimesheet(timesheet);
-                autoEntries.add(entry);
-            }
-        }
-        // Attach the generated table entries to the timesheet
         if (timesheet.getEntries() == null) {
             timesheet.setEntries(new java.util.ArrayList<>());
         } else {
             timesheet.getEntries().clear();
         }
-        timesheet.getEntries().addAll(autoEntries);
+
+        // Reuse the 'start' variable defined at the top of the method
+        for (int i = 0; i < 5; i++) {
+            Double currentHours = dailyHours[i];
+            if (currentHours != null && currentHours > 0) {
+                TimesheetEntry newEntry = new TimesheetEntry();
+                // Using 'start' which was already defined earlier in the method
+                newEntry.setDate(start.plusDays(i));
+                newEntry.setHours(currentHours);
+                newEntry.setTaskDescription("Regular Work Hours");
+                newEntry.setTimesheet(timesheet);
+                timesheet.getEntries().add(newEntry);
+            }
+        }
         return timesheetRepository.save(timesheet);
+
     }
 
     // 2. Submit Timesheet (Finalize)

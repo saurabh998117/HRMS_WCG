@@ -1,5 +1,6 @@
 package com.example.admindashboard.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -12,7 +13,8 @@ public class TimesheetEntry {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "timesheet_id", nullable = false)
+    @JoinColumn(name = "timesheet_id")
+    @JsonBackReference
     private Timesheet timesheet;
 
     private LocalDate date;
