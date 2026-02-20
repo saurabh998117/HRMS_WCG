@@ -152,7 +152,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Leave Type <span class="text-danger">*</span></label>
-                                <select class="form-select" required>
+                                <select class="form-select" id="leaveType" required>
                                     <option selected disabled>Select Type...</option>
                                     <option value="Casual">Casual Leave (CL)</option>
                                     <option value="Sick">Sick Leave (SL)</option>
@@ -164,8 +164,8 @@
                                 <label class="form-label">Leave Mode <span class="text-danger">*</span></label>
                                 <select class="form-select" id="leaveMode" onchange="toggleModeFields()" required>
                                     <option selected disabled>Select Mode...</option>
-                                    <option value="Offline">Offline (Unavailable)</option>
-                                    <option value="Online">Online (Available Remotely)</option>
+                                    <option value="Offline">Unavailable (Offline) </option>
+                                    <option value="Online">Available Remotely (Online)</option>
                                 </select>
                             </div>
 
@@ -202,12 +202,12 @@
 
                             <div class="col-12">
                                 <label class="form-label">Reason for Leave <span class="text-danger">*</span></label>
-                                <textarea class="form-control" rows="3" placeholder="Please describe the reason clearly..."></textarea>
+                                <textarea class="form-control" id="leaveReason" rows="3" placeholder="Please describe the reason clearly..."></textarea>
                             </div>
 
                             <div class="col-12 text-end mt-4">
-                                <button type="button" class="btn btn-light me-2 border">Cancel</button>
-                                <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                <button type="button" class="btn btn-light me-2 border" onclick="cancelLeaveRequest()">Cancel</button>
+                                <button type="button" class="btn btn-primary px-4 fw-bold" onclick="submitLeaveRequest()">
                                     <i class="fas fa-paper-plane me-2"></i>Submit Request
                                 </button>
                             </div>
@@ -346,6 +346,95 @@
             totalInput.value = diffDays;
         } else {
             totalInput.value = "0";
+        }
+    }
+
+    // 3. Submit Request Logic
+    async function submitLeaveRequest() {
+        // Grab values from the DOM
+        const leaveType = document.getElementById("leaveType").value;
+        const leaveMode = document.getElementById("leaveMode").value;
+        const fromDate = document.getElementById("fromDate").value;
+        const toDate = document.getElementById("toDate").value;
+        const totalDays = document.getElementById("totalDays").value;
+        const reason = document.getElementById("leaveReason").value;
+
+        // Basic validation before asking for confirmation
+        if (!leaveType || !leaveMode || !fromDate || !toDate || !reason) {
+            alert("Please fill in all required fields before submitting.");
+            return;
+        }
+
+        // NEW: Step 1 - Ask for confirmation
+        // If they click "Cancel" on the popup, the function stops and lets them edit the form
+        const isConfirmed = confirm("Are you sure you want to Submit this Leave Request?\n\nClick 'Cancel' if you need to edit your request details.");
+
+        if (!isConfirmed) {
+            return; // Stops the submission process, leaving the form exactly as it is
+        }
+
+        // Build the JSON payload
+        const payload = {
+            leaveType: leaveType,
+            leaveMode: leaveMode,
+            fromDate: fromDate,
+            toDate: toDate,
+            totalDays: parseFloat(totalDays) || 0,
+            reason: reason
+        };
+
+        try {
+            const response = await fetch('/api/leave/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                // NEW: Step 2 - Success message exactly as requested
+                alert("Leave Request Submitted successfully for approval");
+                window.location.reload(); // Reload to clear form and update 'Recent Status'
+            } else {
+                const errorText = await response.text();
+                alert("Failed to submit request: " + errorText);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while submitting.");
+        }
+    }
+
+    // 4. Cancel Logic (With Confirmation)
+    function cancelLeaveRequest() {
+        const isConfirmed = confirm("Are you sure you want to cancel this request? All entered details will be cleared.");
+
+        if (isConfirmed) {
+            // Option 1: If your inputs are inside a <form> tag, this single line clears EVERYTHING instantly.
+            const form = document.querySelector('form');
+            if (form) {
+                form.reset();
+            }
+
+            // Option 2: Bulletproof manual clearing just in case there is no <form> tag.
+            // The "?" ensures that if your HTML ID is slightly different, the page won't crash!
+            const typeDropdown = document.getElementById("leaveType");
+            if (typeDropdown) typeDropdown.selectedIndex = 0;
+
+            const modeDropdown = document.getElementById("leaveMode");
+            if (modeDropdown) modeDropdown.selectedIndex = 0;
+
+            const fromDate = document.getElementById("fromDate");
+            if (fromDate) fromDate.value = "";
+
+            const toDate = document.getElementById("toDate");
+            if (toDate) toDate.value = "";
+
+            const totalDays = document.getElementById("totalDays");
+            if (totalDays) totalDays.value = "0";
+
+            // Make sure the ID on your textarea is exactly id="leaveReason"
+            const leaveReason = document.getElementById("leaveReason");
+            if (leaveReason) leaveReason.value = "";
         }
     }
 </script>
