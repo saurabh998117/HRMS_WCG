@@ -159,13 +159,15 @@ public class DashboardController {
                     return true;
                 }
             }
-
             // If none of the above are true, hide the meeting!
             return false;
         }).toList();
 
         // 4. Pass ONLY the filtered list to the HTML page
         model.addAttribute("meetings", myMeetings);
+
+        // Pass the user object to the page so we can check their role
+        model.addAttribute("user", currentUser);
 
         return "conference-room";
     }
