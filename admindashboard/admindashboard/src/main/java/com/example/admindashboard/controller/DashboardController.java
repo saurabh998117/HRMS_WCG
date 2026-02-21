@@ -1,6 +1,7 @@
 package com.example.admindashboard.controller;
 
 import com.example.admindashboard.model.LeaveRequest;
+import com.example.admindashboard.model.Meeting;
 import com.example.admindashboard.model.Timesheet;
 import com.example.admindashboard.model.User;
 import com.example.admindashboard.repository.LeaveRequestRepository;
@@ -30,6 +31,9 @@ public class DashboardController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private com.example.admindashboard.repository.MeetingRepository meetingRepository;
 
     // --- 1. LOGIN PAGE MAPPINGS ---
 
@@ -125,10 +129,46 @@ public class DashboardController {
         return "redirect:/employee/profile";
     }
 
-
+    //
     @GetMapping("/conference-room")
-    public String showConferencePage() { return "conference-room"; }
+    public String showConferencePage(Model model, Principal principal) {
+        // 1. Identify exactly who is looking at the page
+        String currentUsername = principal.getName();
+        User currentUser = userRepository.findByUsername(currentUsername).orElse(null);
 
+        // 2. Fetch ALL upcoming meetings from the database
+        List<Meeting> allUpcomingMeetings = meetingRepository
+                .findByMeetingDateGreaterThanEqualOrderByMeetingDateAscStartTimeAsc(LocalDate.now());
+
+        // 3. FILTER LOGIC: Keep only the meetings that belong to this user
+        List<Meeting> myMeetings = allUpcomingMeetings.stream().filter(meeting -> {
+
+            // Condition A: I am the person who booked the meeting
+            if (meeting.getOrganizer().getUsername().equals(currentUsername)) {
+                return true;
+            }
+
+            // Condition B: I was specifically invited (My ID is in the text box)
+            if (meeting.getSpecificEmployeeIds() != null && meeting.getSpecificEmployeeIds().contains(currentUsername)) {
+                return true;
+            }
+
+            // Condition C: It is a "Team" meeting, and we share the same Department/Business Unit
+            if ("TEAM".equals(meeting.getParticipantType()) && currentUser != null && currentUser.getBusinessUnit() != null) {
+                if (currentUser.getBusinessUnit().equals(meeting.getOrganizer().getBusinessUnit())) {
+                    return true;
+                }
+            }
+
+            // If none of the above are true, hide the meeting!
+            return false;
+        }).toList();
+
+        // 4. Pass ONLY the filtered list to the HTML page
+        model.addAttribute("meetings", myMeetings);
+
+        return "conference-room";
+    }
 
     @GetMapping("/apply-leave")
     public String showApplyLeavePage(Model model, Principal principal) {

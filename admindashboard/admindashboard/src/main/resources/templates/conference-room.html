@@ -61,11 +61,27 @@
 
         /* Time Column */
         .time-col {
-            min-width: 100px; text-align: right; border-right: 1px solid #e2e8f0; padding-right: 20px;
-            display: flex; flex-direction: column; justify-content: center;
+            min-width: 100px;
+            text-align: center;
+            border-right: 1px solid #e2e8f0;
+            padding-right: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        .time-start { font-size: 1.1rem; font-weight: 800; color: var(--bs-primary); }
-        .time-end { font-size: 0.85rem; color: #64748b; }
+        .time-start, .time-end {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--bs-primary);
+            line-height: 1.1;
+        }
+        .time-separator {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 600;
+            margin: 3px 0;
+        }
 
         /* Details Column */
         .details-col { flex-grow: 1; }
@@ -78,11 +94,9 @@
             font-size: 0.8rem; font-weight: 600; color: #475569; display: inline-flex; align-items: center;
         }
         .loc-badge i { margin-right: 6px; }
-
-        /* Platform Colors */
-        .teams-badge { background: #e0e7ff; color: #4338ca; } /* Purple */
-        .zoom-badge { background: #dbeafe; color: #1e40af; }  /* Blue */
-        .offline-badge { background: #fef3c7; color: #b45309; } /* Amber */
+        .teams-badge { background: #e0e7ff; color: #4338ca; }
+        .zoom-badge { background: #dbeafe; color: #1e40af; }
+        .offline-badge { background: #fef3c7; color: #b45309; }
 
         /* Join Button */
         .btn-join {
@@ -92,94 +106,71 @@
         }
         .btn-join:hover { background: #2563eb; color: white; }
 
-        /* --- RIGHT SIDE: BOOKING FORM --- */
+        /* --- RIGHT SIDE: BOOKING FORM ENHANCEMENTS --- */
         .book-card {
             background: white; border-radius: 16px; overflow: hidden;
-            border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Slightly enhanced base shadow */
+            transition: all 0.3s ease; /* Smooth transition added */
+        }
+        .book-card:hover {
+            box-shadow: 0 12px 30px rgba(30, 58, 138, 0.15); /* Richer shadow on hover */
+            transform: translateY(-4px); /* Slight lift effect */
         }
         .book-header {
-            background: var(--bs-primary); color: white; padding: 15px 20px;
+            background: #1e3a8a; color: white; padding: 15px 20px;
             font-weight: 700; text-transform: uppercase; font-size: 0.9rem;
         }
-        .form-floating > .form-control { height: 3.5rem; }
-        .form-floating > label { padding: 1rem 0.75rem; }
+        .form-floating > .form-control { height: 3.0rem; }
+        .form-floating > label { padding: 0.9rem 0.65rem; }
 
-        /* --- UPDATED TIME COLUMN (Smaller Fonts) --- */
-        .time-col {
-            min-width: 100px;
-            text-align: center;
-            border-right: 1px solid #e2e8f0;
-            padding-right: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .time-start, .time-end {
-            font-size: 0.9rem; /* Previously 1.1rem */
-            font-weight: 700;
-            color: var(--bs-primary);
-            line-height: 1.1;
-        }
-        .time-separator {
-            font-size: 0.7rem; /* Previously 0.75rem */
-            color: #94a3b8;
-            font-weight: 600;
-            margin: 3px 0;
-        }
-
-        /* --- NEW: COPY LINK BOX --- */
-        .meeting-link-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 4px 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
-            color: #64748b;
-            max-width: 250px;
-        }
-        .link-text {
-            white-space: nowrap;
+        /* --- NEW: SHINY NAVY BLUE BUTTON --- */
+        .btn-navy {
+            background-color: var(--bs-primary);
+            color: white;
+            position: relative;
             overflow: hidden;
-            text-overflow: ellipsis;
+            border: none;
+            transition: all 0.3s ease;
         }
-        .btn-copy {
-            background: none; border: none; color: var(--bs-primary);
-            cursor: pointer; padding: 0; font-size: 0.9rem;
+        .btn-navy:hover {
+            background-color: #172554;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(30, 58, 138, 0.3);
+            color: white;
         }
-        .btn-copy:hover { color: #1e40af; }
+        /* The Shine Animation Layer */
+        .btn-navy::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: all 0.6s ease;
+        }
+        .btn-navy:hover::after {
+            left: 150%;
+            transition: all 0.6s ease;
+        }
 
-        /* --- NEW: Hover effect for Meeting Link Box --- */
+        /* --- COPY LINK BOX --- */
         .meeting-link-box {
-            /* Existing styles... keep these */
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            /* ... other existing styles ... */
-
-            /* ADD THIS LINE for smooth color transition */
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+            padding: 4px 10px; display: flex; align-items: center; gap: 8px;
+            font-size: 0.8rem; color: #64748b; max-width: 250px;
             transition: all 0.2s ease;
         }
-
-        /* The Hover State */
         .meeting-link-box:hover {
-            background-color: #eef2ff; /* Very light blue background */
-            border-color: var(--bs-primary); /* Navy blue border */
-            cursor: pointer; /* Turns cursor into a hand */
-            box-shadow: 0 2px 5px rgba(30, 58, 138, 0.1);
+            background-color: #eef2ff; border-color: var(--bs-primary);
+            cursor: pointer; box-shadow: 0 2px 5px rgba(30, 58, 138, 0.1);
         }
-
-        /* Ensure the inner copy button icon turns blue on hover too */
-        .meeting-link-box:hover .btn-copy {
-             color: var(--bs-primary);
-        }
+        .link-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-copy { background: none; border: none; color: var(--bs-primary); cursor: pointer; padding: 0; font-size: 0.9rem; }
+        .meeting-link-box:hover .btn-copy { color: var(--bs-primary); }
 
     </style>
 </head>
 <body>
-
 <header class="top-header">
     <div class="page-title">
         <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 60px; border-radius: 6px;">
@@ -195,12 +186,12 @@
 <div class="main-container">
     <div class="row g-4">
 
-        <div class="col-lg-8">
+        <div class="col-lg-7">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold text-dark mb-0"><i class="fas fa-calendar-day text-primary me-2"></i>Today's Agenda</h4>
+                <h4 class="fw-bold text-dark mb-0"><i class="fas fa-calendar-day text-primary me-2"></i>Upcoming Agenda</h4>
                 <div class="d-flex gap-2">
-                    <input type="date" class="form-control" value="2026-01-28">
+                    <input type="date" class="form-control" value="2026-02-21">
                     <select class="form-select w-auto">
                         <option>All Rooms</option>
                         <option>Board Room A</option>
@@ -209,150 +200,143 @@
                 </div>
             </div>
 
-            <div class="meeting-card">
+            <div th:if="${meetings == null or meetings.isEmpty()}" class="text-center p-5 bg-white rounded shadow-sm text-muted border">
+                <i class="fas fa-mug-hot fa-3x mb-3 text-light"></i>
+                <h5>No Meetings Scheduled</h5>
+                <p>The conference room is currently open and available.</p>
+            </div>
+
+            <div th:each="meeting : ${meetings}" class="meeting-card">
+
                 <div class="time-col">
-                    <div class="time-start">10:00 AM</div>
+                    <div class="time-start" th:text="${#temporals.format(meeting.startTime, 'hh:mm a')}">10:00 AM</div>
                     <div class="time-separator">- to -</div>
-                    <div class="time-end">11:30 AM</div>
+                    <div class="time-end" th:text="${#temporals.format(meeting.endTime, 'hh:mm a')}">11:30 AM</div>
+                    <div class="mt-2" style="font-size: 0.75rem; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 3px 8px; border-radius: 4px; display: inline-block;" th:text="${#temporals.format(meeting.meetingDate, 'dd MMM yyyy')}">Date</div>
                 </div>
+
                 <div class="details-col">
                     <div class="d-flex justify-content-between">
-                        <div class="meeting-title">Q1 Financial Review</div>
+                        <div class="meeting-title" th:text="${meeting.meetingTitle}">Meeting Title</div>
                         <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 d-flex align-items-center">Confirmed</span>
                     </div>
-                    <div class="meeting-organizer"><i class="fas fa-user-circle me-1"></i> Organizer: Amit Sharma</div>
+                    <div class="meeting-organizer">
+                        <i class="fas fa-user-circle me-1"></i> Organizer: <span th:text="${meeting.organizer.fullName}">Name</span>
+                    </div>
 
-                    <div class="d-flex gap-2 mt-3">
-                            <span class="loc-badge offline-badge">
-                                <i class="fas fa-building"></i> Offline Mode
-                            </span>
+                    <div th:if="${meeting.meetingMode == 'Offline'}" class="d-flex gap-2 mt-3">
+                        <span class="loc-badge offline-badge">
+                            <i class="fas fa-building"></i> Offline Mode
+                        </span>
                         <span class="loc-badge">
-                                <i class="fas fa-map-marker-alt"></i> Board Room A (Floor 2)
-                            </span>
+                            <i class="fas fa-map-marker-alt"></i> <span th:text="${meeting.platform}">Office (In-Person)</span>
+                        </span>
                     </div>
-                </div>
-            </div>
 
-            <div class="meeting-card">
-                <div class="time-col">
-                    <div class="time-start">01:00 PM</div>
-                    <div class="time-separator">- to -</div>
-                    <div class="time-end">02:00 PM</div>
-                </div>
-                <div class="details-col">
-                    <div class="d-flex justify-content-between">
-                        <div class="meeting-title">Client Project Kickoff</div>
-                        <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 d-flex align-items-center">Confirmed</span>
-                    </div>
-                    <div class="meeting-organizer"><i class="fas fa-user-circle me-1"></i> Organizer: Abhisek Sharma</div>
+                    <div th:if="${meeting.meetingMode == 'Online'}" class="d-flex flex-wrap align-items-center gap-3 mt-3">
 
-                    <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
-                            <span class="loc-badge teams-badge">
-                                <i class="fas fa-video"></i> MS Teams
-                            </span>
+                        <span th:if="${meeting.platform == 'Microsoft Teams'}" class="loc-badge teams-badge">
+                            <i class="fas fa-video"></i> MS Teams
+                        </span>
+                        <span th:if="${meeting.platform == 'Zoom'}" class="loc-badge zoom-badge">
+                            <i class="fas fa-video"></i> Zoom
+                        </span>
+                        <span th:if="${meeting.platform == 'Google Meet'}" class="loc-badge" style="background: #e3f2fd; color: #1976d2;">
+                            <i class="fas fa-video"></i> Google Meet
+                        </span>
+
                         <a href="#" class="btn-join">
                             <i class="fas fa-video me-1"></i> Join
                         </a>
 
                         <div class="meeting-link-box" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Link">
                             <i class="fas fa-link small"></i>
-                            <span class="link-text">teams.microsoft.com/l/meet...</span>
+                            <span class="link-text" th:text="'Click to copy ' + ${meeting.platform} + ' meeting...'">teams.microsoft.com/l/meet...</span>
                             <button class="btn-copy"><i class="far fa-copy"></i></button>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="meeting-card">
-                <div class="time-col">
-                    <div class="time-start">03:30 PM</div>
-                    <div class="time-separator">- to -</div>
-                    <div class="time-end">04:00 PM</div>
-                </div>
-                <div class="details-col">
-                    <div class="d-flex justify-content-between">
-                        <div class="meeting-title">Dev Team Sync</div>
-                        <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 d-flex align-items-center">Confirmed</span>
-                    </div>
-                    <div class="meeting-organizer"><i class="fas fa-user-circle me-1"></i> Organizer: Rahul Deshmukh</div>
-
-                    <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
-                            <span class="loc-badge zoom-badge">
-                                <i class="fas fa-video"></i> Zoom
-                            </span>
-                        <a href="#" class="btn-join">
-                            <i class="fas fa-video me-1"></i> Join
-                        </a>
-
-                        <div class="meeting-link-box" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Link">
-                            <i class="fas fa-link small"></i>
-                            <span class="link-text">zoom.us/j/555111222</span>
-                            <button class="btn-copy"><i class="far fa-copy"></i></button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
         </div>
 
-        <div class="col-lg-4">
-            <div class="book-card position-sticky" style="top: 140px;">
+        <div class="col-lg-5">
+            <div class="book-card position-sticky bg-white rounded border" style="top: 140px; overflow: hidden;">
                 <div class="book-header">
                     <i class="fas fa-plus-circle me-2"></i> Quick Book Room
                 </div>
                 <div class="p-4">
-                    <form>
+                    <form id="bookingForm">
+
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="title" placeholder="Title">
-                            <label for="title">Meeting Title</label>
+                            <input type="text" class="form-control" id="meetingTitle" placeholder="Title" required>
+                            <label for="meetingTitle">Meeting Title*</label>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <select class="form-select" id="mode" onchange="toggleLocation()">
+                            <select class="form-select" id="meetingMode" onchange="toggleLocation()" required>
                                 <option value="Online">Online (Virtual)</option>
                                 <option value="Offline">Offline (In-Office)</option>
                             </select>
-                            <label for="mode">Meeting Mode</label>
+                            <label for="meetingMode">Meeting Mode</label>
                         </div>
 
                         <div class="form-floating mb-3" id="platformField">
-                            <select class="form-select">
-                                <option>Microsoft Teams</option>
-                                <option>Google Meet</option>
-                                <option>Zoom</option>
+                            <select class="form-select" id="platform">
+                                <option value="Microsoft Teams">Microsoft Teams</option>
+                                <option value="Google Meet">Google Meet</option>
+                                <option value="Zoom">Zoom</option>
                             </select>
                             <label>Platform</label>
                         </div>
 
                         <div class="form-floating mb-3 d-none" id="roomField">
-                            <select class="form-select">
-                                <option>Board Room A (Floor 2)</option>
-                                <option>Conf Hall 1 (Floor 1)</option>
+                            <select class="form-select" id="roomName">
+                                <option value="Board Room A (Floor 2)">Board Room A (Floor 2)</option>
+                                <option value="Conf Hall 1 (Floor 1)">Conf Hall 1 (Floor 1)</option>
+                                <option value="Meeting Room B (Floor 3)">Meeting Room B (Floor 3)</option>
                             </select>
                             <label>Select Room</label>
                         </div>
 
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="participantType" onchange="toggleSpecificInput()" required>
+                                <option selected disabled value="">Select whom to invite...</option>
+                                <option value="TEAM">My Team</option>
+                                <option value="SPECIFIC_EMP">Specific Employee(s)</option>
+                                <option value="SPECIFIC_ADM">A specific Admin(s)</option>
+                            </select>
+                            <label for="participantType" class="text-muted fw-bold">Invite Participants <span class="text-danger">*</span></label>
+                        </div>
+
+                        <div class="form-floating d-none" id="specificEmployeeField" style="margin-bottom: 2px;">
+                            <input type="text" class="form-control" id="specificEmployeeIds" placeholder="Enter IDs">
+                            <label for="specificEmployeeIds" class="text-muted fw-bold" id="specificInputLabel">Enter IDs</label>
+                        </div>
+                        <small class="text-muted d-none mb-3 px-2" id="specificEmployeeHelp" style="font-size: 0.75rem;">Separate multiple IDs with a comma</small>
+
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <div class="form-floating">
-                                    <input type="time" class="form-control" id="start">
-                                    <label for="start">Start Time</label>
+                                    <input type="time" class="form-control" id="startTime" required>
+                                    <label for="startTime">Start Time</label>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-floating">
-                                    <input type="time" class="form-control" id="end">
-                                    <label for="end">End Time</label>
+                                    <input type="time" class="form-control" id="endTime" required>
+                                    <label for="endTime">End Time</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-floating mb-4">
-                            <input type="date" class="form-control">
-                            <label>Date</label>
+                            <input type="date" class="form-control" id="meetingDate" required>
+                            <label for="meetingDate">Date</label>
                         </div>
 
-                        <button class="btn btn-primary w-100 fw-bold py-3 rounded-pill shadow-sm">
+                        <button type="button" class="btn btn-navy w-100 fw-bold py-3 rounded-pill" onclick="submitMeeting()">
                             <i class="fas fa-calendar-check me-2"></i> Confirm Booking
                         </button>
                     </form>
@@ -365,7 +349,8 @@
 
 <script>
     function toggleLocation() {
-        const mode = document.getElementById('mode').value;
+        // Fixed: Grab the value from the exact correct ID
+        const mode = document.getElementById('meetingMode').value;
         const platformField = document.getElementById('platformField');
         const roomField = document.getElementById('roomField');
 
@@ -377,16 +362,94 @@
             roomField.classList.remove('d-none');
         }
     }
+
+    function toggleSpecificInput() {
+        const participantType = document.getElementById("participantType").value;
+        const specificField = document.getElementById("specificEmployeeField");
+        const specificHelp = document.getElementById("specificEmployeeHelp");
+        const specificLabel = document.getElementById("specificInputLabel");
+        const specificInput = document.getElementById("specificEmployeeIds");
+
+        if (participantType === "SPECIFIC_EMP") {
+            specificField.classList.remove("d-none");
+            specificHelp.classList.remove("d-none");
+            specificLabel.innerText = "Enter Employee IDs";
+            specificInput.placeholder = "Enter Employee IDs";
+        } else if (participantType === "SPECIFIC_ADM") {
+            specificField.classList.remove("d-none");
+            specificHelp.classList.remove("d-none");
+            specificLabel.innerText = "Enter Admin IDs";
+            specificInput.placeholder = "Enter Admin IDs";
+        } else {
+            specificField.classList.add("d-none");
+            specificHelp.classList.add("d-none");
+            specificInput.value = "";
+        }
+    }
+
+    async function submitMeeting() {
+        // Determine whether to save the Platform (Online) or the Room (Offline)
+        const currentMode = document.getElementById("meetingMode").value;
+        let platformOrRoomValue = "";
+
+        if (currentMode === 'Online') {
+            platformOrRoomValue = document.getElementById("platform").value;
+        } else {
+            platformOrRoomValue = document.getElementById("roomName").value;
+        }
+
+        const payload = {
+            meetingTitle: document.getElementById("meetingTitle").value,
+            meetingMode: currentMode,
+            platform: platformOrRoomValue, // Saves the room name perfectly if offline!
+            participantType: document.getElementById("participantType").value,
+            specificEmployeeIds: document.getElementById("specificEmployeeIds").value,
+            startTime: document.getElementById("startTime").value,
+            endTime: document.getElementById("endTime").value,
+            meetingDate: document.getElementById("meetingDate").value
+        };
+
+        if (!payload.meetingTitle || !payload.meetingDate || !payload.startTime || !payload.endTime || !payload.participantType) {
+            alert("Please fill out all required fields before confirming.");
+            return;
+        }
+
+        // NEW: Confirmation popup before sending to backend
+        const isConfirmed = confirm("Are you sure you want to confirm this meeting booking?\nAn alert will be placed on the agenda of the invited participants.");
+
+        if (!isConfirmed) {
+            return; // Stops submission if they click cancel
+        }
+
+        try {
+            const response = await fetch('/api/meetings/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert("Meeting Details are successfully sent to participants.");
+                window.location.reload();
+            } else {
+                const errorText = await response.text();
+                alert("Booking Failed: " + errorText);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("A connection error occurred.");
+        }
+    }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-    <script>
-        document.addEventListener("DOMContentLoaded", function(){
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            })
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
+    });
 </script>
 </body>
 </html>
