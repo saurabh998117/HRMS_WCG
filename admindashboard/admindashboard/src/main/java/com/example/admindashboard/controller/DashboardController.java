@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.example.admindashboard.repository.TimesheetRepository;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.example.admindashboard.model.EmployeeProfile;
 
 @Controller
 public class DashboardController {
@@ -88,16 +89,9 @@ public class DashboardController {
     // --- EMPLOYEE PROFILE SECTION ---
     @GetMapping("/employee/profile")
     public String viewProfile(Model model, Principal principal) {
-        // 1. Get the username of the person currently logged in
         String username = principal.getName();
-
-        // 2. Find their data in the database
         User user = userRepository.findByUsername(username).orElse(null);
-
-        // 3. Send this data to the HTML page
         model.addAttribute("user", user);
-
-        // 4. Open the profile page
         return "employee-profile";
     }
 
@@ -105,6 +99,78 @@ public class DashboardController {
 
     @GetMapping("/my-profile")
     public String showProfilePage() { return "my-profile"; }
+
+    @GetMapping("/employee/full-profile")
+    public String showFullProfile(Model model, Principal principal) {
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getEmployeeProfile() == null) {
+            user.setEmployeeProfile(new EmployeeProfile());
+        }
+        model.addAttribute("user", user);
+        return "full-profile";
+    }
+
+    @PostMapping("/employee/profile/save-detailed")
+    public String saveDetailedProfile(
+            @ModelAttribute EmployeeProfile formProfile,
+            // Capture User-Entity fields manually
+            @RequestParam(value = "mobileNumber", required = false) String mobileNumber,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "country", required = false) String country,
+            @RequestParam(value = "experience", required = false) String experience,
+            @RequestParam(value = "joiningDate", required = false) LocalDate joiningDate,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 1. UPDATE USER ENTITY FIELDS
+        if (mobileNumber != null) user.setMobileNumber(mobileNumber.trim());
+        if (city != null) user.setCity(city.trim());
+        if (country != null) user.setCountry(country.trim());
+        if (experience != null) user.setExperience(experience.trim());
+        if (joiningDate != null) user.setJoiningDate(joiningDate);
+
+        // 2. FETCH OR CREATE PROFILE
+        EmployeeProfile existingProfile = user.getEmployeeProfile();
+        if (existingProfile == null) {
+            existingProfile = new EmployeeProfile();
+            existingProfile.setUser(user);
+        }
+
+        // 3. UPDATE PROFILE FIELDS (Personal, Education, Emergency)
+        existingProfile.setDob(formProfile.getDob());
+        existingProfile.setGender(formProfile.getGender());
+        existingProfile.setPersonalEmail(formProfile.getPersonalEmail());
+        existingProfile.setAadharNo(formProfile.getAadharNo());
+        existingProfile.setPanNo(formProfile.getPanNo());
+        existingProfile.setPermanentAddress(formProfile.getPermanentAddress());
+        existingProfile.setWorkingAddress(formProfile.getWorkingAddress()); // Make sure to save this!
+
+        existingProfile.setQual1Title(formProfile.getQual1Title());
+        existingProfile.setQual1Inst(formProfile.getQual1Inst());
+        existingProfile.setQual1Year(formProfile.getQual1Year());
+        existingProfile.setQual2Title(formProfile.getQual2Title());
+        existingProfile.setQual2Inst(formProfile.getQual2Inst());
+        existingProfile.setQual2Year(formProfile.getQual2Year());
+
+        existingProfile.setEmergencyContactName(formProfile.getEmergencyContactName());
+        existingProfile.setRelationWithEmployee(formProfile.getRelationWithEmployee());
+        existingProfile.setEmergencyPhone(formProfile.getEmergencyPhone());
+        existingProfile.setAltMobile(formProfile.getAltMobile());
+
+        // 4. SAVE
+        user.setEmployeeProfile(existingProfile);
+        userRepository.save(user);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Master Profile updated successfully!");
+        return "redirect:/employee/full-profile";
+    }
 
     @GetMapping("/employee/profile/edit")
     public String showEditMyProfileForm(Principal principal, Model model) {
