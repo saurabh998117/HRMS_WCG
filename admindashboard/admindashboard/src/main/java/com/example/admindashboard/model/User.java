@@ -1,4 +1,5 @@
 package com.example.admindashboard.model;
+import com.example.admindashboard.model.EmployeeProfile;
 
 import java.time.LocalDate;
 import jakarta.persistence.*;
@@ -10,6 +11,17 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private EmployeeProfile employeeProfile;
+
+    public EmployeeProfile getEmployeeProfile() {
+        return employeeProfile;
+    }
+
+    public void setEmployeeProfile(EmployeeProfile employeeProfile) {
+        this.employeeProfile = employeeProfile;
+    }
 
     // --- LOGIN CREDENTIALS ---
     @Column(unique = true, nullable = false)
