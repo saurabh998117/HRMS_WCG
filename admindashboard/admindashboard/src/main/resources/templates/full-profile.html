@@ -7,47 +7,149 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --navy: #1e3a8a; --light-blue: #f0f4f8; --border-color: #e2e8f0; }
-        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding-top: 100px; }
-
-        .master-nav {
-            position: fixed; top: 0; left: 0; right: 0; height: 85px; background: white;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 40px; z-index: 1000; border-bottom: 2px solid var(--navy);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        :root {
+            --navy: #1e3a8a;
+            --navy-hover: #172a6b;
+            --light-blue: #f0f4f8;
+            --border-color: #e2e8f0;
+            --bg-color: #f4f7f9; /* Slightly richer off-white for depth */
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
         }
-        .progress-container { width: 250px; margin-right: 20px; text-align: right; }
-        .progress { height: 8px; border-radius: 10px; background: #e2e8f0; margin-top: 4px; }
-        .progress-bar { background: var(--navy); transition: width 0.5s ease; }
 
-        /* Card Styles */
-        .section-card { background: white; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 24px; overflow: hidden; }
-        .section-header { background: var(--navy); color: white; padding: 12px 20px; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.5px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-top: 120px;
+            letter-spacing: -0.01em; /* Modern typography touch */
+        }
+
+        /* Glassmorphism Navbar (Premium Blur Effect) */
+        .master-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 85px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 1000;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        /* Progress Bar Enhancements */
+        .progress-container { width: 260px; margin-right: 25px; text-align: right; }
+        .progress-track {
+            width: 160px; height: 8px; /* Slimmer, sleeker */
+            background-color: #e2e8f0; border-radius: 20px;
+            overflow: hidden; float: right; margin-top: 6px;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 20px;
+            background: linear-gradient(90deg, var(--navy) 0%, #3b82f6 100%);
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1), background 0.5s ease;
+        }
+
+        /* Modern Card Design */
+        .section-card {
+            background: white; border-radius: 16px;
+            border: 1px solid var(--border-color); margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            overflow: hidden; /* <-- THIS FIXES THE CORNER OVERLAP */
+        }
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .section-header {
+            background: var(--navy); color: white;
+            padding: 16px 20px; font-weight: 600; font-size: 0.95rem;
+            letter-spacing: 0.5px; border-bottom: none;
+            display: flex; align-items: center; text-transform: uppercase;
+        }
+        /* Make the icons light blue so they pop against the dark navy background */
+        .section-header i { color: #93c5fd; margin-right: 12px; font-size: 1.15rem; }
+
         .section-body { padding: 20px; }
 
-        /* Field Styles */
-        .info-box { background: #fdfdfd; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 15px; margin-bottom: 15px; height: 100%; min-height: 65px; }
-        .info-label { color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; display: block; }
-        .info-value { color: #1e293b; font-size: 0.95rem; font-weight: 500; word-break: break-word; min-height: 20px; }
+        /* Header Main Card - Premium Gradient */
+        .profile-main-card {
+            background: linear-gradient(to right, #ffffff, #f8fafc);
+            border-radius: 16px; border: 1px solid #e2e8f0;
+            border-left: 6px solid var(--navy); padding: 30px; margin-bottom: 30px;
+            box-shadow: var(--card-shadow); transition: all 0.3s ease;
+        }
+        .profile-main-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow-hover); }
 
-        /* Edit Mode Styles */
-        .editable-field { display: none; width: 100%; border: 1px solid #3b82f6; border-radius: 4px; padding: 4px 8px; font-size: 0.9rem; }
-        /* Only show editable fields inside cards marked as editable-card when in editing mode */
+        /* Avatar Enhancements */
+        .avatar-circle {
+            width: 95px; height: 95px;
+            background: linear-gradient(135deg, var(--navy) 0%, #3b82f6 100%);
+            color: white; font-size: 2.5rem; display: flex; align-items: center;
+            justify-content: center; border-radius: 50%; font-weight: 700;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            border: 4px solid white;
+        }
+
+        /* Information Grid Boxes - Soft & Interactive */
+        .info-box {
+            background: #fdfdfd; border: 1px solid #f8fafc;
+            border-radius: 10px; padding: 12px 16px; margin-bottom: 12px;
+            height: 100%; min-height: 70px; transition: all 0.2s ease;
+        }
+        .info-box:hover { background: #f8fafc; border-color: #e2e8f0; }
+
+        /* Professional Typography for Labels/Values */
+        .info-label { color: var(--text-muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; display: block; }
+        .info-value { color: var(--text-main); font-size: 0.95rem; font-weight: 500; word-break: break-word; }
+
+        /* Edit Mode Input Styling (SaaS style) */
+        .editable-field {
+            display: none; width: 100%;
+            border: 1px solid #cbd5e1; border-radius: 6px;
+            padding: 8px 12px; font-size: 0.95rem; color: var(--text-main);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fff;
+        }
+        .editable-field:focus {
+            outline: none; border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
         .editing .editable-card .editable-field { display: block; }
         .editing .editable-card .info-value-text { display: none; }
 
-        /* UPDATED: Changed from yellow to light gray/blue for a cleaner look */
-        .bg-pending { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
-
-        /* Header Card Specifics */
-        .profile-main-card { background: white; border-radius: 15px; border: 1px solid #d1d5db; border-left: 8px solid var(--navy); padding: 25px; margin-bottom: 30px; }
-        .avatar-circle { width: 90px; height: 90px; background: var(--navy); color: white; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; }
-
+        /* Highlight missing fields with a subtle left-border indicator */
+        .bg-pending { background-color: #f8fafc !important; border-left: 3px solid #94a3b8 !important; }
         .info-value-text:empty::before { content: "\200b"; }
 
-        /* UPDATED: Back Button Style */
-        .btn-back { background-color: var(--navy); color: white; font-weight: 600; padding: 8px 20px; border-radius: 50px; text-decoration: none; display: flex; align-items: center; transition: background 0.2s; }
-        .btn-back:hover { background-color: #162c6b; color: white; }
+        /* Button Enhancements */
+        .btn-primary { background: var(--navy); border: none; box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2); transition: all 0.2s; }
+        .btn-primary:hover { background: var(--navy-hover); transform: translateY(-1px); box-shadow: 0 6px 8px -1px rgba(30, 58, 138, 0.3); }
+
+        .btn-success { background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); border: none; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.2); }
+        .btn-success:hover { background: linear-gradient(135deg, #15803d 0%, #16a34a 100%); transform: translateY(-1px); }
+
+        /* Sleeker Back Button - Restored to Solid Navy */
+        .btn-back {
+            background-color: var(--navy); color: white;
+            font-weight: 600; padding: 8px 20px; border-radius: 10px;
+            border: none; text-decoration: none; display: flex;
+            align-items: center; transition: all 0.2s; box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+        }
+        .btn-back:hover {
+            background-color: var(--navy-hover); color: white;
+            transform: translateY(-1px); box-shadow: 0 4px 6px rgba(30, 58, 138, 0.3);
+        }
+
+        /* Modern Status Badge */
+        .badge.bg-success { background-color: #dcfce7 !important; color: #166534 !important; font-weight: 700; padding: 0.6em 1.2em; border-radius: 8px; border: 1px solid #bbf7d0; }
     </style>
 </head>
 <body>
@@ -55,13 +157,13 @@
 <nav class="master-nav">
     <div class="d-flex align-items-center">
         <img src="/images/wcg-logo.jpg" alt="Logo" height="65" class="me-3">
-        <h4 class="fw-bold m-0" style="color: var(--navy)">MASTER PROFILE PAGE</h4>
+        <h4 class="fw-bold m-0" style="color: var(--navy)">MY PROFILE PAGE</h4>
     </div>
 
     <div class="d-flex align-items-center">
         <div class="progress-container d-none d-lg-block">
-            <span class="small fw-bold text-muted">Profile: <span id="percentLabel" class="text-primary">0%</span> Complete</span>
-            <div class="progress"><div class="progress-bar" id="completionBar" style="width: 0%"></div></div>
+            <span class="small fw-bold text-muted d-block mb-1">Profile: <span id="percentLabel" class="text-primary">0%</span> Complete</span>
+            <div class="progress-track"><div class="progress-fill" id="completionBar" style="width: 0%"></div></div>
         </div>
         <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" id="editToggleBtn" onclick="toggleEditMode()">
             <i class="fas fa-user-edit me-2"></i>Complete Profile
@@ -129,7 +231,10 @@
                                     <label class="info-label">Personal Email</label>
                                     <div class="info-value">
                                         <span class="info-value-text" th:text="${user.employeeProfile?.personalEmail}"></span>
-                                        <input type="email" name="personalEmail" class="editable-field" th:value="${user.employeeProfile?.personalEmail}">
+                                        <input type="email" name="personalEmail" class="editable-field"
+                                               th:value="${user.employeeProfile?.personalEmail}"
+                                               pattern=".*@gmail\.com$"
+                                               title="Email must end with @gmail.com">
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +256,7 @@
                                     <label class="info-label">Date of Birth</label>
                                     <div class="info-value">
                                         <span class="info-value-text" th:text="${user.employeeProfile?.dob}"></span>
-                                        <input type="date" name="dob" class="editable-field" th:value="${user.employeeProfile?.dob}">
+                                        <input type="date" name="dob" class="editable-field" th:value="${user.employeeProfile?.dob}" max="9999-12-31">
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +265,10 @@
                                     <label class="info-label">Aadhar Card No.</label>
                                     <div class="info-value">
                                         <span class="info-value-text" th:text="${user.employeeProfile?.aadharNo}"></span>
-                                        <input type="text" name="aadharNo" class="editable-field" th:value="${user.employeeProfile?.aadharNo}">
+                                        <input type="text" name="aadharNo" class="editable-field"
+                                               th:value="${user.employeeProfile?.aadharNo}"
+                                               pattern="\d{12}" maxlength="12"
+                                               title="Aadhar Card must be exactly 12 digits (e.g., 123456789012)">
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +277,10 @@
                                     <label class="info-label">PAN Card No.</label>
                                     <div class="info-value">
                                         <span class="info-value-text text-uppercase" th:text="${user.employeeProfile?.panNo}"></span>
-                                        <input type="text" name="panNo" class="editable-field text-uppercase" th:value="${user.employeeProfile?.panNo}">
+                                        <input type="text" name="panNo" class="editable-field text-uppercase"
+                                               th:value="${user.employeeProfile?.panNo}"
+                                               pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}" maxlength="10"
+                                               title="PAN must be 5 letters, 4 digits, 1 letter (e.g., ABCDE1234F)">
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +334,6 @@
             </div>
 
             <div class="col-lg-4">
-
                 <div class="section-card editable-card">
                     <div class="section-header"><i class="fas fa-briefcase me-2"></i> WORK DETAILS</div>
                     <div class="section-body">
@@ -231,7 +341,7 @@
                             <label class="info-label">Date of Joining</label>
                             <div class="info-value">
                                 <span class="info-value-text" th:text="${user.joiningDate}"></span>
-                                <input type="date" name="joiningDate" class="editable-field" th:value="${user.joiningDate}">
+                                <input type="date" name="joiningDate" class="editable-field" th:value="${user.joiningDate}" max="9999-12-31">
                             </div>
                         </div>
                         <div class="info-box mb-3">
@@ -254,7 +364,7 @@
                                     <label class="info-label">City</label>
                                     <div class="info-value">
                                         <span class="info-value-text" th:text="${user.city}"></span>
-                                        <input type="text" name="city" class="editable-field" th:value="${user.city}">
+                                        <input type="text" name="city" class="editable-field" th:value="${user.city}" placeholder="e.g., Nagpur">
                                     </div>
                                 </div>
                             </div>
@@ -263,7 +373,7 @@
                                     <label class="info-label">State/Country</label>
                                     <div class="info-value">
                                         <span class="info-value-text" th:text="${user.country}"></span>
-                                        <input type="text" name="country" class="editable-field" th:value="${user.country}">
+                                        <input type="text" name="country" class="editable-field" th:value="${user.country}" placeholder="e.g., Maharashtra, India">
                                     </div>
                                 </div>
                             </div>
@@ -322,6 +432,7 @@
     function toggleEditMode() {
         const body = document.body;
         const btn = document.getElementById('editToggleBtn');
+        const form = document.getElementById('masterProfileForm');
 
         if (!body.classList.contains('editing')) {
             // Enter Edit Mode
@@ -329,41 +440,46 @@
             btn.innerHTML = '<i class="fas fa-save me-2"></i>Save Master Profile';
             btn.className = "btn btn-success rounded-pill px-4 fw-bold shadow";
 
-            // Highlight empty fields with the new gray/blue color
+            // Highlight empty fields
             document.querySelectorAll('.editable-card .info-value-text').forEach(span => {
                 if (span.innerText.trim() === "") {
                     span.closest('.info-box').classList.add('bg-pending');
                 }
             });
         } else {
-            // Submit the Form
-            document.getElementById('masterProfileForm').submit();
+            // reportValidity() triggers the red HTML error popups if pattern rules fail
+            if (form.reportValidity()) {
+                form.submit();
+            }
         }
     }
 
     function calculateCompletion() {
-        // Only target fields that are inside editable cards
         const textFields = document.querySelectorAll('.editable-card .info-value-text');
         if (textFields.length === 0) return;
 
         let filled = 0;
         textFields.forEach(f => {
-            if(f.innerText.trim() !== "") {
-                filled++;
-            }
+            if(f.innerText.trim() !== "") filled++;
         });
 
         let percent = Math.round((filled / textFields.length) * 100);
-        document.getElementById('completionBar').style.width = percent + '%';
-        document.getElementById('percentLabel').innerText = percent + '%';
+        const bar = document.getElementById('completionBar');
+        const label = document.getElementById('percentLabel');
+
+        bar.style.width = percent + '%';
+        label.innerText = percent + '%';
 
         if(percent === 100) {
-             document.getElementById('completionBar').classList.replace('bg-primary', 'bg-success');
-        } else {
-             document.getElementById('completionBar').classList.replace('bg-success', 'bg-primary');
+             bar.style.background = 'linear-gradient(90deg, #166534 0%, #22c55e 100%)';
+             label.classList.replace('text-primary', 'text-success');
         }
     }
-    window.onload = calculateCompletion;
+
+    // Run when page loads
+    window.onload = function() {
+        calculateCompletion();
+    };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
