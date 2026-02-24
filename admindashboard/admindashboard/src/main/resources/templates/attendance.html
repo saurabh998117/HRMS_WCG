@@ -58,6 +58,35 @@
         .sum-item:last-child { border-right: none; }
         .sum-val { font-size: 1.25rem; font-weight: 800; color: #1e3a8a; }
         .sum-lbl { font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; }
+
+        /* --- SHINING BUTTON ANIMATION --- */
+        .btn-navy-shine {
+            background-color: var(--bs-primary);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-navy-shine:hover {
+            background-color: #172a6b;
+            color: white;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.4);
+        }
+        .btn-navy-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -60%;
+            width: 20%; height: 200%;
+            background: rgba(255,255,255,0.3);
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { left: -60%; }
+            20% { left: 120%; }
+            100% { left: 120%; }
+        }
     </style>
 </head>
 <body>
@@ -75,29 +104,22 @@
 
 <div class="main-container">
     <div id="view-dashboard">
-        <div class="feature-card border-navy p-4">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">Employee Name</label>
-                    <input type="text" id="empName" class="form-control bg-light fw-bold" th:value="${user.fullName}" readonly>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">Employee ID</label>
-                    <input type="text" id="empId" class="form-control bg-light" th:value="${user.username}" readonly>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">Select Week</label>
-                    <input type="week" class="form-control" id="weekInput" th:value="${currentWeek}" onchange="updateTableDates()">
-                    <small id="weekRangeDisplay" class="text-primary fw-bold" style="font-size: 0.7rem;">Select a week to update table</small>
-                </div>
-            </div>
-        </div>
+        <input type="hidden" id="empName" th:value="${user.fullName}">
+        <input type="hidden" id="empId" th:value="${user.username}">
 
-        <div class="feature-card mb-0">
-            <div class="card-header-light p-3 border-bottom d-flex justify-content-between">
-                <h6 class="fw-bold m-0">Weekly Timesheet</h6>
-                <small class="text-muted">Enter hours in decimal format (e.g. 8.5)</small>
+        <div class="feature-card border-navy mb-0">
+            <div class="card-header-light p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
+                <div>
+                    <h4 class="fw-bold m-0 text-navy" style="color: var(--bs-primary);">Weekly Timesheet</h4>
+                    <small class="text-muted">Enter hours in decimal format (e.g. 8.5)</small>
+                </div>
+
+                <div style="width: 250px;">
+                    <label class="form-label small fw-bold text-muted mb-1">Select Week</label>
+                    <input type="week" class="form-control form-control-sm border-primary shadow-sm" id="weekInput" th:value="${currentWeek}" onchange="updateTableDates()">
+                </div>
             </div>
+
             <div class="table-responsive">
                 <table class="table attendance-table mb-0">
                     <thead class="bg-navy-header">
@@ -113,12 +135,11 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center p-3 bg-light border-top">
-                <button class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm">Draft</button>
+            <div class="d-flex justify-content-end align-items-center p-3 bg-light border-top">
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-secondary px-3 fw-bold" onclick="exportToPDF()">Export PDF</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="saveDraft()">Save Draft</button>
-                    <button type="button" class="btn btn-primary" onclick="submitWeek()">Submit Week</button>
+                    <button type="button" class="btn btn-outline-primary fw-bold" onclick="saveDraft()">Save Draft</button>
+                    <button type="button" class="btn btn-navy-shine fw-bold px-4" onclick="submitWeek()">Submit Week</button>
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 package com.example.admindashboard.model;
 import com.example.admindashboard.model.EmployeeProfile;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import jakarta.persistence.*;
@@ -13,6 +14,7 @@ public class User {
     private Long id;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private EmployeeProfile employeeProfile;
 
     public EmployeeProfile getEmployeeProfile() {
