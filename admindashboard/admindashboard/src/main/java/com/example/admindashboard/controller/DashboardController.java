@@ -332,6 +332,11 @@ public class DashboardController {
     @GetMapping("/payroll")
     public String showPayrollPage() { return "payroll"; }
 
+    @GetMapping("/employee/my-timesheets")
+    public String showMyTimesheets() {
+        return "my-timesheets"; // Looks for my-timesheets.html
+    }
+
 
 
     // -- CLIENT PORTAL PAGES --

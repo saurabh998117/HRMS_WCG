@@ -1,5 +1,6 @@
 package com.example.admindashboard.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -17,6 +18,7 @@ public class Timesheet {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     @JsonIgnoreProperties({"password", "timesheets", "roles", "attendance", "hibernateLazyInitializer", "handler"})
     private User user;
 
