@@ -407,6 +407,14 @@
         const alertBox = document.querySelector('.alert-danger');
         if(alertBox) alertBox.style.display = 'none';
     });
+
+
+    // Force all date inputs to have a maximum year of 9999 (4 digits)
+    document.querySelectorAll('input[type="date"]').forEach(function(dateInput) {
+        if (!dateInput.getAttribute('max')) {
+            dateInput.setAttribute('max', '9999-12-31');
+        }
+    });
 </script>
 
 </body>
