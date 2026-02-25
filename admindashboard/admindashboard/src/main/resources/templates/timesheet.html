@@ -103,83 +103,89 @@
             text-align: center; padding: 8px; font-weight: 600; color: #64748b; font-size: 0.8rem;
         }
 
+        /* --- CLASSY MINIMALIST CALENDAR DAYS --- */
         .cal-day {
-            /* CHANGED: Reduced height from 80px to 60px */
-            min-height: 60px;
-            padding: 5px 8px;
-            border-right: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9;
-            position: relative; transition: background 0.2s;
-            display: flex; flex-direction: column;
-        }
-        .cal-day:hover { background: #f8fafc; }
-
-        .day-num { font-weight: 600; font-size: 0.85rem; color: #334155; }
-        .day-badge {
-            margin-top: auto; font-size: 0.65rem; padding: 1px 4px; border-radius: 3px; display: inline-block; align-self: flex-start;
-        }
-        .badge-filled { background: #dcfce7; color: #166534; }
-        .badge-draft { background: #fef3c7; color: #92400e; }
-        .current-day { background-color: #eff6ff; } /* Highlight for today */
-
-        /* --- 3. RECENT LIST UPDATES --- */
-        .recent-card {
-            background: white;
-            border: 1.5px solid var(--bs-primary);
-            border-radius: 16px;
-            overflow: hidden;
-            height: 100%;
-            /* Removed generic hover-card class from HTML to stop whole card hover */
-        }
-
-        /* NEW: Header matches Calendar style */
-        .recent-header {
-            background: var(--bs-primary);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .view-all-link {
-            font-size: 0.85rem;
-            color: #bfdbfe; /* Lighter blue text */
-            text-decoration: none;
-            font-weight: 600;
-            position: relative;
-        }
-
-        /* Underline effect on hover */
-        .view-all-link:hover {
-            color: white;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-        }
-
-        .recent-item {
-            padding: 15px 20px;
+            min-height: 90px; /* Good height for breathing room */
+            padding: 12px;
+            border-right: 1px solid #f1f5f9;
             border-bottom: 1px solid #f1f5f9;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
-            cursor: pointer;
+            flex-direction: column;
+            background-color: white;
+            transition: all 0.2s ease;
+            position: relative;
         }
-        /* Only rows hover, not the whole container */
+        .cal-day:hover { background-color: #f8fafc; }
+
+        /* The Date Number - prominent but clean */
+        .day-num {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: #334155; /* Dark slate gray */
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        /* The Status Text container */
+        .day-info {
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex; align-items: center;
+        }
+
+        /* Typography-based Status Styles */
+        .info-present {
+            color: var(--bs-primary); /* Navy theme color */
+        }
+        .info-absent {
+            color: #dc2626; /* Professional muted red */
+        }
+        .info-off {
+            color: #94a3b8; /* Subtle gray */
+            font-weight: 500;
+        }
+
+        /* Tiny icons next to text */
+        .info-icon { margin-right: 5px; font-size: 0.8rem; opacity: 0.8; }
+
+        /* Today Highlight - Cleaner Navy accents */
+        .current-day {
+            background-color: #f0f5ff !important; /* Very subtle navy tint */
+            box-shadow: inset 0 0 0 2px var(--bs-primary); /* Inner navy border */
+            z-index: 5;
+        }
+        .current-day .day-num { color: var(--bs-primary); }
+
+        /* --- RESTORED: RECENT TIMECARDS CSS --- */
+        .recent-card {
+            background: white; border: 1.5px solid var(--bs-primary);
+            border-radius: 16px; overflow: hidden; height: 100%;
+        }
+        .recent-header {
+            background: var(--bs-primary); color: white; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .view-all-link {
+            font-size: 0.85rem; color: #bfdbfe; text-decoration: none; font-weight: 600;
+        }
+        .view-all-link:hover {
+            color: white; text-decoration: underline; text-underline-offset: 4px;
+        }
+        .recent-item {
+            padding: 15px 20px; border-bottom: 1px solid #f1f5f9; display: flex;
+            justify-content: space-between; align-items: center; transition: background 0.2s; cursor: pointer;
+        }
         .recent-item:hover { background: #f8fafc; }
         .recent-item:last-child { border-bottom: none; }
 
-        /* --- TODAY HIGHLIGHT UPDATE --- */
-        .current-day {
-            background-color: #e0f2fe; /* Distinct light blue background */
-            border: 2px solid var(--bs-primary) !important; /* Navy border */
-            z-index: 5; /* Brings it above neighbors */
-        }
-        .current-day .day-num {
-            color: var(--bs-primary);
-            font-weight: 800;
-            font-size: 1.1rem; /* Larger font */
-        }
+        .ri-date { font-weight: 600; color: #1e293b; font-size: 0.95rem; }
+        .ri-hours { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+
+        /* RESTORED: Status Pills */
+        .status-pill { padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
+        .st-approved { background: #dcfce7; color: #15803d; }
+        .st-submitted { background: #e0e7ff; color: #3730a3; }
+        .st-draft { background: #fff7ed; color: #c2410c; }
 
         /* --- CLICK EFFECT FOR TOP CARDS --- */
         .action-card:active {
@@ -237,7 +243,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="action-card hover-card ac-report">
+            <div class="action-card hover-card ac-report" onclick="window.location.href='/employee/my-timesheets'">
                 <div class="ac-icon"><i class="fas fa-file-invoice"></i></div>
                 <div>
                     <h5 class="fw-bold text-dark mb-1">Timesheet Report</h5>
@@ -321,21 +327,59 @@
 
 <script>
     let currentDate = new Date(); // Start with today
+    let timesheetDataMap = {}; // Stores { "2026-02-23": 8.5 }
 
+    // 1. Fetch Real Data from Database
+    async function fetchTimesheetData() {
+        try {
+            const response = await fetch('/api/timesheet/my-history');
+            if (response.ok) {
+                const allTimesheets = await response.json();
+
+                // Map the Monday-Friday hours to specific dates
+                allTimesheets.forEach(ts => {
+                    if (!ts.weekStartDate) return;
+
+                    // Parse date safely to avoid timezone shifts
+                    const [y, m, d] = ts.weekStartDate.split('-');
+                    const weekStart = new Date(y, m - 1, d);
+
+                    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+                    days.forEach((dayPrefix, index) => {
+                        const date = new Date(weekStart);
+                        date.setDate(weekStart.getDate() + index);
+
+                        // Format as YYYY-MM-DD for easy lookup
+                        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+                        // Save the hours (if multiple timesheets exist for the week, it saves the latest)
+                        timesheetDataMap[dateString] = ts[`${dayPrefix}Hours`] || 0;
+                    });
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching timesheets:", error);
+        }
+        // Render calendar AFTER data is loaded
+        renderCalendar();
+    }
+
+    // 2. Render the Calendar
     function renderCalendar() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-        // Update Header
         document.getElementById('monthYearDisplay').innerHTML = `<i class="fas fa-calendar-alt me-2"></i> ${monthNames[month]} ${year}`;
 
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
         const totalDays = lastDay.getDate();
-        const startDayIndex = firstDay.getDay(); // 0 (Sun) to 6 (Sat)
+        const startDayIndex = firstDay.getDay();
+
+        // Reset time to midnight for accurate "past vs future" checking
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
         let html = '';
 
@@ -346,50 +390,54 @@
 
         // Days 1 to Total
         for (let day = 1; day <= totalDays; day++) {
-            // Check if it's today
-            const isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+            const currentLoopDate = new Date(year, month, day);
+            const isToday = (currentLoopDate.getTime() === today.getTime());
             const dayClass = isToday ? 'cal-day current-day' : 'cal-day';
+            const dayOfWeek = currentLoopDate.getDay();
 
-            // Add dummy data for visuals (just an example of logic)
-            let badge = '';
-            const dayOfWeek = new Date(year, month, day).getDay();
+            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-            // Add "8h" badge for weekdays in the past
-            if (dayOfWeek !== 0 && dayOfWeek !== 6 && day < today.getDate()) {
-                badge = `<span class="day-badge badge-filled">8h</span>`;
-            } else if (isToday) {
-                badge = `<span class="day-badge badge-draft">Draft</span>`;
+            // Default empty content
+            let dayContent = `<span class="day-num">${day}</span>`;
+
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                // Saturday & Sunday
+                dayContent += `<div class="day-info info-off">Off</div>`;
+            } else if (currentLoopDate <= today) {
+                // Past or Today (Weekdays)
+                const loggedHours = timesheetDataMap[dateString];
+
+                if (loggedHours !== undefined && loggedHours > 0) {
+                    // Use theme color (navy) for logged hours with a subtle clock icon
+                    dayContent += `<div class="day-info info-present"><i class="fas fa-clock info-icon"></i>${loggedHours}h</div>`;
+                } else {
+                    // Use muted red for absent
+                    dayContent += `<div class="day-info info-absent">Absent</div>`;
+                }
             }
+            // Future weekdays just show the date number
 
             html += `
                 <div class="${dayClass}">
-                    <span class="day-num ${isToday ? 'text-primary' : ''}">${day}</span>
-                    ${badge}
+                    ${dayContent}
                 </div>
             `;
         }
 
         document.getElementById('calendarGrid').innerHTML = html;
     }
+
+    // 3. Navigation Controls
     function changeMonth(step) {
         currentDate.setMonth(currentDate.getMonth() + step);
-        renderCalendar();
+        renderCalendar(); // No need to fetch data again, we fetched ALL history on load!
     }
     function goToToday() {
         currentDate = new Date();
         renderCalendar();
     }
     // Initialize on load
-    document.addEventListener('DOMContentLoaded', renderCalendar);
-
-    <script>
-    // Force all date inputs to have a maximum year of 9999 (4 digits)
-    document.querySelectorAll('input[type="date"]').forEach(function(dateInput) {
-        if (!dateInput.getAttribute('max')) {
-            dateInput.setAttribute('max', '9999-12-31');
-        }
-    });
-</script>
+    document.addEventListener('DOMContentLoaded', fetchTimesheetData);
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
