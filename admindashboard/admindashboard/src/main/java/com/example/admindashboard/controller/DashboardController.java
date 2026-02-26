@@ -323,8 +323,17 @@ public class DashboardController {
     @GetMapping("/my-whitecircle")
     public String showMyWhiteCircle() { return "my-whitecircle"; }
 
-    @GetMapping("/timesheet")
-    public String showTimesheetPage() { return "timesheet"; }
+    @GetMapping("/employee/erp-timesheet")
+    public String showErpAndTimesheet() {
+        return "erp-and-timesheet";
+    }
+
+    @GetMapping("/employee/create-timesheet")
+    public String showCreateTimesheet() {
+        // This tells Spring Boot to look for 'create-timesheet.html' in your templates folder
+        return "create-timesheet";
+    }
+
 
     @GetMapping("/tickets")
     public String showTicketsPage() { return "tickets"; }
