@@ -220,11 +220,11 @@
         <div class="row align-items-center">
             <div class="col-md-3 border-end">
                 <span class="info-label">Employee Name</span>
-                <div class="info-value">Anil Yadav</div>
+                <div class="info-value" id="displayEmpName">Loading...</div>
             </div>
             <div class="col-md-3 border-end ps-4">
                 <span class="info-label">Employee ID</span>
-                <div class="info-value">377383838</div>
+                <div class="info-value" id="displayEmpId">Loading...</div>
             </div>
             <div class="col-md-6 ps-4">
                 <span class="info-label">Timesheet Period (Sun - Sat)</span>
@@ -284,7 +284,7 @@
                         <select class="grid-select">
                             <option selected>Billable</option>
                             <option>Non-Billable</option>
-                            <option>Overtime</option>
+                            <option>Leave</option>
                         </select>
                     </td>
                     <td><input type="number" class="grid-input-hours" min="0" max="24" step="0.5" value="0"></td>
@@ -411,6 +411,10 @@
     // --- MASTER TIMESHEET JAVASCRIPT ENGINE ---
 
     document.addEventListener('DOMContentLoaded', function() {
+
+        // 1. Fetch user details immediately on load
+        fetchCurrentUserDetails();
+
         const btnSaveDraft = document.getElementById('btnSaveDraft');
         const btnSubmit = document.getElementById('btnSubmit');
         const addRowBtn = document.querySelector('.fa-plus').closest('button');
@@ -433,10 +437,9 @@
                 });
             });
         }
-
         setupDateSelectors();
 
-        // 3. CHECK FOR EXISTING DATA ON LOAD!
+        // 2. CHECK FOR EXISTING DATA ON LOAD!
         const startDateInput = document.getElementById('startDate');
         if (startDateInput && startDateInput.value) {
             loadTimesheetForWeek(startDateInput.value);
@@ -445,7 +448,29 @@
         }
     });
 
-    // --- NEW: FETCH AND POPULATE LOGIC ---
+    // --- FETCH LOGGED IN USER DETAILS ---
+    function fetchCurrentUserDetails() {
+        fetch('/api/weekly-timesheet/current-user')
+            .then(response => {
+                if (!response.ok) throw new Error("Session expired or user not logged in");
+                return response.json();
+            })
+            .then(data => {
+                const nameEl = document.getElementById('displayEmpName');
+                const idEl = document.getElementById('displayEmpId');
+                if (nameEl) nameEl.textContent = data.employeeName || 'Unknown Employee';
+                if (idEl) idEl.textContent = data.employeeId || 'N/A';
+            })
+            .catch(err => {
+                console.error("Error fetching user details:", err);
+                const nameEl = document.getElementById('displayEmpName');
+                const idEl = document.getElementById('displayEmpId');
+                if (nameEl) nameEl.textContent = 'Not Logged In';
+                if (idEl) idEl.textContent = 'N/A';
+            });
+    }
+
+    // --- FETCH AND POPULATE LOGIC ---
     function loadTimesheetForWeek(startDateStr) {
         fetch(`/api/weekly-timesheet/week?startDate=${startDateStr}`)
         .then(response => {
@@ -464,26 +489,22 @@
     }
 
     function populateTimesheetBoard(data) {
-        // 1. Update Badge
         if (data.status === 'DRAFT') updateStatusBadge(data.status, 'bg-warning text-dark border-warning');
         else if (data.status === 'SUBMITTED') updateStatusBadge(data.status, 'bg-primary text-white');
         else if (data.status === 'APPROVED') updateStatusBadge(data.status, 'bg-success text-white');
         else updateStatusBadge(data.status, 'bg-secondary text-white');
 
-        // 2. Update Comments
         const commentsArea = document.getElementById('overallComments');
         if (commentsArea) commentsArea.value = data.overallComments || '';
 
-        // 3. Rebuild Rows
         const tbody = document.querySelector('.timecard-table tbody');
         const templateRow = tbody.querySelector('tr').cloneNode(true);
-        tbody.innerHTML = ''; // Clear existing rows
+        tbody.innerHTML = '';
 
         if (data.entries && data.entries.length > 0) {
             data.entries.forEach(entry => {
                 const newRow = templateRow.cloneNode(true);
 
-                // Populate Dropdowns (Using DB IDs as the selected index)
                 const selects = newRow.querySelectorAll('select');
                 if (selects.length >= 3) {
                     selects[0].selectedIndex = entry.projectId || 0;
@@ -491,7 +512,6 @@
                     selects[2].value = entry.type || "Billable";
                 }
 
-                // Populate Hours
                 const inputs = newRow.querySelectorAll('.grid-input-hours');
                 inputs[0].value = entry.sunHours || 0;
                 inputs[1].value = entry.monHours || 0;
@@ -501,7 +521,6 @@
                 inputs[5].value = entry.friHours || 0;
                 inputs[6].value = entry.satHours || 0;
 
-                // Populate Text
                 const details = newRow.querySelector('.grid-input-text');
                 if (details) details.value = entry.comments || '';
 
@@ -512,7 +531,6 @@
             resetTimesheetBoard();
         }
 
-        // Re-lock rows and calculate
         setupRowEvents();
         calculateTotals();
     }
@@ -649,8 +667,8 @@
             if (rowTotal > 0 && selects[0].selectedIndex > 0 && selects[1].selectedIndex > 0) {
                 const inputs = row.querySelectorAll('.grid-input-hours');
                 rowData.push({
-                    projectId: selects[0].selectedIndex, // Saves the actual dropdown position
-                    taskId: selects[1].selectedIndex,    // Saves the actual dropdown position
+                    projectId: selects[0].selectedIndex,
+                    taskId: selects[1].selectedIndex,
                     type: selects[2].value,
                     sun: parseFloat(inputs[0].value) || 0,
                     mon: parseFloat(inputs[1].value) || 0,
@@ -700,24 +718,21 @@
         const endDateInput = document.getElementById('endDate');
         const loadWeekBtn = document.getElementById('loadWeekBtn');
 
-        // --- NEW: Restrict the calendar picker to NOT allow future dates ---
         const today = new Date();
-        // Format today as YYYY-MM-DD
         const todayStr = today.getFullYear() + '-' +
                          String(today.getMonth() + 1).padStart(2, '0') + '-' +
                          String(today.getDate()).padStart(2, '0');
 
         if (startDateInput) {
-            startDateInput.setAttribute('max', todayStr); // Grays out future dates in the calendar UI
+            startDateInput.setAttribute('max', todayStr);
 
             startDateInput.addEventListener('change', function() {
                 if (this.value) {
                     const fromDate = new Date(this.value);
 
-                    // NEW: Hard check - if they somehow type a future date, clear it and warn them
                     if (fromDate > today) {
                         alert("Company Policy: You cannot create a timesheet for future dates.");
-                        this.value = ''; // Reset the input
+                        this.value = '';
                         if (endDateInput) endDateInput.value = '';
                         return;
                     }
@@ -736,7 +751,6 @@
                 if(!startDateInput.value) return alert("Please select a valid start date first.");
                 const startDate = new Date(startDateInput.value);
 
-                // Double check before loading
                 if (startDate > today) {
                     return alert("Cannot load future weeks.");
                 }
@@ -752,7 +766,6 @@
                     }
                 }
 
-                // Fetch data when you click "Load Week"
                 loadTimesheetForWeek(startDateInput.value);
             });
         }

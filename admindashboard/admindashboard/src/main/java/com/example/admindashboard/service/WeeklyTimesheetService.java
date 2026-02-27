@@ -5,15 +5,18 @@ import com.example.admindashboard.dto.TimesheetSubmissionDTO;
 import com.example.admindashboard.model.WeeklyTimesheet;
 import com.example.admindashboard.model.WeeklyTimesheetEntry;
 import com.example.admindashboard.repository.WeeklyTimesheetRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.example.admindashboard.model.User;
+import com.example.admindashboard.repository.UserRepository;
+
 
 @Service
 public class WeeklyTimesheetService {
@@ -21,16 +24,34 @@ public class WeeklyTimesheetService {
     @Autowired
     private WeeklyTimesheetRepository timesheetRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    // --- NEW HELPER METHOD: Grabs the dynamic ID from Spring Security ---
+    private Long getLoggedInEmployeeId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            throw new RuntimeException("User is not authenticated");
+        }
+        String currentUsername = authentication.getName(); // This gets "EMP001"
+        Optional<User> currentUserOpt = userRepository.findByUsername(currentUsername);
+        if (currentUserOpt.isEmpty()) {
+            throw new RuntimeException("User not found for username: " + currentUsername);
+        }
+
+        return currentUserOpt.get().getId(); // Returns the Long ID for the database
+    }
+
     @Transactional
     public void saveWeeklyTimesheet(TimesheetSubmissionDTO payload) {
 
-        // We use a dummy ID for now until Spring Security is added
-        Long currentEmployeeId = 1L;
+        // DYNAMIC FIX: Now it uses the logged-in user instead of 1L
+        Long currentEmployeeId = getLoggedInEmployeeId();
 
         // 1. Check if a timesheet already exists for this week and employee
         Optional<WeeklyTimesheet> existingTimesheetOpt =
                 timesheetRepository.findByEmployeeIdAndWeekStartDate(currentEmployeeId, payload.getWeekStartDate());
-
         WeeklyTimesheet timesheet;
 
         if (existingTimesheetOpt.isPresent()) {
@@ -41,7 +62,6 @@ public class WeeklyTimesheetService {
             if ("APPROVED".equals(timesheet.getStatus())) {
                 throw new RuntimeException("Cannot edit a timesheet that has already been approved.");
             }
-
             timesheet.setStatus(payload.getStatus());
             timesheet.setOverallComments(payload.getOverallComments());
             timesheet.setTotalWeekHours(payload.getTotalWeekHours());
@@ -73,7 +93,6 @@ public class WeeklyTimesheetService {
                 // FIX: Save the raw IDs directly
                 entry.setProjectId(rowDto.getProjectId());
                 entry.setTaskId(rowDto.getTaskId());
-
                 entry.setType(rowDto.getType());
                 entry.setSunHours(rowDto.getSun());
                 entry.setMonHours(rowDto.getMon());
@@ -87,7 +106,6 @@ public class WeeklyTimesheetService {
 
                 // Crucial Step: Link the child to the parent
                 entry.setWeeklyTimesheet(timesheet);
-
                 // Add the row
                 timesheet.getEntries().add(entry);
             }
@@ -98,14 +116,14 @@ public class WeeklyTimesheetService {
     }
 
     public List<WeeklyTimesheet> getAllMyTimesheets() {
-        // TODO: Replace with logged-in user ID from Spring Security later
-        Long currentEmployeeId = 1L;
+        // DYNAMIC FIX
+        Long currentEmployeeId = getLoggedInEmployeeId();
         return timesheetRepository.findByEmployeeIdOrderByWeekStartDateDesc(currentEmployeeId);
     }
 
     public Optional<WeeklyTimesheet> getTimesheetByWeekStartDate(LocalDate startDate) {
-        // TODO: Replace with logged-in user ID from Spring Security later
-        Long currentEmployeeId = 1L;
+        // DYNAMIC FIX
+        Long currentEmployeeId = getLoggedInEmployeeId();
         return timesheetRepository.findByEmployeeIdAndWeekStartDate(currentEmployeeId, startDate);
     }
 }
