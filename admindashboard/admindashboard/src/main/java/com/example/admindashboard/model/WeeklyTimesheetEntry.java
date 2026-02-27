@@ -1,5 +1,6 @@
 package com.example.admindashboard.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class WeeklyTimesheetEntry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weekly_timesheet_id", nullable = false)
+    @JsonIgnore
     private WeeklyTimesheet weeklyTimesheet;
 
     // FIX: Changed from Project entity to a simple Long ID

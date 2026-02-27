@@ -411,13 +411,11 @@
     // --- MASTER TIMESHEET JAVASCRIPT ENGINE ---
 
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Initial Setup
         const btnSaveDraft = document.getElementById('btnSaveDraft');
         const btnSubmit = document.getElementById('btnSubmit');
         const addRowBtn = document.querySelector('.fa-plus').closest('button');
         const recalcBtn = document.querySelector('.fa-calculator').closest('button');
 
-        // Bind Action Buttons
         if(btnSaveDraft) btnSaveDraft.addEventListener('click', () => submitTimesheet('DRAFT'));
         if(btnSubmit) btnSubmit.addEventListener('click', () => submitTimesheet('SUBMITTED'));
         if(addRowBtn) addRowBtn.addEventListener('click', addRow);
@@ -425,7 +423,6 @@
         if(recalcBtn) {
             recalcBtn.addEventListener('click', function() {
                 calculateTotals();
-                // Visual Flash for recalculate
                 document.querySelectorAll('.col-total, .total-val').forEach(cell => {
                     cell.style.transition = 'none';
                     cell.style.backgroundColor = '#dcfce7';
@@ -437,44 +434,119 @@
             });
         }
 
-        // 2. Setup Date Selectors
         setupDateSelectors();
 
-        // 3. WIPE THE BOARD CLEAN ON INITIAL LOAD!
-        resetTimesheetBoard();
+        // 3. CHECK FOR EXISTING DATA ON LOAD!
+        const startDateInput = document.getElementById('startDate');
+        if (startDateInput && startDateInput.value) {
+            loadTimesheetForWeek(startDateInput.value);
+        } else {
+            resetTimesheetBoard();
+        }
     });
 
-    // --- NEW FEATURE: RESET THE BOARD ---
+    // --- NEW: FETCH AND POPULATE LOGIC ---
+    function loadTimesheetForWeek(startDateStr) {
+        fetch(`/api/weekly-timesheet/week?startDate=${startDateStr}`)
+        .then(response => {
+            if (response.status === 204) {
+                // No draft exists for this week -> wipe board clean
+                resetTimesheetBoard();
+                updateStatusBadge('New', 'bg-secondary text-white');
+                return null;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data) populateTimesheetBoard(data);
+        })
+        .catch(error => console.error("Error loading timesheet:", error));
+    }
+
+    function populateTimesheetBoard(data) {
+        // 1. Update Badge
+        if (data.status === 'DRAFT') updateStatusBadge(data.status, 'bg-warning text-dark border-warning');
+        else if (data.status === 'SUBMITTED') updateStatusBadge(data.status, 'bg-primary text-white');
+        else if (data.status === 'APPROVED') updateStatusBadge(data.status, 'bg-success text-white');
+        else updateStatusBadge(data.status, 'bg-secondary text-white');
+
+        // 2. Update Comments
+        const commentsArea = document.getElementById('overallComments');
+        if (commentsArea) commentsArea.value = data.overallComments || '';
+
+        // 3. Rebuild Rows
+        const tbody = document.querySelector('.timecard-table tbody');
+        const templateRow = tbody.querySelector('tr').cloneNode(true);
+        tbody.innerHTML = ''; // Clear existing rows
+
+        if (data.entries && data.entries.length > 0) {
+            data.entries.forEach(entry => {
+                const newRow = templateRow.cloneNode(true);
+
+                // Populate Dropdowns (Using DB IDs as the selected index)
+                const selects = newRow.querySelectorAll('select');
+                if (selects.length >= 3) {
+                    selects[0].selectedIndex = entry.projectId || 0;
+                    selects[1].selectedIndex = entry.taskId || 0;
+                    selects[2].value = entry.type || "Billable";
+                }
+
+                // Populate Hours
+                const inputs = newRow.querySelectorAll('.grid-input-hours');
+                inputs[0].value = entry.sunHours || 0;
+                inputs[1].value = entry.monHours || 0;
+                inputs[2].value = entry.tueHours || 0;
+                inputs[3].value = entry.wedHours || 0;
+                inputs[4].value = entry.thuHours || 0;
+                inputs[5].value = entry.friHours || 0;
+                inputs[6].value = entry.satHours || 0;
+
+                // Populate Text
+                const details = newRow.querySelector('.grid-input-text');
+                if (details) details.value = entry.comments || '';
+
+                tbody.appendChild(newRow);
+            });
+        } else {
+            tbody.appendChild(templateRow);
+            resetTimesheetBoard();
+        }
+
+        // Re-lock rows and calculate
+        setupRowEvents();
+        calculateTotals();
+    }
+
+    function updateStatusBadge(text, classes) {
+        const badge = document.getElementById('timesheetStatusBadge');
+        if (badge) {
+            badge.textContent = 'Status: ' + text;
+            badge.className = `badge rounded-pill px-4 py-2 fw-bold shadow-sm ${classes}`;
+        }
+    }
+
     function resetTimesheetBoard() {
         const tbody = document.querySelector('.timecard-table tbody');
         const rows = tbody.querySelectorAll('tr');
 
-        // 1. Delete all extra rows, keep only the first one
-        for(let i = 1; i < rows.length; i++) {
-            rows[i].remove();
-        }
+        for(let i = 1; i < rows.length; i++) rows[i].remove();
 
         const firstRow = tbody.querySelector('tr');
-
-        // 2. Reset dropdowns to Index 0 ("Select Project" / "Select Task")
-        firstRow.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
-
-        // 3. Reset text and comments
-        const detailsInput = firstRow.querySelector('.grid-input-text');
-        if(detailsInput) detailsInput.value = '';
+        if(firstRow) {
+            firstRow.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
+            const detailsInput = firstRow.querySelector('.grid-input-text');
+            if(detailsInput) detailsInput.value = '';
+        }
 
         const overallCommentsArea = document.getElementById('overallComments');
         if(overallCommentsArea) overallCommentsArea.value = '';
 
-        // 4. Re-bind events (This will auto-lock the hours to 0 because dropdowns are empty!)
         setupRowEvents();
         calculateTotals();
     }
 
     function setupRowEvents() {
         document.querySelectorAll('.timecard-table tbody tr').forEach(row => {
-
-            // --- NEW FEATURE: LOCK HOURS IF PROJECT/TASK NOT SELECTED ---
             const selects = row.querySelectorAll('select');
             if (selects.length >= 2) {
                 const projectSelect = selects[0];
@@ -482,41 +554,34 @@
                 const inputs = row.querySelectorAll('.grid-input-hours');
 
                 const checkLock = () => {
-                    // Check if they are on the default "Select..." option (index 0)
                     const isLocked = projectSelect.selectedIndex === 0 || taskSelect.selectedIndex === 0;
-
                     inputs.forEach(input => {
                         input.disabled = isLocked;
                         if (isLocked) {
-                            input.value = '0'; // Wipe to 0 if locked
-                            input.style.backgroundColor = '#f1f5f9'; // Gray out the box
+                            input.value = '0';
+                            input.style.backgroundColor = '#f1f5f9';
                             input.style.cursor = 'not-allowed';
                         } else {
-                            input.style.backgroundColor = ''; // Restore white background
+                            input.style.backgroundColor = '';
                             input.style.cursor = 'text';
                         }
                     });
-                    calculateTotals(); // Recalculate if hours were wiped
+                    calculateTotals();
                 };
 
-                // Remove old listeners to prevent duplicates, then add new ones
                 projectSelect.removeEventListener('change', checkLock);
                 taskSelect.removeEventListener('change', checkLock);
                 projectSelect.addEventListener('change', checkLock);
                 taskSelect.addEventListener('change', checkLock);
-
-                // Run immediately to set initial locked state
                 checkLock();
             }
 
-            // Bind Delete Buttons
             const deleteBtn = row.querySelector('.btn-delete-row');
             if(deleteBtn) {
                 deleteBtn.removeEventListener('click', deleteRow);
                 deleteBtn.addEventListener('click', deleteRow);
             }
 
-            // Bind Live Math to Inputs
             row.querySelectorAll('.grid-input-hours').forEach(input => {
                 input.removeEventListener('input', calculateTotals);
                 input.addEventListener('input', calculateTotals);
@@ -552,12 +617,10 @@
     function addRow() {
         const tbody = document.querySelector('.timecard-table tbody');
         const newRow = tbody.querySelector('tr').cloneNode(true);
-
         newRow.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
         newRow.querySelectorAll('.grid-input-text').forEach(input => input.value = '');
-
         tbody.appendChild(newRow);
-        setupRowEvents(); // This instantly locks the new row!
+        setupRowEvents();
         calculateTotals();
     }
 
@@ -583,12 +646,11 @@
             const selects = row.querySelectorAll('select');
             const rowTotal = parseFloat(row.querySelector('.col-total').textContent) || 0;
 
-            // Only send if hours > 0 AND they actually selected a project/task
             if (rowTotal > 0 && selects[0].selectedIndex > 0 && selects[1].selectedIndex > 0) {
                 const inputs = row.querySelectorAll('.grid-input-hours');
                 rowData.push({
-                    projectId: 1, // Change to selects[0].value when DB is ready
-                    taskId: 1,    // Change to selects[1].value when DB is ready
+                    projectId: selects[0].selectedIndex, // Saves the actual dropdown position
+                    taskId: selects[1].selectedIndex,    // Saves the actual dropdown position
                     type: selects[2].value,
                     sun: parseFloat(inputs[0].value) || 0,
                     mon: parseFloat(inputs[1].value) || 0,
@@ -618,16 +680,11 @@
         .then(response => response.json())
         .then(data => {
             if(data.status === 'success') {
-                // 1. Always show the success popup
                 alert(data.message);
-
-                // 2. ONLY reset the board and redirect if they actually SUBMITTED it
                 if(status === 'SUBMITTED') {
                     resetTimesheetBoard();
                     window.location.href = '/employee/erp-timesheet';
                 }
-                // If status is 'DRAFT', it does nothing else, leaving their typed hours perfectly intact!
-
             } else {
                 alert("Error saving timesheet: " + data.message);
             }
@@ -643,21 +700,46 @@
         const endDateInput = document.getElementById('endDate');
         const loadWeekBtn = document.getElementById('loadWeekBtn');
 
-        if(startDateInput && endDateInput) {
+        // --- NEW: Restrict the calendar picker to NOT allow future dates ---
+        const today = new Date();
+        // Format today as YYYY-MM-DD
+        const todayStr = today.getFullYear() + '-' +
+                         String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                         String(today.getDate()).padStart(2, '0');
+
+        if (startDateInput) {
+            startDateInput.setAttribute('max', todayStr); // Grays out future dates in the calendar UI
+
             startDateInput.addEventListener('change', function() {
                 if (this.value) {
                     const fromDate = new Date(this.value);
+
+                    // NEW: Hard check - if they somehow type a future date, clear it and warn them
+                    if (fromDate > today) {
+                        alert("Company Policy: You cannot create a timesheet for future dates.");
+                        this.value = ''; // Reset the input
+                        if (endDateInput) endDateInput.value = '';
+                        return;
+                    }
+
                     const toDate = new Date(fromDate);
                     toDate.setDate(toDate.getDate() + 6);
-                    endDateInput.value = `${toDate.getFullYear()}-${String(toDate.getMonth() + 1).padStart(2, '0')}-${String(toDate.getDate()).padStart(2, '0')}`;
+                    if (endDateInput) {
+                        endDateInput.value = `${toDate.getFullYear()}-${String(toDate.getMonth() + 1).padStart(2, '0')}-${String(toDate.getDate()).padStart(2, '0')}`;
+                    }
                 }
             });
         }
 
         if(loadWeekBtn) {
             loadWeekBtn.addEventListener('click', function() {
-                if(!startDateInput.value) return alert("Please select a start date first.");
+                if(!startDateInput.value) return alert("Please select a valid start date first.");
                 const startDate = new Date(startDateInput.value);
+
+                // Double check before loading
+                if (startDate > today) {
+                    return alert("Cannot load future weeks.");
+                }
                 const dayHeaders = document.querySelectorAll('.timecard-table th.col-day');
                 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -669,6 +751,9 @@
                         dayHeaders[i].innerHTML = `${dayNames[currentDate.getDay()]}<br><small class="text-secondary fw-bold text-capitalize">${currentDate.getDate()} ${monthNames[currentDate.getMonth()]}</small>`;
                     }
                 }
+
+                // Fetch data when you click "Load Week"
+                loadTimesheetForWeek(startDateInput.value);
             });
         }
     }

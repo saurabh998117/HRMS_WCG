@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -93,5 +95,17 @@ public class WeeklyTimesheetService {
 
         // 3. Save to database
         timesheetRepository.save(timesheet);
+    }
+
+    public List<WeeklyTimesheet> getAllMyTimesheets() {
+        // TODO: Replace with logged-in user ID from Spring Security later
+        Long currentEmployeeId = 1L;
+        return timesheetRepository.findByEmployeeIdOrderByWeekStartDateDesc(currentEmployeeId);
+    }
+
+    public Optional<WeeklyTimesheet> getTimesheetByWeekStartDate(LocalDate startDate) {
+        // TODO: Replace with logged-in user ID from Spring Security later
+        Long currentEmployeeId = 1L;
+        return timesheetRepository.findByEmployeeIdAndWeekStartDate(currentEmployeeId, startDate);
     }
 }

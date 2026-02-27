@@ -284,40 +284,15 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="recent-card">
-                <div class="recent-header">
-                    <h6 class="fw-bold m-0"><i class="fas fa-history me-2"></i>Recent Timecards</h6>
-                    <a href="#" class="view-all-link">View All</a>
+            <div class="card shadow-sm border-0 h-100" style="border-radius: 12px; overflow: hidden;">
+                <div class="p-3 d-flex justify-content-between align-items-center" style="background-color: var(--bs-primary);">
+                    <h6 class="m-0 fw-bold text-white"><i class="fas fa-history me-2"></i>Recent Timesheets</h6>
                 </div>
 
-                <div class="d-flex flex-column">
-                    <div class="recent-item">
-                        <div>
-                            <div class="ri-date">26 Jan - 01 Feb</div>
-                            <div class="ri-hours">Current Week &bull; 16 Hours logged</div>
-                        </div>
-                        <span class="status-pill st-draft">Draft</span>
-                    </div>
-                    <div class="recent-item">
-                        <div>
-                            <div class="ri-date">19 Jan - 25 Jan</div>
-                            <div class="ri-hours">Total: 40:00 Hours</div>
-                        </div>
-                        <span class="status-pill st-submitted">Submitted</span>
-                    </div>
-                    <div class="recent-item">
-                        <div>
-                            <div class="ri-date">12 Jan - 18 Jan</div>
-                            <div class="ri-hours">Total: 40:00 Hours</div>
-                        </div>
-                        <span class="status-pill st-approved">Approved</span>
-                    </div>
-                    <div class="recent-item">
-                        <div>
-                            <div class="ri-date">05 Jan - 11 Jan</div>
-                            <div class="ri-hours">Total: 40:00 Hours</div>
-                        </div>
-                        <span class="status-pill st-approved">Approved</span>
+                <div class="card-body p-0" id="recentTimecardsContainer">
+                    <div class="p-5 text-center text-muted">
+                        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                        <br><small>Loading timesheets...</small>
                     </div>
                 </div>
             </div>
@@ -329,39 +304,67 @@
     let currentDate = new Date(); // Start with today
     let timesheetDataMap = {}; // Stores { "2026-02-23": 8.5 }
 
-    // 1. Fetch Real Data from Database
-    async function fetchTimesheetData() {
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', fetchHubData);
+
+    // 1. Fetch ALL data from our new API once
+    async function fetchHubData() {
         try {
-            const response = await fetch('/api/timesheet/my-history');
+            const response = await fetch('/api/weekly-timesheet/my-timesheets');
+
             if (response.ok) {
-                const allTimesheets = await response.json();
+                const timesheets = await response.json();
 
-                // Map the Monday-Friday hours to specific dates
-                allTimesheets.forEach(ts => {
-                    if (!ts.weekStartDate) return;
+                // A. Render the Recent Timecards panel immediately
+                renderRecentTimecards(timesheets);
 
-                    // Parse date safely to avoid timezone shifts
-                    const [y, m, d] = ts.weekStartDate.split('-');
-                    const weekStart = new Date(y, m - 1, d);
+                // B. Process the data for the Calendar
+                timesheetDataMap = {}; // Reset map
 
-                    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-                    days.forEach((dayPrefix, index) => {
-                        const date = new Date(weekStart);
-                        date.setDate(weekStart.getDate() + index);
+                timesheets.forEach(ts => {
+                    if (!ts.entries || ts.entries.length === 0) return;
 
-                        // Format as YYYY-MM-DD for easy lookup
-                        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                    const startDate = new Date(ts.weekStartDate);
+                    let dailySums = [0, 0, 0, 0, 0, 0, 0]; // Sun to Sat
 
-                        // Save the hours (if multiple timesheets exist for the week, it saves the latest)
-                        timesheetDataMap[dateString] = ts[`${dayPrefix}Hours`] || 0;
+                    // Add up the hours from every row for that week
+                    ts.entries.forEach(entry => {
+                        dailySums[0] += entry.sunHours || 0;
+                        dailySums[1] += entry.monHours || 0;
+                        dailySums[2] += entry.tueHours || 0;
+                        dailySums[3] += entry.wedHours || 0;
+                        dailySums[4] += entry.thuHours || 0;
+                        dailySums[5] += entry.friHours || 0;
+                        dailySums[6] += entry.satHours || 0;
                     });
+
+                    // Map those sums to actual calendar dates (YYYY-MM-DD)
+                    for (let i = 0; i < 7; i++) {
+                        if (dailySums[i] > 0) {
+                            let currentLoopDate = new Date(startDate);
+                            currentLoopDate.setDate(startDate.getDate() + i);
+
+                            // Format strictly as YYYY-MM-DD
+                            let dateString = currentLoopDate.getFullYear() + '-' +
+                                             String(currentLoopDate.getMonth() + 1).padStart(2, '0') + '-' +
+                                             String(currentLoopDate.getDate()).padStart(2, '0');
+
+                            // Save the hours to our map
+                            timesheetDataMap[dateString] = dailySums[i];
+                        }
+                    }
                 });
+            } else {
+                console.error("API Error. Status:", response.status);
+                document.getElementById('recentTimecardsContainer').innerHTML = '<div class="p-4 text-center text-danger">Failed to load data.</div>';
             }
         } catch (error) {
             console.error("Error fetching timesheets:", error);
+            document.getElementById('recentTimecardsContainer').innerHTML = '<div class="p-4 text-center text-danger">Network Error: Failed to load data.</div>';
+        } finally {
+            // C. Render the calendar regardless of success or failure!
+            renderCalendar();
         }
-        // Render calendar AFTER data is loaded
-        renderCalendar();
     }
 
     // 2. Render the Calendar
@@ -411,7 +414,7 @@
                     // Use theme color (navy) for logged hours with a subtle clock icon
                     dayContent += `<div class="day-info info-present"><i class="fas fa-clock info-icon"></i>${loggedHours}h</div>`;
                 } else {
-                    // Use muted red for absent
+                    // absent marker
                     dayContent += `<div class="day-info info-absent">Absent</div>`;
                 }
             }
@@ -427,17 +430,67 @@
         document.getElementById('calendarGrid').innerHTML = html;
     }
 
-    // 3. Navigation Controls
-    function changeMonth(step) {
-        currentDate.setMonth(currentDate.getMonth() + step);
-        renderCalendar(); // No need to fetch data again, we fetched ALL history on load!
+    // 3. Render Recent Timecards Panel
+    function renderRecentTimecards(timesheets) {
+        const container = document.getElementById('recentTimecardsContainer');
+        container.innerHTML = '';
+
+        if (!timesheets || timesheets.length === 0) {
+            container.innerHTML = '<div class="p-4 text-center text-muted"><i class="fas fa-folder-open mb-2 fs-3 opacity-50"></i><br>No recent timesheets found.</div>';
+            return;
+        }
+
+        const recentFour = timesheets.slice(0, 4);
+
+        recentFour.forEach(ts => {
+            const startDate = new Date(ts.weekStartDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+            const endDate = new Date(ts.weekEndDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+
+            // FIXED TYPO HERE!
+            let badgeClass = 'bg-secondary';
+            if (ts.status === 'DRAFT') badgeClass = 'bg-warning text-dark';
+            if (ts.status === 'SUBMITTED') badgeClass = 'bg-primary text-white';
+            if (ts.status === 'APPROVED') badgeClass = 'bg-success text-white';
+            if (ts.status === 'REJECTED') badgeClass = 'bg-danger text-white';
+
+            const html = `
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="transition: background-color 0.2s cursor: pointer;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-dark">${startDate} - ${endDate}</h6>
+                        <small class="text-muted"><i class="fas fa-clock me-1 text-primary"></i>Total: ${ts.totalWeekHours || 0} Hours</small>
+                    </div>
+                    <div>
+                        <span class="badge ${badgeClass} rounded-pill px-3 py-2 shadow-sm">${ts.status}</span>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
     }
+
+    // 4. Navigation Controls
+    function changeMonth(step) {
+        const today = new Date();
+
+        // Calculate what the new month and year WOULD be if we let them click it
+        const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + step, 1);
+
+        // Check if the target month/year is in the future
+        if (targetDate.getFullYear() > today.getFullYear() ||
+           (targetDate.getFullYear() === today.getFullYear() && targetDate.getMonth() > today.getMonth())) {
+
+            alert("Company Policy: You cannot view or draft timesheets for future months.");
+            return; // Instantly stops the code so the calendar does NOT change!
+        }
+        // If it's a past or current month, allow the change
+        currentDate.setMonth(currentDate.getMonth() + step);
+        renderCalendar();
+    }
+
     function goToToday() {
         currentDate = new Date();
         renderCalendar();
     }
-    // Initialize on load
-    document.addEventListener('DOMContentLoaded', fetchTimesheetData);
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
