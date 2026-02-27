@@ -271,6 +271,12 @@ public class DashboardController {
         return "attendance";
     }
 
+    @GetMapping("/employee/my-timesheets")
+    public String showMyTimesheets() {
+        return "my-timesheets"; // Looks for my-timesheets.html
+    }
+
+
     @GetMapping("/my-approvals")
     public String showMyApprovals(Model model, Principal principal) {
         String username = principal.getName();
@@ -334,6 +340,12 @@ public class DashboardController {
         return "create-timesheet";
     }
 
+    @GetMapping("/employee/timesheet-report")
+    public String showTimesheetReport() {
+        // This must return timesheet-report.html file
+        return "timesheet-report";
+    }
+
 
     @GetMapping("/tickets")
     public String showTicketsPage() { return "tickets"; }
@@ -341,10 +353,7 @@ public class DashboardController {
     @GetMapping("/payroll")
     public String showPayrollPage() { return "payroll"; }
 
-    @GetMapping("/employee/my-timesheets")
-    public String showMyTimesheets() {
-        return "my-timesheets"; // Looks for my-timesheets.html
-    }
+
 
 
 
