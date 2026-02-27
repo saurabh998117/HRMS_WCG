@@ -87,17 +87,27 @@
             20% { left: 120%; }
             100% { left: 120%; }
         }
+        .btn-my-timesheets {
+        min-width: 200px; /* Adjust this value to make it wider or narrower */
+        border-radius: 8px !important; /* Forces square-ish corners */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
     </style>
 </head>
 <body>
 
 <nav class="top-nav-bar">
     <div class="brand-section">
-        <img src="/images/wcg-logo.jpg" alt="Logo" height="55" class="me-3"> ATTENDANCE REGULATION
+        <img src="/images/wcg-logo.jpg" alt="Logo" height="65" class="me-3"> ATTENDANCE REGULATION
     </div>
     <div class="nav-tabs-container">
-        <a href="#" class="nav-btn-tab active">Dashboard</a>
-        <a href="#" class="nav-btn-tab">Time & Attendance</a>
+        <a href="/employee/my-timesheets" class="btn btn-navy-shine px-5 py-2 fw-bold shadow-sm rounded-2 text-decoration-none me-3">
+            <i class="fas fa-history me-2"></i> My Timesheets
+        </a>
+            <div class="vr text-secondary opacity-25" style="width: 4px; height: 40px;"></div>
+        </div>
     </div>
     <a href="/employee/dashboard" class="btn-back"><i class="fas fa-arrow-left me-2"></i>Back to Home</a>
 </nav>
@@ -139,7 +149,7 @@
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-secondary px-3 fw-bold" onclick="exportToPDF()">Export PDF</button>
                     <button type="button" class="btn btn-outline-primary fw-bold" onclick="saveDraft()">Save Draft</button>
-                    <button type="button" class="btn btn-navy-shine fw-bold px-4" onclick="submitWeek()">Submit Week</button>
+                    <button type="button" class="btn btn-outline-primary fw-bold px-4" onclick="submitWeek()">Submit Week</button>
                 </div>
             </div>
         </div>
