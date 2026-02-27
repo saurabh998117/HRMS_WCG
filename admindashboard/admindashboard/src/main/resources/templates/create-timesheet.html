@@ -40,7 +40,7 @@
         }
         .btn-back {
             background: white; color: var(--bs-primary);
-            padding: 6px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;
+            padding: 6px 16px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
             text-decoration: none; border: 1px solid var(--bs-primary); transition: all 0.2s;
         }
         .btn-back:hover { background: var(--bs-primary); color: white; }
@@ -139,33 +139,66 @@
             padding: 18px 12px !important;
             vertical-align: middle;
         }
-
         /* 2. Visually separate the Header */
         .timecard-table thead tr {
             background-color: #f1f5f9 !important; /* Light slate background */
             border-bottom: 2px solid #cbd5e1 !important; /* Thicker separation line */
         }
-
         /* 3. Visually separate the Footer (Daily Totals) */
         .timecard-table tfoot tr {
             background-color: #f8fafc !important; /* Very subtle slate background */
             border-top: 2px solid #cbd5e1 !important; /* Thicker separation line */
         }
-
         /* 4. Optional: Subtle hover effect for the main data rows */
         .timecard-table tbody tr:hover {
             background-color: #fdfdfd;
         }
 
-        /* 1. Increase the main header text (PROJECT, TASK, SUN, MON, etc.) */
+        /*  Increase the main header text (PROJECT, TASK, SUN, MON, etc.) */
         .timecard-table thead th {
             font-size: 0.9rem;
             text-transform: uppercase;
         }
-
-        /* 2. Increase the smaller date text (22 Feb, 23 Feb, etc.) */
+        /*  Increase the smaller date text (22 Feb, 23 Feb, etc.) */
         .timecard-table thead th small {
             font-size: 0.8rem !important; /* Overrides Bootstrap's default <small> size */
+        }
+
+        /* --- INTERACTIVE UI EFFECTS --- */
+
+        /* 1. Button Click Animations */
+        .btn, .btn-grid-action {
+            transition: all 0.15s ease-in-out;
+        }
+        .btn:active, .btn-grid-action:active {
+            transform: scale(0.95); /* Makes the button physically "press" down */
+        }
+
+        /* 2. Input Hover & Focus Effects */
+        .form-control, .form-select {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-control:hover, .form-select:hover {
+            border-color: var(--bs-primary) !important; /* Highlights blue on hover */
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--bs-primary) !important;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15) !important; /* Adds a soft blue glow when typing */
+            background-color: #fff !important;
+        }
+
+        /* 3. Outline Button Hover Fixes */
+        .btn-outline-secondary:hover {
+            background-color: #6c757d !important;
+            color: #ffffff !important; /* Forces text to pure white */
+        }
+        .btn-outline-navy {
+            border-color: var(--bs-primary);
+            color: var(--bs-primary);
+        }
+        .btn-outline-navy:hover {
+            background-color: var(--bs-primary) !important;
+            color: #ffffff !important; /* Forces text to pure white */
         }
     </style>
 </head>
@@ -176,7 +209,7 @@
         <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 55px; border-radius: 6px;" class="me-3">
         <span class="fw-bold text-dark fs-4" style="letter-spacing: 0;">CREATE TIMESHEET</span>
     </div>
-    <a href="/employee/erp-timesheet" class="btn-back">
+    <a href="/employee/erp-timesheet" class="btn btn-navy px-4 py-2 fw-bold shadow-sm">
         <i class="fas fa-arrow-left me-2"></i>Back to Main Page
     </a>
 </nav>
@@ -208,8 +241,7 @@
     <div class="content-panel p-0 overflow-hidden mb-5 bg-white shadow-sm" style="border: 1px solid #e2e8f0; border-radius: 12px;">
 
         <div class="py-3 px-4 d-flex justify-content-between align-items-center" style="background-color: var(--bs-primary);">
-            <h5 class="fw-bold text-white m-0" style="font-size: 1.2rem;">Weekly Task Breakdown</h5>
-            <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold border border-warning">Status: Draft</span>
+            <h6 class="fw-bold text-white m-0" style="font-size: 1.1rem;">Weekly Task Breakdown</h6>
         </div>
 
         <div class="table-responsive border-bottom">
@@ -286,7 +318,7 @@
                         <select class="grid-select">
                             <option>Billable</option>
                             <option selected>Non-Billable</option>
-                            <option>Leave / PTO</option>
+                            <option>Leave </option>
                         </select>
                     </td>
                     <td><input type="number" class="grid-input-hours" min="0" max="24" step="0.5" value="0"></td>
@@ -318,10 +350,27 @@
             </table>
         </div>
 
-        <div class="p-3 bg-white border-bottom">
-            <div class="d-flex gap-3">
+        <div class="table-responsive mb-3">
+            <table class="table timecard-table mb-0">
+            </table>
+        </div>
+
+        <div class="p-3 bg-white border-top border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div class="d-flex align-items-center gap-3 flex-wrap">
                 <button class="btn btn-navy btn-grid-action fw-bold"><i class="fas fa-plus me-2"></i> Add Row</button>
                 <button class="btn btn-outline-navy btn-grid-action bg-white fw-bold"><i class="fas fa-calculator me-2"></i> Recalculate</button>
+
+                <div class="vr mx-1 text-secondary" style="width: 2px; opacity: 0.2;"></div>
+
+                <select id="templateSelect" class="form-select border-secondary shadow-sm" style="width: auto; cursor: pointer;">
+                    <option selected disabled>Select Template...</option>
+                    <option value="1">Standard Dev Week</option>
+                    <option value="2">QA & Testing</option>
+                </select>
+                <button id="btnApplyTemplate" class="btn btn-outline-secondary bg-white text-dark shadow-sm">
+                    <i class="fas fa-magic me-2"></i> Apply Template
+                </button>
             </div>
         </div>
 
@@ -329,12 +378,12 @@
             <div class="d-flex flex-column gap-4">
 
                 <div>
-                    <label class="fw-bold text-secondary mb-2 small"><i class="fas fa-comment-dots me-2"></i> ADDITIONAL DETAILS & CONTEXT</label>
+                    <label class="fw-bolder text-dark mb-2 small" style="letter-spacing: 0.5px;"><i class="fas fa-comment-dots text-primary me-2"></i> ADDITIONAL DETAILS & CONTEXT</label>
                     <textarea id="overallComments" class="form-control border-secondary shadow-sm" rows="3" placeholder="Provide any overall summary, blockers, or context for this week's timesheet..."></textarea>
                 </div>
 
                 <div style="max-width: 300px;">
-                    <label class="fw-bold text-secondary mb-2 small"><i class="fas fa-fingerprint me-2"></i> ACCESS CONTROL HOURS</label>
+                    <label class="fw-bolder text-dark mb-2 small" style="letter-spacing: 0.5px;"><i class="fas fa-fingerprint text-primary me-2"></i> ACCESS CONTROL HOURS</label>
                     <div class="input-group shadow-sm">
                         <input type="number" class="form-control bg-white border-secondary" placeholder="0.0" step="0.5">
                         <span class="input-group-text bg-light text-muted fw-bold border-secondary">hrs</span>
@@ -343,20 +392,19 @@
                 </div>
 
                 <div style="max-width: 400px;">
-                    <label class="fw-bold text-secondary mb-2 small"><i class="fas fa-paperclip me-2"></i> ATTACHMENTS (FUTURE SCOPE)</label>
-                    <div class="p-2 bg-white rounded border border-secondary d-flex flex-column justify-content-center shadow-sm">
+                    <label class="fw-bolder text-dark mb-2 small" style="letter-spacing: 0.5px;"><i class="fas fa-paperclip text-primary me-2"></i> ATTACHMENTS (FUTURE SCOPE)</label>
+                    <div class="p-2 bg-white rounded border border-secondary d-flex flex-column justify-content-center shadow-sm" style="transition: border-color 0.2s ease;">
                         <input class="form-control form-control-sm text-muted" type="file" disabled title="Attachment feature coming soon">
                     </div>
                 </div>
-
             </div>
         </div>
-        <div class="p-4 border-top bg-white d-flex justify-content-end align-items-center gap-3">
-            <button class="btn btn-outline-secondary px-4 py-2 fw-bold bg-white shadow-sm border-secondary">Cancel</button>
-            <button id="btnSaveDraft" class="btn btn-outline-navy px-4 py-2 fw-bold bg-white shadow-sm border-secondary">Save Draft</button>
-            <button id="btnSubmit" class="btn btn-navy px-5 py-3 fw-bold fs-6 shadow rounded-pill">Submit to Admin <i class="fas fa-paper-plane ms-2"></i></button>
-        </div>
 
+        <div class="p-4 border-top bg-white d-flex justify-content-end align-items-center gap-3" style="border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+            <button id="btnCancel" type="button" onclick="window.location.href='/employee/erp-timesheet'" class="btn btn-outline-secondary px-4 py-2 fw-bold shadow-sm"> Cancel </button>
+            <button id="btnSaveDraft" type="button" class="btn btn-outline-navy px-4 py-2 fw-bold shadow-sm"> Save Draft </button>
+            <button id="btnSubmit" type="button" class="btn btn-navy px-4 py-2 fw-bold shadow rounded-pill">Submit to Admin <i class="fas fa-paper-plane ms-2"></i></button>
+        </div>
     </div>
 </div>
 <script>
