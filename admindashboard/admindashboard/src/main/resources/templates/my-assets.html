@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Assets - WhiteCircle</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1e3a8a;
+            --navy-hover: #172a6b;
+            --bg-color: #f1f5f9;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #0f172a;
+            padding-top: 120px;
+        }
+
+        /* --- NAV BAR --- */
+        .master-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 1000; border-bottom: 2px solid var(--navy);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        .btn-navy { background-color: var(--navy); color: white; border: none; transition: all 0.3s ease; }
+        .btn-navy:hover { background-color: var(--navy-hover); color: white; transform: translateY(-1px); }
+
+        .btn-back {
+            background: #1e3a8a; color: white;
+            padding: 10px 24px; border-radius: 10px; font-size: 0.95rem; text-decoration: none;
+            border: none; transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(30, 58, 138, 0.2);
+        }
+        .btn-back:hover { background: #172554; color: white; transform: translateY(-1px); }
+
+        .main-container { max-width: 1400px; width: 96%; margin: 0 auto; padding: 0 20px; }
+
+        /* --- QUICK ACTION CARDS --- */
+        .catalog-card {
+            background: white; border-radius: 12px; padding: 25px;
+            border: 1px solid #e2e8f0; border-top: 4px solid var(--navy);
+            transition: all 0.3s ease; cursor: pointer; height: 100%;
+            display: flex; flex-direction: column;
+        }
+        .catalog-card:hover {
+            transform: translateY(-5px); box-shadow: 0 10px 20px rgba(30, 58, 138, 0.08);
+            border-color: #cbd5e1;
+        }
+        .catalog-icon {
+            width: 50px; height: 50px; border-radius: 10px; background: #eff6ff;
+            color: var(--navy); display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 15px;
+        }
+
+        /* --- INVENTORY ASSET CARDS --- */
+        .asset-card {
+            background: white; border-radius: 12px; border: 1px solid #e2e8f0;
+            overflow: hidden; box-shadow: var(--card-shadow); height: 100%;
+            transition: transform 0.2s;
+        }
+        .asset-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .asset-header {
+            background: var(--navy); padding: 15px 20px; border-bottom: none;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .asset-header h6, .asset-header i {
+            color: white !important;
+        }
+
+        .asset-body { padding: 20px; }
+        .asset-meta {
+            display: flex; justify-content: space-between; font-size: 0.85rem;
+            margin-bottom: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;
+        }
+        .asset-meta:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .meta-label { color: #64748b; font-weight: 600; }
+        .meta-value { color: #0f172a; font-weight: 700; font-family: monospace; }
+
+        /* --- TICKET TABLE --- */
+        .ticket-container {
+            background: white; border-radius: 12px; border: 1px solid #e2e8f0;
+            overflow: hidden; box-shadow: var(--card-shadow);
+        }
+        .ticket-header {
+            background: var(--navy); padding: 18px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .ticket-header h6 { color: white !important; margin: 0; font-weight: 700; }
+
+        .table-custom { margin-bottom: 0; }
+        .table-custom thead { background: #f8fafc; color: #64748b; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+        .table-custom th, .table-custom td { padding: 16px 25px; vertical-align: middle; }
+
+        .status-badge { padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .bg-active { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .bg-pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .ticket-id { font-family: monospace; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; }
+
+    </style>
+</head>
+<body>
+
+<header class="master-nav">
+    <div class="d-flex align-items-center">
+        <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 60px; border-radius: 6px;">
+        <div class="ms-3 border-start ps-3 border-2 border-primary border-opacity-25">
+            <span class="fw-bold text-navy fs-5 d-block" style="line-height: 1.2;">MY ASSETS</span>
+            <small class="text-muted fw-bold">IT Inventory Portal</small>
+        </div>
+    </div>
+    <a href="/tickets" class="btn-back">
+        <i class="fas fa-arrow-left me-2"></i>Back to Helpdesk
+    </a>
+</header>
+
+<div class="main-container">
+
+    <div class="mb-4 d-flex justify-content-between align-items-end">
+        <div>
+            <h4 class="fw-bold text-navy">Hardware Requests</h4>
+            <p class="text-muted mb-0">Need new equipment or facing hardware issues? Raise a request below.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="catalog-card" onclick="openHardwareModal('Request Accessory')">
+                <div class="catalog-icon"><i class="fas fa-mouse"></i></div>
+                <h5 class="fw-bold text-dark mb-2">Request Accessories</h5>
+                <p class="text-muted small mb-0 mt-auto">Need a new wireless mouse, mechanical keyboard, adapters, or a headset for meetings.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="catalog-card" style="border-top-color: #f59e0b;" onclick="openHardwareModal('Upgrade Hardware')">
+                <div class="catalog-icon" style="color: #f59e0b; background: #fffbeb;"><i class="fas fa-microchip"></i></div>
+                <h5 class="fw-bold text-dark mb-2">Upgrade Hardware</h5>
+                <p class="text-muted small mb-0 mt-auto">Request a RAM upgrade, an external monitor, or a dedicated graphics card for heavy workloads.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <h5 class="fw-bold text-navy mb-3 border-bottom border-2 border-primary border-opacity-25 pb-2 d-inline-block"><i class="fas fa-box-open me-2"></i>My Assigned Inventory</h5>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="asset-card">
+                <div class="asset-header">
+                    <h6 class="fw-bold m-0 text-dark"><i class="fas fa-laptop me-2 text-navy"></i>Primary Laptop</h6>
+                    <span class="status-badge bg-active">Active</span>
+                </div>
+                <div class="asset-body">
+                    <h5 class="fw-bold text-navy mb-3">Dell Latitude 7420</h5>
+                    <div class="asset-meta">
+                        <span class="meta-label">Asset Tag:</span>
+                        <span class="meta-value">WCG-LT-4092</span>
+                    </div>
+                    <div class="asset-meta">
+                        <span class="meta-label">Serial No:</span>
+                        <span class="meta-value">DL-98273X</span>
+                    </div>
+                    <div class="asset-meta">
+                        <span class="meta-label">Assigned:</span>
+                        <span class="meta-value" style="font-family: inherit;">14 Aug 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="asset-card">
+                <div class="asset-header">
+                    <h6 class="fw-bold m-0 text-dark"><i class="fas fa-desktop me-2 text-navy"></i>External Display</h6>
+                    <span class="status-badge bg-active">Active</span>
+                </div>
+                <div class="asset-body">
+                    <h5 class="fw-bold text-navy mb-3">Dell 27" 4K Monitor</h5>
+                    <div class="asset-meta">
+                        <span class="meta-label">Asset Tag:</span>
+                        <span class="meta-value">WCG-MN-1104</span>
+                    </div>
+                    <div class="asset-meta">
+                        <span class="meta-label">Serial No:</span>
+                        <span class="meta-value">MON-4K-882</span>
+                    </div>
+                    <div class="asset-meta">
+                        <span class="meta-label">Assigned:</span>
+                        <span class="meta-value" style="font-family: inherit;">14 Aug 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="asset-card">
+                <div class="asset-header">
+                    <h6 class="fw-bold m-0 text-dark"><i class="fas fa-keyboard me-2 text-navy"></i>Peripherals</h6>
+                    <span class="status-badge bg-active">Active</span>
+                </div>
+                <div class="asset-body">
+                    <h5 class="fw-bold text-navy mb-3">Logitech Wireless Combo</h5>
+                    <div class="asset-meta">
+                        <span class="meta-label">Type:</span>
+                        <span class="meta-value" style="font-family: inherit;">Mouse & Keyboard</span>
+                    </div>
+                    <div class="asset-meta">
+                        <span class="meta-label">Asset Tag:</span>
+                        <span class="meta-value">WCG-PR-9921</span>
+                    </div>
+                    <div class="asset-meta">
+                        <span class="meta-label">Assigned:</span>
+                        <span class="meta-value" style="font-family: inherit;">10 Jan 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ticket-container mb-5">
+        <div class="ticket-header">
+            <h6>Recent Hardware Requests</h6>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-custom table-hover">
+                <thead>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Request Type</th>
+                    <th>Device / Subject</th>
+                    <th>Submitted On</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><span class="ticket-id">HW-2104</span></td>
+                    <td><span class="fw-bold text-dark">Accessory Request</span></td>
+                    <td class="text-muted">Requesting noise-cancelling headset for client calls</td>
+                    <td class="text-muted fw-semibold">26 Feb 2026</td>
+                    <td><span class="status-badge bg-pending">Pending IT Approval</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3">View</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function openHardwareModal(type) {
+        alert("Opening hardware request form for: " + type + "\n\nWe can design this modal next!");
+    }
+</script>
+
+</body>
+</html>
