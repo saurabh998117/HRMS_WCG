@@ -350,10 +350,26 @@ public class DashboardController {
     @GetMapping("/tickets")
     public String showTicketsPage() { return "tickets"; }
 
+    @GetMapping("/service-requests")
+    public String showServiceRequestsPage() {
+        return "service-requests";
+    }
+    @GetMapping("/my-assets")
+    public String showMyAssetsPage() {
+        return "my-assets";
+    }
+    @GetMapping("/report-incident")
+    public String showReportIncidentPage() {
+        return "report-incident";
+    }
+    @GetMapping("/knowledge-base")
+    public String showKnowledgeBasePage() {
+        return "knowledge-base";
+    }
+
+
     @GetMapping("/payroll")
     public String showPayrollPage() { return "payroll"; }
-
-
 
 
 

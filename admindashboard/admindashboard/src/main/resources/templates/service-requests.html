@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Service Requests - WhiteCircle</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1e3a8a;
+            --navy-hover: #172a6b;
+            --bg-color: #f1f5f9;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #0f172a;
+            padding-top: 120px;
+        }
+
+        /* --- NAV BAR --- */
+        .master-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 1000; border-bottom: 2px solid var(--navy);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        .btn-navy { background-color: var(--navy); color: white; border: none; transition: all 0.3s ease; }
+        .btn-navy:hover { background-color: var(--navy-hover); color: white; transform: translateY(-1px); }
+        .text-navy { color: var(--navy) !important; }
+
+        .btn-back {
+            background: #1e3a8a; color: white;
+            padding: 10px 24px; border-radius: 10px; font-size: 0.95rem; text-decoration: none;
+            border: none; transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(30, 58, 138, 0.2);
+        }
+        .btn-back:hover { background: #172554; color: white; transform: translateY(-1px); }
+
+        .main-container { max-width: 1400px; width: 96%; margin: 0 auto; padding: 0 20px; }
+
+        /* --- QUICK ACTION CARDS --- */
+        .catalog-card {
+            background: white; border-radius: 12px; padding: 25px;
+            border: 1px solid #e2e8f0; border-top: 4px solid var(--navy);
+            transition: all 0.3s ease; cursor: pointer; height: 100%;
+        }
+        .catalog-card:hover {
+            transform: translateY(-5px); box-shadow: 0 10px 20px rgba(30, 58, 138, 0.08);
+            border-color: #cbd5e1;
+        }
+        .catalog-icon {
+            width: 50px; height: 50px; border-radius: 10px; background: #eff6ff;
+            color: var(--navy); display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 15px;
+        }
+
+        /* --- TICKET TABLE --- */
+        .ticket-container {
+            background: white; border-radius: 12px; border: 1px solid #e2e8f0;
+            overflow: hidden; box-shadow: var(--card-shadow);
+        }
+        .ticket-header {
+            background: var(--navy); padding: 18px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .ticket-header h6 { color: white !important; margin: 0; font-weight: 700; }
+
+        .table-custom { margin-bottom: 0; }
+        .table-custom thead { background: #f8fafc; color: #64748b; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+        .table-custom th, .table-custom td { padding: 16px 25px; vertical-align: middle; }
+
+        .status-badge { padding: 6px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .bg-pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .bg-progress { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; }
+        .bg-resolved { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+
+        .ticket-id { font-family: monospace; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<header class="master-nav">
+    <div class="d-flex align-items-center">
+        <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 60px; border-radius: 6px;">
+        <div class="ms-3 border-start ps-3 border-2 border-primary border-opacity-25">
+            <span class="fw-bold text-navy fs-5 d-block" style="line-height: 1.2;">SOFTWARE & ACCESS SERVICES</span>
+            <small class="text-muted fw-bold">IT Helpdesk Portal</small>
+        </div>
+    </div>
+    <a href="/tickets" class="btn-back">
+        <i class="fas fa-arrow-left me-2"></i>Back to Helpdesk
+    </a>
+</header>
+
+<div class="main-container">
+
+    <div class="mb-4">
+        <h4 class="fw-bold text-navy">Service Catalog</h4>
+        <p class="text-muted">Select a category below to raise a new software or access request.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="catalog-card" onclick="openRequestModal('Software License')">
+                <div class="catalog-icon"><i class="fas fa-laptop-code"></i></div>
+                <h5 class="fw-bold text-dark mb-2">Software Licenses</h5>
+                <p class="text-muted small mb-0">Request licenses for tools like IntelliJ, Adobe Creative Cloud, or specialized IDEs.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="catalog-card" style="border-top-color: #10b981;" onclick="openRequestModal('System Access')">
+                <div class="catalog-icon" style="color: #10b981; background: #ecfdf5;"><i class="fas fa-key"></i></div>
+                <h5 class="fw-bold text-dark mb-2">System Access</h5>
+                <p class="text-muted small mb-0">Request access to internal portals, AWS environments, databases, or Jira boards.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="catalog-card" style="border-top-color: #f59e0b;" onclick="openRequestModal('Permission Modification')">
+                <div class="catalog-icon" style="color: #f59e0b; background: #fffbeb;"><i class="fas fa-user-shield"></i></div>
+                <h5 class="fw-bold text-dark mb-2">Modify Permissions</h5>
+                <p class="text-muted small mb-0">Request admin rights, VPN access changes, or role elevations for your current profile.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <h5 class="fw-bold text-navy mb-3"><i class="fas fa-ticket-alt me-2"></i>My Active Service Requests</h5>
+
+    <div class="ticket-container mb-5">
+        <div class="ticket-header">
+            <h6>Recent Software Tickets</h6>
+            <div class="d-flex gap-2">
+                <select class="form-select form-select-sm border-0 rounded-pill px-3 shadow-sm" style="width: 150px;">
+                    <option>All Statuses</option>
+                    <option>Pending</option>
+                    <option>In Progress</option>
+                    <option>Resolved</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-custom table-hover">
+                <thead>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Request Type</th>
+                    <th>Subject</th>
+                    <th>Submitted On</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><span class="ticket-id">SR-1045</span></td>
+                    <td><span class="fw-bold text-dark">Software License</span></td>
+                    <td class="text-muted">JetBrains IntelliJ IDEA Ultimate License Renewal</td>
+                    <td class="text-muted fw-semibold">27 Feb 2026</td>
+                    <td><span class="status-badge bg-pending">Pending Approval</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="ticket-id">SR-1012</span></td>
+                    <td><span class="fw-bold text-dark">System Access</span></td>
+                    <td class="text-muted">Access to Staging Database (Read-Only)</td>
+                    <td class="text-muted fw-semibold">20 Feb 2026</td>
+                    <td><span class="status-badge bg-progress">In Progress</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="ticket-id">SR-0988</span></td>
+                    <td><span class="fw-bold text-dark">Permission Mod</span></td>
+                    <td class="text-muted">VPN Access for Remote Client Deployment</td>
+                    <td class="text-muted fw-semibold">05 Jan 2026</td>
+                    <td><span class="status-badge bg-resolved">Resolved</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3">View</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Placeholder function for opening the new request modal
+    function openRequestModal(type) {
+        alert("You clicked to open a new request for: " + type + "\n\nWe will build the pop-up modal for this next!");
+    }
+</script>
+
+</body>
+</html>
