@@ -29,6 +29,16 @@ public class LeaveRequest {
     private String status; // Pending, Approved, Rejected
     private String adminComments; // For HR notes when denying
 
+    private LocalDate createdAt;
+
+    // Add the getter and setter
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
     // --- GETTERS AND SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

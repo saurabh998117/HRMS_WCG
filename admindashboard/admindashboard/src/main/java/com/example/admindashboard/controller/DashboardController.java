@@ -277,35 +277,6 @@ public class DashboardController {
     }
 
 
-    @GetMapping("/my-approvals")
-    public String showMyApprovals(Model model, Principal principal) {
-        String username = principal.getName();
-        User currentUser = userRepository.findByUsername(username).orElse(null);
-
-        // Fetch all timesheets for this specific user
-        List<Timesheet> userTimesheets = timesheetRepository.findByUser(currentUser);
-
-        // FIX: Match the exact status strings saved in your database!
-        List<Timesheet> pending = userTimesheets.stream()
-                .filter(t -> "Submitted".equalsIgnoreCase(t.getStatus())).toList(); // Changed from PENDING
-
-        List<Timesheet> approved = userTimesheets.stream()
-                .filter(t -> "Approved".equalsIgnoreCase(t.getStatus())).toList();  // Remains APPROVED
-
-        List<Timesheet> denied = userTimesheets.stream()
-                .filter(t -> "Rejected".equalsIgnoreCase(t.getStatus())).toList();  // Changed from DENIED
-
-        model.addAttribute("pendingList", pending);
-        model.addAttribute("approvedList", approved);
-        model.addAttribute("deniedList", denied);
-
-        // Only count the submitted, approved, and rejected ones (ignore "Drafts")
-        int totalRelevantCount = pending.size() + approved.size() + denied.size();
-        model.addAttribute("totalCount", totalRelevantCount);
-
-        return "my-approvals";
-    }
-
     @GetMapping("/email-signature")
     public String showEmailSignaturePage(Model model, Principal principal) {
         // 1. Get the username (ID) of the currently logged-in employee

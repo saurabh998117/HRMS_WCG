@@ -14,4 +14,7 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
     List<LeaveRequest> findByStatus(String status);
 
     List<LeaveRequest> findByUserOrderByIdDesc(User user);
+
+    // Finds requests by the User object AND the status (ignoring case), newest first!
+    List<LeaveRequest> findByUserAndStatusIgnoreCaseOrderByIdDesc(User user, String status);
 }

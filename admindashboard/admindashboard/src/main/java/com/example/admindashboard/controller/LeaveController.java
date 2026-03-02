@@ -1,5 +1,6 @@
 package com.example.admindashboard.controller;
 
+import java.time.LocalDate; // <-- NEW: Imported for date tracking
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,13 +19,19 @@ import java.security.Principal;
 @RequestMapping("/api/leave")
 public class LeaveController {
 
+    // --- ALL DEPENDENCIES AT THE TOP ---
     @Autowired
     private LeaveRequestRepository leaveRequestRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    // Catches the POST request from apply-leave.html
+    @Autowired
+    private LeaveRequestService leaveRequestService;
+
+    // ==========================================
+    // 1. SUBMIT LEAVE REQUEST
+    // ==========================================
     @PostMapping("/submit")
     public ResponseEntity<?> submitLeaveRequest(@RequestBody LeaveRequest leaveRequest, Principal principal) {
         try {
@@ -37,7 +44,10 @@ public class LeaveController {
             leaveRequest.setUser(currentUser);
             leaveRequest.setStatus("Pending");
 
-            // 3. Save it to the PostgreSQL database!
+            // 3. NEW: Automatically stamp today's date on the request before saving!
+            leaveRequest.setCreatedAt(LocalDate.now());
+
+            // 4. Save it to the PostgreSQL database
             LeaveRequest savedRequest = leaveRequestRepository.save(leaveRequest);
 
             return ResponseEntity.ok(savedRequest);
@@ -47,13 +57,13 @@ public class LeaveController {
         }
     }
 
-    @Autowired
-    private LeaveRequestService leaveRequestService; // Make sure this is autowired at the top of your controller!
-
+    // ==========================================
+    // 2. FETCH RECENT LEAVES (For the UI Card)
+    // ==========================================
     @GetMapping("/my-leaves")
     public ResponseEntity<?> getMyRecentLeaves(Principal principal) {
         try {
-            // Pass the logged-in username straight to your newly updated service!
+            // Pass the logged-in username straight to your service
             List<LeaveRequest> myLeaves = leaveRequestService.getMyLeaves(principal.getName());
             return ResponseEntity.ok(myLeaves);
 
@@ -62,7 +72,9 @@ public class LeaveController {
         }
     }
 
-    // NEW: Calculate Leave Balance dynamically
+    // ==========================================
+    // 3. CALCULATE LEAVE BALANCE DYNAMICALLY
+    // ==========================================
     @GetMapping("/balance")
     public ResponseEntity<?> getLeaveBalance(Principal principal) {
         try {
