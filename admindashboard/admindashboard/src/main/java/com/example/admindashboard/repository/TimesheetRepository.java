@@ -26,6 +26,8 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
     // Add inside TimesheetRepository interface
     List<Timesheet> findByUserAndWeekStartDate(User user, LocalDate weekStartDate);
 
+    List<Timesheet> findByUserAndStatusIgnoreCaseOrderByIdDesc(User user, String status);
+
     @Query("SELECT t FROM Timesheet t WHERE t.weekStartDate BETWEEN :from AND :to " +
             "AND (LOWER(t.user.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(t.user.username) LIKE LOWER(CONCAT('%', :keyword, '%')))")

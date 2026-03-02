@@ -121,9 +121,17 @@ public class TimesheetService {
         if (totalHours == 0) {
             return "Error: Cannot submit an empty timesheet (0 hours).";
         }
-        sheet.setStatus("Submitted");
+
+        // --- STATUS AND DATE STAMPING ---
+        sheet.setStatus("Pending");
+
+        // NEW: Automatically stamp today's date on the timesheet!
+        sheet.setSubmissionDate(LocalDate.now());
+
+        // Save to database
         timesheetRepository.save(sheet);
 
+        // Send email notification
         String emailBody = "Employee " + sheet.getUser().getUsername() + " has submitted a timesheet for week: " + sheet.getWeekStartDate();
         emailService.sendSimpleEmail("hr-admin@whitecircle.com", "New Timesheet Submission", emailBody);
 
