@@ -1,0 +1,93 @@
+package com.example.admindashboard.controller;
+
+import com.example.admindashboard.model.LeaveRequest;
+import com.example.admindashboard.model.Attendance;
+import com.example.admindashboard.model.Timesheet; // <-- Added
+import com.example.admindashboard.model.User;
+import com.example.admindashboard.repository.LeaveRequestRepository;
+import com.example.admindashboard.repository.AttendanceRepository;
+import com.example.admindashboard.repository.TimesheetRepository; // <-- Added
+import com.example.admindashboard.repository.UserRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.security.Principal;
+import java.util.List;
+
+@Controller
+public class EmployeeApprovalsController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private LeaveRequestRepository leaveRepo;
+
+    @Autowired
+    private AttendanceRepository attendanceRepo;
+
+    @Autowired
+    private TimesheetRepository timesheetRepo; // <-- Autowired!
+
+    @GetMapping("/my-approvals") // Or "/employee/my-approvals" depending on what you mapped it to
+    public String viewMyApprovals(Principal principal, Model model) {
+
+        // 1. Get current employee
+        String username = principal.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // ==========================================
+        // 2. FETCH PENDING REQUESTS
+        // ==========================================
+        List<LeaveRequest> pendingLeaves = leaveRepo.findByUserAndStatusIgnoreCaseOrderByIdDesc(currentUser, "Pending");
+        List<Attendance> pendingAttendances = attendanceRepo.findByUserAndApprovalStatusIgnoreCaseOrderByIdDesc(currentUser, "Pending");
+
+        // Note: Searching for "Submitted" because that is what TimesheetService saves it as!
+        List<Timesheet> pendingTimesheets = timesheetRepo.findByUserAndStatusIgnoreCaseOrderByIdDesc(currentUser, "Submitted");
+
+        model.addAttribute("pendingLeaves", pendingLeaves);
+        model.addAttribute("pendingAttendances", pendingAttendances);
+        model.addAttribute("pendingTimesheets", pendingTimesheets); // <-- Added to UI
+
+        // Calculate Total
+        int totalPending = pendingLeaves.size() + pendingAttendances.size() + pendingTimesheets.size();
+        model.addAttribute("totalPending", totalPending);
+
+        // ==========================================
+        // 3. FETCH APPROVED REQUESTS
+        // ==========================================
+        List<LeaveRequest> approvedLeaves = leaveRepo.findByUserAndStatusIgnoreCaseOrderByIdDesc(currentUser, "Approved");
+        List<Attendance> approvedAttendances = attendanceRepo.findByUserAndApprovalStatusIgnoreCaseOrderByIdDesc(currentUser, "Approved");
+        List<Timesheet> approvedTimesheets = timesheetRepo.findByUserAndStatusIgnoreCaseOrderByIdDesc(currentUser, "Approved");
+
+        model.addAttribute("approvedLeaves", approvedLeaves);
+        model.addAttribute("approvedAttendances", approvedAttendances);
+        model.addAttribute("approvedTimesheets", approvedTimesheets);
+
+        int totalApproved = approvedLeaves.size() + approvedAttendances.size() + approvedTimesheets.size();
+        model.addAttribute("totalApproved", totalApproved);
+
+        // ==========================================
+        // 4. FETCH REJECTED REQUESTS
+        // ==========================================
+        List<LeaveRequest> deniedLeaves = leaveRepo.findByUserAndStatusIgnoreCaseOrderByIdDesc(currentUser, "Rejected");
+        List<Attendance> deniedAttendances = attendanceRepo.findByUserAndApprovalStatusIgnoreCaseOrderByIdDesc(currentUser, "Rejected");
+        List<Timesheet> deniedTimesheets = timesheetRepo.findByUserAndStatusIgnoreCaseOrderByIdDesc(currentUser, "Rejected");
+
+        model.addAttribute("deniedLeaves", deniedLeaves);
+        model.addAttribute("deniedAttendances", deniedAttendances);
+        model.addAttribute("deniedTimesheets", deniedTimesheets);
+
+        int totalDenied = deniedLeaves.size() + deniedAttendances.size() + deniedTimesheets.size();
+        model.addAttribute("totalDenied", totalDenied);
+
+        // Grand Total for empty states
+        model.addAttribute("totalCount", totalPending + totalApproved + totalDenied);
+
+        return "my-approvals";
+    }
+}
