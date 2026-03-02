@@ -25,7 +25,7 @@ public class LeaveRequest {
 
     @Column(length = 500)
     private String reason;
-
+    private String managerComments;
     private String status; // Pending, Approved, Rejected
     private String adminComments; // For HR notes when denying
 
@@ -63,6 +63,9 @@ public class LeaveRequest {
 
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
+
+    public String getManagerComments() { return managerComments; }
+    public void setManagerComments(String managerComments) { this.managerComments = managerComments; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

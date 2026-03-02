@@ -16,4 +16,8 @@ public interface WeeklyTimesheetRepository extends JpaRepository<WeeklyTimesheet
 
     // Fetch all timesheets for an employee, newest first
     List<WeeklyTimesheet> findByEmployeeIdOrderByWeekStartDateDesc(Long employeeId);
+
+    // Fetches timesheets by Employee ID and Status, sorting the newest ones to the top
+    List<WeeklyTimesheet> findByEmployeeIdAndStatusIgnoreCaseOrderByIdDesc(Long employeeId, String status);
+
 }

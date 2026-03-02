@@ -56,6 +56,23 @@ public class Timesheet {
     private Double fridayHours;
     private String fridayTask;
 
+    private Integer presentDays;
+    private Integer absentDays;
+
+    public Integer getPresentDays() {
+        return presentDays;
+    }
+    public void setPresentDays(Integer presentDays) {
+        this.presentDays = presentDays;
+    }
+
+    public Integer getAbsentDays() {
+        return absentDays;
+    }
+    public void setAbsentDays(Integer absentDays) {
+        this.absentDays = absentDays;
+    }
+
     @JsonManagedReference
     @OneToMany(mappedBy = "timesheet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TimesheetEntry> entries = new ArrayList<>();

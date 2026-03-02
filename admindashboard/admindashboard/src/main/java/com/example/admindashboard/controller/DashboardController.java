@@ -97,6 +97,13 @@ public class DashboardController {
 
     // -- EMPLOYEE PORTAL PAGES --
 
+    @GetMapping("/chat")
+    public String viewChatPage(Model model) {
+        // We will add real-time WebSocket logic here later!
+        // For now, it just loads the UI.
+        return "chat";
+    }
+
     @GetMapping("/my-profile")
     public String showProfilePage() { return "my-profile"; }
 

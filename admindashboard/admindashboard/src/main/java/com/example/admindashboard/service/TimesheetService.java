@@ -109,10 +109,22 @@ public class TimesheetService {
         totalHours += (sheet.getFridayHours() != null ? sheet.getFridayHours() : 0);
 
         // Fallback if flat fields are empty but entries exist
-        if (totalHours == 0 && sheet.getEntries() != null) {
-            for (TimesheetEntry entry : sheet.getEntries()) {
-                totalHours += (entry.getHours() != null ? entry.getHours() : 0);
-            }
+        int present = 0;
+        // Count any day where they logged more than 0 hours as a "Present" day
+        if (sheet.getMondayHours() != null && sheet.getMondayHours() > 0) present++;
+        if (sheet.getTuesdayHours() != null && sheet.getTuesdayHours() > 0) present++;
+        if (sheet.getWednesdayHours() != null && sheet.getWednesdayHours() > 0) present++;
+        if (sheet.getThursdayHours() != null && sheet.getThursdayHours() > 0) present++;
+        if (sheet.getFridayHours() != null && sheet.getFridayHours() > 0) present++;
+
+        sheet.setPresentDays(present);
+
+        // Assuming a standard 5-day work week (Monday-Friday) for absence calculation.
+        sheet.setAbsentDays(5 - present);
+
+        // (Optional) If you don't already have an end date calculated, add 6 days to the start date:
+        if (sheet.getWeekStartDate() != null && sheet.getWeekEndDate() == null) {
+            sheet.setWeekEndDate(sheet.getWeekStartDate().plusDays(6));
         }
 
         sheet.setTotalHours(totalHours); // Save calculated total back to the database

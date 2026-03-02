@@ -34,6 +34,7 @@ public class WeeklyTimesheet {
     private Double totalWeekHours;
 
     private LocalDateTime submittedAt;
+    private LocalDate submissionDate;
 
     // Links to the rows
     @OneToMany(mappedBy = "weeklyTimesheet", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -41,7 +42,6 @@ public class WeeklyTimesheet {
 
     // ==========================================
     //          GETTERS AND SETTERS
-    // ==========================================
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -66,6 +66,9 @@ public class WeeklyTimesheet {
 
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
+
+    public LocalDate getSubmissionDate() {return submissionDate;}
+    public void setSubmissionDate(LocalDate submissionDate) {this.submissionDate = submissionDate;}
 
     public List<WeeklyTimesheetEntry> getEntries() { return entries; }
     public void setEntries(List<WeeklyTimesheetEntry> entries) { this.entries = entries; }
