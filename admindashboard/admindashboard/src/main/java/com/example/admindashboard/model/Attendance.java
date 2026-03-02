@@ -20,7 +20,9 @@ public class Attendance {
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
     private String status; // Present, Absent, Half-Day
+    private String approvalStatus; // Pending, Approved, Rejected
     private String totalHours; // Stored as "08:30" string or calculation
+    private String reason;
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -35,6 +37,15 @@ public class Attendance {
     public void setCheckOutTime(LocalTime checkOutTime) { this.checkOutTime = checkOutTime; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getApprovalStatus() { return approvalStatus; }
+    public void setApprovalStatus(String approvalStatus) { this.approvalStatus = approvalStatus; }
     public String getTotalHours() { return totalHours; }
     public void setTotalHours(String totalHours) { this.totalHours = totalHours; }
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+
+    private LocalDate submittedOn;
+
+    public LocalDate getSubmittedOn() { return submittedOn; }
+    public void setSubmittedOn(LocalDate submittedOn) { this.submittedOn = submittedOn; }
 }

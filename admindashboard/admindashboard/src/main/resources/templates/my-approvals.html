@@ -11,7 +11,9 @@
 
     <style>
         :root {
-            --bs-primary: #1e3a8a; /* Navy Blue Theme */
+            --bs-primary: #1e3a8a; /* Navy Blue */
+            --bs-purple: #8b5cf6;  /* Timesheet Purple */
+            --bs-orange: #f59e0b;  /* Attendance Orange */
             --bg-color: #f1f5f9;
         }
 
@@ -19,220 +21,228 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: #334155;
+            padding-top: 100px; /* Offset for fixed header */
         }
 
         /* --- HEADER --- */
         .top-header {
-            background: white; border-bottom: 1px solid #e2e8f0;
-            padding: 15px 30px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--bs-primary);
+            padding: 15px 40px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
         }
         .btn-back-home {
             background-color: var(--bs-primary); color: white;
-            border-radius: 10px; padding: 10px 24px; font-weight: 600;
+            border-radius: 50px; padding: 8px 24px; font-weight: 600;
             font-size: 0.9rem; text-decoration: none; display: flex; align-items: center;
-            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2); transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2); transition: all 0.2s ease;
         }
-        .btn-back-home:hover { background-color: #172554; transform: translateY(-2px); color: white; }
+        .btn-back-home:hover { background-color: #172554; transform: translateY(-1px); color: white; }
 
         /* --- CONTAINER --- */
-        .main-container {
-            max-width: 1000px; margin: 125px auto 40px; padding: 0 20px;
-        }
+        .main-container { max-width: 1000px; margin: 0 auto 50px; padding: 0 20px; }
 
         /* --- TABS STYLE --- */
+        .nav-pills { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; display: inline-flex;}
         .nav-pills .nav-link {
-            background: white; color: #64748b; font-weight: 600;
-            border: 1px solid #e2e8f0; margin-right: 10px;
-            border-radius: 8px; padding: 10px 20px;
-            transition: all 0.2s;
+            background: transparent; color: #64748b; font-weight: 600;
+            margin-right: 5px; border-radius: 8px; padding: 10px 24px;
+            transition: all 0.2s; border: none;
         }
         .nav-pills .nav-link:hover { background: #f8fafc; color: var(--bs-primary); }
         .nav-pills .nav-link.active {
-            background-color: var(--bs-primary); color: white; border-color: var(--bs-primary);
+            background-color: var(--bs-primary); color: white;
             box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
         }
-        /* Tab Badge Counts */
         .badge-count {
-            background: rgba(255,255,255,0.2); color: white;
-            padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 8px;
+            background: rgba(255,255,255,0.25); color: white;
+            padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; margin-left: 8px;
         }
-        .nav-link:not(.active) .badge-count { background: #e2e8f0; color: #64748b; }
+        .nav-link:not(.active) .badge-count { background: #e2e8f0; color: #475569; }
 
-        /* --- APPROVAL CARD --- */
+        /* --- MODERN APPROVAL CARDS --- */
         .approval-card {
             background: white; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 20px; margin-bottom: 15px; position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex; gap: 20px; align-items: center;
+            padding: 20px; margin-bottom: 16px; position: relative;
+            transition: all 0.2s ease; display: flex; gap: 20px; align-items: flex-start;
         }
         .approval-card:hover {
-            transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.03);
+            transform: translateX(4px); box-shadow: 0 8px 20px rgba(0,0,0,0.04);
             border-color: #cbd5e1;
         }
 
-        /* Left Color Strip based on Type */
-        .border-leave { border-left: 5px solid #3b82f6; } /* Blue for Leave */
-        .border-timesheet { border-left: 5px solid #8b5cf6; } /* Purple for Timesheet */
-        .border-expense { border-left: 5px solid #f59e0b; } /* Orange for Expense */
+        /* Color Strips */
+        .border-leave { border-left: 5px solid var(--bs-primary); }
+        .border-timesheet { border-left: 5px solid var(--bs-purple); }
+        .border-attendance { border-left: 5px solid var(--bs-orange); }
 
-        /* Avatar */
-        .requestor-img {
-            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
-            border: 2px solid #f1f5f9;
+        /* Icon Avatars */
+        .avatar-square {
+            width: 50px; height: 50px; border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
         }
+        .bg-leave { background: #eff6ff; color: var(--bs-primary); }
+        .bg-timesheet { background: #f3e8ff; color: var(--bs-purple); }
+        .bg-attendance { background: #fffbeb; color: var(--bs-orange); }
 
-        /* Content */
+        /* Content Formatting */
         .req-info { flex-grow: 1; }
-        .req-title { font-weight: 700; color: #1e293b; font-size: 1rem; margin-bottom: 2px; }
-        .req-meta { font-size: 0.85rem; color: #64748b; }
-        .req-date { font-size: 0.8rem; color: #94a3b8; font-weight: 500; margin-top: 4px; display: block; }
+        .req-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;}
+        .req-title { font-weight: 800; color: #1e293b; font-size: 1.05rem; margin: 0; }
+        .req-date-badge { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 0.8rem; padding: 4px 10px; border-radius: 6px; font-weight: 600;}
 
-        /* Actions */
-        .btn-action {
-            width: 40px; height: 40px; border-radius: 50%; border: none;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s; cursor: pointer;
-        }
-        .btn-approve { background: #dcfce7; color: #16a34a; }
-        .btn-approve:hover { background: #16a34a; color: white; transform: scale(1.1); }
+        .req-desc { color: #64748b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; }
+        .req-meta { font-size: 0.8rem; color: #94a3b8; font-weight: 500; display: flex; gap: 15px; align-items: center;}
 
-        .btn-deny { background: #fee2e2; color: #dc2626; }
-        .btn-deny:hover { background: #dc2626; color: white; transform: scale(1.1); }
+        /* Status Badges */
+        .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-pending { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+        .badge-approved { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .badge-denied { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
-        /* Status Badges for History */
-        .status-badge {
-            padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-        }
-        .bg-approved { background: #dcfce7; color: #15803d; }
-        .bg-denied { background: #fee2e2; color: #b91c1c; }
+        /* Rejection Reason Box */
+        .rejection-box { background: #fef2f2; border-left: 3px solid #ef4444; padding: 10px 15px; border-radius: 0 6px 6px 0; margin-top: 10px;}
 
     </style>
 </head>
 <body>
 
 <header class="top-header">
-    <div class="page-title">
-        <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 60px; border-radius: 6px;">
-        <span class="fw-bold text-dark" style="border-left: 2px solid #cbd5e1; padding-left: 17px; margin-left: 10px; font-size: 1.5rem; letter-spacing: 0.5px;">
-            MY APPROVALS
-        </span>
+    <div class="d-flex align-items-center">
+        <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 45px; border-radius: 6px;">
+        <div class="ms-3 border-start ps-3 border-2 border-primary border-opacity-25">
+            <span class="fw-bold text-dark fs-5 d-block" style="line-height: 1.2;">MY APPROVALS</span>
+            <small class="text-muted fw-bold">Request Tracking</small>
+        </div>
     </div>
     <a href="/employee/dashboard" class="btn-back-home">
-        <i class="fas fa-arrow-left me-2"></i> Back to Home
+        <i class="fas fa-arrow-left me-2"></i> Home
     </a>
 </header>
 
 <div class="main-container">
 
-    <h5 class="fw-bold text-dark mb-4">
-        <i class="fas fa-history text-primary me-2"></i>
-        View current status of your submitted reports here
-    </h5>
-
-    <div th:if="${totalCount == 0}" class="text-center p-5 feature-card bg-white border-0 shadow-sm">
-        <div class="mb-4">
-            <i class="fas fa-clipboard-list fa-4x text-muted opacity-50"></i>
-        </div>
-        <h5 class="text-secondary fw-bold">No approvals till now, first try submitting some reports.</h5>
-    </div>
-
-    <div th:if="${totalCount > 0}">
-
-        <ul class="nav nav-pills mb-4" id="approvalTabs" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" id="pending-tab" data-bs-toggle="pill" data-bs-target="#pending" type="button">
-                    <i class="fas fa-hourglass-half me-2"></i>Pending <span class="badge-count" th:text="${pendingList.size()}">0</span>
-                </button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="approved-tab" data-bs-toggle="pill" data-bs-target="#approved" type="button">
-                    <i class="fas fa-check me-2"></i>Approved <span class="badge-count" th:text="${approvedList.size()}">0</span>
-                </button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="denied-tab" data-bs-toggle="pill" data-bs-target="#denied" type="button">
-                    <i class="fas fa-times me-2"></i>Denied <span class="badge-count" th:text="${deniedList.size()}">0</span>
-                </button>
-            </li>
-        </ul>
-
-        <div class="tab-content" id="approvalTabsContent">
-
-            <div class="tab-pane fade show active" id="pending" role="tabpanel">
-                <div th:if="${#lists.isEmpty(pendingList)}" class="text-center p-4 bg-white rounded shadow-sm text-muted">
-                    <i class="fas fa-info-circle me-2"></i> No pending approvals for now.
-                </div>
-
-                <div th:each="sheet : ${pendingList}" class="approval-card border-timesheet">
-                    <div class="avatar-circle bg-primary text-white me-3">TS</div>
-                    <div class="req-info">
-                        <div class="req-title" th:text="${sheet.weekRange != null ? 'Timesheet: ' + sheet.weekRange : 'Week Starting: ' + sheet.weekStartDate}">Timesheet Submission</div>
-                        <div class="req-meta">Status: Awaiting Manager Review</div>
-                        <span class="req-date"><i class="far fa-clock me-1"></i> Submitted: <span th:text="${sheet.submissionDate}">Date</span></span>
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" th:attr="data-bs-target='#detailsModal'+${sheet.id}">
-                        View Details
-                    </button>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="approved" role="tabpanel">
-                <div th:if="${#lists.isEmpty(approvedList)}" class="text-center p-4 bg-white rounded shadow-sm text-muted">
-                    <i class="fas fa-info-circle me-2"></i> No approved reports found.
-                </div>
-
-                <div th:each="sheet : ${approvedList}" class="approval-card border-timesheet opacity-75">
-                    <div class="avatar-circle bg-success text-white me-3"><i class="fas fa-check"></i></div>
-                    <div class="req-info">
-                        <div class="req-title" th:text="${sheet.weekRange != null ? 'Timesheet: ' + sheet.weekRange : 'Week Starting: ' + sheet.weekStartDate}">Timesheet Approved</div>
-                        <div class="req-meta">Processed and verified by Admin</div>
-                    </div>
-                    <span class="status-badge bg-approved">Approved</span>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="denied" role="tabpanel">
-                <div th:if="${#lists.isEmpty(deniedList)}" class="text-center p-4 bg-white rounded shadow-sm text-muted">
-                    <i class="fas fa-info-circle me-2"></i> No rejected reports for now.
-                </div>
-
-                <div th:each="sheet : ${deniedList}" class="approval-card border-timesheet opacity-75">
-                    <div class="avatar-circle bg-danger text-white me-3"><i class="fas fa-times"></i></div>
-                    <div class="req-info">
-                        <div class="req-title" th:text="${sheet.weekRange != null ? 'Timesheet: ' + sheet.weekRange : 'Week Starting: ' + sheet.weekStartDate}">Timesheet Rejected</div>
-
-                        <div class="req-date text-danger fw-bold" th:text="'Reason: ' + ${sheet.comments != null ? sheet.comments : 'No reason provided'}">Reason...</div>
-                    </div>
-                    <span class="status-badge bg-denied">Rejected</span>
-                </div>
-            </div>
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">Request Status Center</h4>
+            <p class="text-muted mb-0">Track your Leaves, Timesheets, and Attendance adjustments.</p>
         </div>
     </div>
-</div>
 
-<div th:each="sheet : ${pendingList}" class="modal fade" th:id="'detailsModal'+${sheet.id}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-light border-0">
-                <h6 class="modal-title fw-bold">Timesheet Details</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="p-3 bg-light rounded border mb-3">
-                    <small class="text-uppercase fw-bold text-primary" style="font-size: 0.7rem;">Week Period</small>
-                    <div class="fw-bold text-dark" th:text="${sheet.weekRange != null ? sheet.weekRange : sheet.weekStartDate}">Week Range</div>
+    <ul class="nav nav-pills mb-4" id="approvalTabs" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pending" type="button">
+                <i class="fas fa-hourglass-half me-2"></i>Pending
+                <span class="badge-count" th:text="${totalPending}">0</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#approved" type="button">
+                <i class="fas fa-check-circle me-2"></i>Approved
+                <span class="badge-count" th:text="${totalApproved}">0</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#denied" type="button">
+                <i class="fas fa-times-circle me-2"></i>Denied
+                <span class="badge-count" th:text="${totalDenied}">0</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="approvalTabsContent">
+
+        <div class="tab-pane fade show active" id="pending" role="tabpanel">
+
+            <div th:each="leave : ${pendingLeaves}" class="approval-card border-leave">
+                <div class="avatar-square bg-leave"><i class="fas fa-umbrella-beach"></i></div>
+                <div class="req-info">
+                    <div class="req-header">
+                        <h6 class="req-title" th:text="${leave.leaveType} + ' Leave'">Casual Leave</h6>
+                        <span class="req-date-badge"><i class="far fa-calendar-alt me-1"></i> <span th:text="${leave.fromDate} + ' to ' + ${leave.toDate}">12 Feb - 14 Feb</span></span>
+                    </div>
+                    <p class="req-desc" th:text="${leave.reason}">Reason for the leave goes here...</p>
+                    <div class="req-meta">
+                        <span><i class="fas fa-clock me-1"></i> Submitted: <span th:text="${leave.createdAt}">Date</span></span>
+                        <span><i class="fas fa-user-tie me-1"></i> Approver: <span th:text="${leave.user.reportingManager}">Manager</span></span>
+                    </div>
                 </div>
-                <p class="text-muted small mb-1 fw-bold">Comments:</p>
-                <p class="text-dark bg-light p-3 rounded" style="font-size: 0.9rem;" th:text="${sheet.comments != null ? sheet.comments : 'No comments submitted.'}">
-                    Notes...
-                </p>
+                <div><span class="status-badge badge-pending">Pending</span></div>
             </div>
-            <div class="modal-footer border-0 bg-light">
-                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
+
+            <div th:each="sheet : ${pendingTimesheets}" class="approval-card border-timesheet">
+                <div class="avatar-square bg-timesheet"><i class="fas fa-business-time"></i></div>
+                <div class="req-info">
+                    <div class="req-header">
+                        <h6 class="req-title">Timesheet Submission</h6>
+                        <span class="req-date-badge"><i class="far fa-calendar-alt me-1"></i> Week: <span th:text="${sheet.weekStartDate}">01 Mar 2026</span></span>
+                    </div>
+                    <p class="req-desc" th:text="${sheet.comments != null ? sheet.comments : 'Standard weekly timesheet submission.'}">Notes...</p>
+                    <div class="req-meta">
+                        <span><i class="fas fa-clock me-1"></i> Submitted: <span th:text="${sheet.submissionDate}">Date</span></span>
+                    </div>
+                </div>
+                <div><span class="status-badge badge-pending">Pending</span></div>
+            </div>
+
+            <div th:each="att : ${pendingAttendances}" class="approval-card border-attendance">
+                <div class="avatar-square bg-attendance"><i class="fas fa-user-clock"></i></div>
+                <div class="req-info">
+                    <div class="req-header">
+                        <h6 class="req-title">Attendance Regularization</h6>
+                        <span class="req-date-badge"><i class="far fa-calendar-alt me-1"></i> Date: <span th:text="${att.adjustmentDate}">25 Feb 2026</span></span>
+                    </div>
+                    <p class="req-desc" th:text="'Requested Change: ' + ${att.reason}">Forgot to punch out.</p>
+                    <div class="req-meta">
+                        <span><i class="fas fa-clock me-1"></i> Submitted: <span th:text="${att.submittedOn}">Date</span></span>
+                    </div>
+                </div>
+                <div><span class="status-badge badge-pending">Pending</span></div>
+            </div>
+
+            <div th:if="${totalPending == 0}" class="text-center p-5 bg-white border rounded-4 shadow-sm text-muted mt-3">
+                <i class="fas fa-check-double fa-3x mb-3 text-success opacity-50"></i>
+                <h5 class="fw-bold text-dark">You're all caught up!</h5>
+                <p class="mb-0">You have no pending requests waiting for approval.</p>
             </div>
         </div>
+
+
+        <div class="tab-pane fade" id="approved" role="tabpanel">
+            <div th:each="leave : ${approvedLeaves}" class="approval-card border-leave opacity-75">
+                <div class="avatar-square bg-leave"><i class="fas fa-umbrella-beach"></i></div>
+                <div class="req-info">
+                    <div class="req-header">
+                        <h6 class="req-title" th:text="${leave.leaveType} + ' Leave'">Casual Leave</h6>
+                        <span class="req-date-badge"><i class="far fa-calendar-alt me-1"></i> <span th:text="${leave.fromDate} + ' to ' + ${leave.toDate}">12 Feb - 14 Feb</span></span>
+                    </div>
+                    <div class="req-meta mt-2">
+                        <span class="text-success fw-bold"><i class="fas fa-check me-1"></i> Approved by Admin</span>
+                    </div>
+                </div>
+                <div><span class="status-badge badge-approved">Approved</span></div>
+            </div>
+        </div>
+
+
+        <div class="tab-pane fade" id="denied" role="tabpanel">
+            <div th:each="sheet : ${deniedTimesheets}" class="approval-card border-timesheet">
+                <div class="avatar-square bg-timesheet"><i class="fas fa-business-time"></i></div>
+                <div class="req-info">
+                    <div class="req-header">
+                        <h6 class="req-title">Timesheet Submission</h6>
+                        <span class="req-date-badge"><i class="far fa-calendar-alt me-1"></i> Week: <span th:text="${sheet.weekStartDate}">01 Mar 2026</span></span>
+                    </div>
+                    <div class="rejection-box">
+                        <span class="fw-bold text-danger" style="font-size: 0.8rem; text-transform: uppercase;">Reason for Denial:</span>
+                        <p class="mb-0 text-dark small fw-medium mt-1" th:text="${sheet.comments}">Hours logged do not match client billing report. Please revise.</p>
+                    </div>
+                </div>
+                <div><span class="status-badge badge-denied">Rejected</span></div>
+            </div>
+        </div>
+
     </div>
 </div>
 

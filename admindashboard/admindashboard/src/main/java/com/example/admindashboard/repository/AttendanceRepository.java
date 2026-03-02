@@ -14,4 +14,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     // Find all attendance for a user (for history)
     List<Attendance> findByUserOrderByDateDesc(User user);
     long countByDate(LocalDate date);
+
+    List<Attendance> findByUserAndStatusIgnoreCaseOrderByIdDesc(User user, String status);
+
+    List<Attendance> findByUserAndApprovalStatusIgnoreCaseOrderByIdDesc(User user, String approvalStatus);
 }
