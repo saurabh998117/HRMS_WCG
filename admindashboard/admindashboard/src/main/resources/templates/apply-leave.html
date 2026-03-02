@@ -215,48 +215,25 @@
                     </form>
                 </div>
             </div>
-
         </div>
 
         <div class="col-lg-4">
-
             <div class="app-card">
                 <div class="app-card-header">
                     <i class="fas fa-history"></i> Recent Status
                 </div>
                 <div class="app-card-body p-0">
-                    <div class="list-group list-group-flush">
+                    <div class="list-group list-group-flush" id="recentStatusContainer">
 
-                        <div class="list-group-item p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-dark">Sick Leave</span>
-                                <span class="badge badge-status status-pending">Pending</span>
-                            </div>
-                            <small class="text-muted d-block mb-1">27 Jan - 29 Jan (3 Days)</small>
-                            <small class="text-secondary" style="font-size: 0.75rem;"> Approver: <span th:text="${user.reportingManager}">Manager Name</span></small>
-                        </div>
-
-                        <div class="list-group-item p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-dark">Casual Leave</span>
-                                <span class="badge badge-status status-approved">Approved</span>
-                            </div>
-                            <small class="text-muted d-block mb-1">10 Jan (1 Day)</small>
-                            <small class="text-secondary" style="font-size: 0.75rem;"> Approver: <span th:text="${user.reportingManager}">Manager Name</span></small>
-                        </div>
-
-                        <div class="list-group-item p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-dark">WFH</span>
-                                <span class="badge badge-status status-rejected">Rejected</span>
-                            </div>
-                            <small class="text-muted d-block mb-1">02 Jan (1 Day)</small>
-                            <small class="text-secondary" style="font-size: 0.75rem;">Reason: Important Client Visit</small>
+                        <div class="text-center p-4 text-muted">
+                            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                            <br><small class="fw-bold">Loading recent requests...</small>
                         </div>
 
                     </div>
                 </div>
             </div>
+
             <div class="app-card">
                 <div class="app-card-header">
                     <i class="fas fa-wallet"></i> Yearly Leave Balance
@@ -266,23 +243,23 @@
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="fw-bold text-dark" style="font-size: 0.9rem;">Casual Leave (CL)</span>
-                            <span class="fw-bold text-primary" style="font-size: 0.9rem;">8 / 12 Left</span>
+                            <span class="fw-bold text-primary" style="font-size: 0.9rem;" id="cl-text">-- / 12 Left</span>
                         </div>
                         <div class="progress" style="height: 8px; background-color: #e2e8f0;">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-primary" id="cl-bar" role="progressbar" style="width: 0%; transition: width 1s ease-in-out;"></div>
                         </div>
-                        <small class="text-muted" style="font-size: 0.75rem;">Used: 4 &bull; Total: 12</small>
+                        <small class="text-muted" style="font-size: 0.75rem;" id="cl-subtext">Used: 0 &bull; Total: 12</small>
                     </div>
 
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="fw-bold text-dark" style="font-size: 0.9rem;">Sick Leave (SL)</span>
-                            <span class="fw-bold text-success" style="font-size: 0.9rem;">10 / 10 Left</span>
+                            <span class="fw-bold text-success" style="font-size: 0.9rem;" id="sl-text">-- / 10 Left</span>
                         </div>
                         <div class="progress" style="height: 8px; background-color: #e2e8f0;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-success" id="sl-bar" role="progressbar" style="width: 0%; transition: width 1s ease-in-out;"></div>
                         </div>
-                        <small class="text-muted" style="font-size: 0.75rem;">Used: 0 &bull; Total: 10</small>
+                        <small class="text-muted" style="font-size: 0.75rem;" id="sl-subtext">Used: 0 &bull; Total: 10</small>
                     </div>
 
                     <div class="p-3 bg-light border rounded">
@@ -295,16 +272,16 @@
                                 <small class="text-muted">Accumulated Privilege Leave</small>
                             </div>
                             <div class="ms-auto text-end">
-                                <h4 class="mb-0 fw-bold text-dark">18</h4>
+                                <h4 class="mb-0 fw-bold text-dark" id="el-left">--</h4>
                                 <small class="text-muted" style="font-size: 0.7rem;">Days Left</small>
                             </div>
                         </div>
                         <div class="progress mt-2" style="height: 6px; background-color: #e2e8f0;">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-warning" id="el-bar" role="progressbar" style="width: 0%; transition: width 1s ease-in-out;"></div>
                         </div>
                         <div class="d-flex justify-content-between mt-1">
-                            <small class="text-muted" style="font-size: 0.7rem;">Used: 2</small>
-                            <small class="text-muted" style="font-size: 0.7rem;">Total Credited: 20</small>
+                            <small class="text-muted" style="font-size: 0.7rem;" id="el-used">Used: 0</small>
+                            <small class="text-muted" style="font-size: 0.7rem;" id="el-total">Total Credited: 20</small>
                         </div>
                     </div>
 
@@ -443,6 +420,123 @@
         if (!dateInput.getAttribute('max')) {
             dateInput.setAttribute('max', '9999-12-31');
         }
+    });
+
+    async function fetchRecentLeaves() {
+        const container = document.getElementById('recentStatusContainer');
+
+        try {
+            // Assuming this is your endpoint to get the current user's leave requests
+            const response = await fetch('/api/leave/my-leaves');
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch leave history.");
+            }
+
+            const leaves = await response.json();
+            container.innerHTML = ''; // Clear the loading spinner
+
+            if (leaves.length === 0) {
+                container.innerHTML = '<div class="p-4 text-center text-muted small fw-bold">No recent leave requests found.</div>';
+                return;
+            }
+
+            // Loop through the recent leaves (limiting to top 5 for the card)
+            leaves.slice(0, 5).forEach(leave => {
+
+                // NEW: Force the status to uppercase so we can safely compare it
+                const currentStatus = (leave.status || 'PENDING').toUpperCase();
+
+                // Determine Badge Color based on status
+                let badgeClass = 'status-pending';
+                let displayStatus = 'Pending';
+
+                if (currentStatus === 'APPROVED') {
+                    badgeClass = 'status-approved';
+                    displayStatus = 'Approved';
+                } else if (currentStatus === 'REJECTED') {
+                    badgeClass = 'status-rejected';
+                    displayStatus = 'Rejected';
+                }
+
+                // Format the dates nicely (e.g., "10 Jan - 12 Jan")
+                const fromDateObj = new Date(leave.fromDate);
+                const toDateObj = new Date(leave.toDate);
+                const dateOptions = { day: '2-digit', month: 'short' };
+                const dateRangeStr = `${fromDateObj.toLocaleDateString('en-GB', dateOptions)} - ${toDateObj.toLocaleDateString('en-GB', dateOptions)}`;
+
+                // Create the HTML for the list item
+                let html = `
+                    <div class="list-group-item p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold text-dark">${leave.leaveType} Leave</span>
+                            <span class="badge badge-status ${badgeClass}">${displayStatus}</span>
+                        </div>
+                        <small class="text-muted d-block mb-1">${dateRangeStr} (${leave.totalDays} Days)</small>
+                `;
+
+                // Add a rejection reason if it exists, otherwise show the approver
+                if (leave.status === 'REJECTED' && leave.managerComments) {
+                    html += `<small class="text-danger fw-bold" style="font-size: 0.75rem;">Reason: ${leave.managerComments}</small>`;
+                } else {
+                    html += `<small class="text-secondary" style="font-size: 0.75rem;">Approver: Manager</small>`;
+                }
+
+                html += `</div>`; // Close the list-group-item
+
+                // Inject into the container
+                container.innerHTML += html;
+            });
+
+        } catch (error) {
+            console.error("Error fetching recent leaves:", error);
+            container.innerHTML = '<div class="p-4 text-center text-danger small fw-bold"><i class="fas fa-exclamation-circle me-1"></i> Error loading status.</div>';
+        }
+    }
+
+    // Call this function automatically when the page loads
+    document.addEventListener("DOMContentLoaded", function() {
+        fetchRecentLeaves();
+    });
+
+    // NEW: 6. Fetch and Render Yearly Balance
+    async function fetchLeaveBalance() {
+        try {
+            const response = await fetch('/api/leave/balance');
+            if (!response.ok) throw new Error("Failed to fetch balance");
+
+            const data = await response.json();
+
+            // Calculate progress bar percentages
+            const clPercent = (data.Casual.used / data.Casual.total) * 100;
+            const slPercent = (data.Sick.used / data.Sick.total) * 100;
+            const elPercent = (data.Earned.used / data.Earned.total) * 100;
+
+            // Update Casual Leave UI
+            document.getElementById('cl-text').textContent = `${data.Casual.left} / ${data.Casual.total} Left`;
+            document.getElementById('cl-subtext').innerHTML = `Used: ${data.Casual.used} &bull; Total: ${data.Casual.total}`;
+            document.getElementById('cl-bar').style.width = `${clPercent}%`;
+
+            // Update Sick Leave UI
+            document.getElementById('sl-text').textContent = `${data.Sick.left} / ${data.Sick.total} Left`;
+            document.getElementById('sl-subtext').innerHTML = `Used: ${data.Sick.used} &bull; Total: ${data.Sick.total}`;
+            document.getElementById('sl-bar').style.width = `${slPercent}%`;
+
+            // Update Earned Leave UI
+            document.getElementById('el-left').textContent = data.Earned.left;
+            document.getElementById('el-used').textContent = `Used: ${data.Earned.used}`;
+            document.getElementById('el-total').textContent = `Total Credited: ${data.Earned.total}`;
+            document.getElementById('el-bar').style.width = `${elPercent}%`;
+
+        } catch (error) {
+            console.error("Error fetching leave balance:", error);
+        }
+    }
+
+    // Update the DOMContentLoaded listener to call BOTH functions now
+    document.addEventListener("DOMContentLoaded", function() {
+        fetchRecentLeaves();
+        fetchLeaveBalance(); // Add this line!
     });
 </script>
 
