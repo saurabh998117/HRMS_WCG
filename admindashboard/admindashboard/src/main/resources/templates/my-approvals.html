@@ -33,12 +33,23 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
         }
         .btn-back-home {
-            background-color: var(--bs-primary); color: white;
-            border-radius: 50px; padding: 8px 24px; font-weight: 600;
-            font-size: 0.9rem; text-decoration: none; display: flex; align-items: center;
-            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2); transition: all 0.2s ease;
+            background-color: var(--bs-primary); /* Navy Blue */
+            color: white;
+            border-radius: 8px; /* Changed from 50px to 8px for the rectangular look */
+            padding: 8px 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+            transition: all 0.2s ease;
         }
-        .btn-back-home:hover { background-color: #172554; transform: translateY(-1px); color: white; }
+        .btn-back-home:hover {
+            background-color: #172554;
+            transform: translateY(-1px);
+            color: white;
+        }
 
         /* --- CONTAINER --- */
         .main-container { max-width: 1000px; margin: 0 auto 50px; padding: 0 20px; }
@@ -138,14 +149,6 @@
             background: #fef2f2; border-left: 3px solid #ef4444;
             padding: 12px 15px; border-radius: 6px; margin-top: 12px;
         }
-
-        .btn-back {
-            background: #1e3a8a; color: white;
-            padding: 10px 24px; border-radius: 10px; font-size: 0.95rem; text-decoration: none;
-            border: none; transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(30, 58, 138, 0.2);
-        }
-        .btn-back:hover { background: #172554; color: white; transform: translateY(-1px); }
 
     </style>
 </head>
