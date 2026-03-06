@@ -17,6 +17,7 @@
             --border-color: #e2e8f0;
             --text-main: #334155;
             --text-muted: #64748b;
+            --sidebar-width: 400px; /* NEW: Wider sidebar */
         }
 
         body {
@@ -29,106 +30,201 @@
             flex-direction: column;
         }
 
-        /* --- THEMED HEADER --- */
+        /* --- THEMED HEADER (CONFERENCE ROOM STYLE) --- */
         .top-header {
-            background: var(--bs-primary); /* Navy Blue Background */
-            border-bottom: 1px solid var(--border-color);
+            background: #ffffff; /* White background */
+            border-bottom: 2px solid var(--border-color);
             padding: 12px 30px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* Softer, lighter shadow */
             z-index: 10;
         }
-        .header-logo {
-            background: white; color: var(--bs-primary);
-            width: 40px; height: 40px; font-weight: 800; font-size: 1.1rem;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+        /* New Logo Image Styling */
+        .header-logo-img {
+            height: 60px;
+            width: auto;
+            border-radius: 6px;
+            object-fit: contain;
         }
+
+        /* Vertical Divider */
+        .header-separator {
+            height: 50px;
+            width: 2px;
+            background-color: #e2e8f0;
+            margin: 0 15px;
+        }
+
+        /* Dark, Uppercase Title */
+        .header-title {
+            color: #1e293b;
+            font-weight: 800;
+            font-size: 1.45rem;
+            letter-spacing: 0.5px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* Solid Blue Back Button */
         .btn-back-home {
-            background-color: rgba(255, 255, 255, 0.15); color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px; padding: 8px 20px; font-weight: 600;
-            font-size: 0.85rem; text-decoration: none; display: flex; align-items: center;
-            transition: all 0.2s ease;
+            background-color: var(--bs-primary);
+            color: white;
+            border: none;
+            border-radius: 6px; /* Matched the slight curve of the conference button */
+            padding: 9px 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex; align-items: center; transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(30, 58, 138, 0.15);
         }
-        .btn-back-home:hover { background-color: white; color: var(--bs-primary); }
+        .btn-back-home:hover {
+            background-color: var(--bs-primary-hover);
+            color: white;
+            transform: translateY(-1px);
+        }
 
-        /* --- CHAT LAYOUT --- */
+        /* --- 1. OVERALL CHAT LAYOUT (FLOATING PANELS) --- */
         .chat-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            background: white;
-            border-left: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
+            display: flex; flex: 1; overflow: hidden; max-width: 1500px; /* Slightly wider */
+            margin: 0 auto; width: 100%;
+            background: transparent; /* Removes the flat white background */
+            padding: 20px;
+            gap: 20px; /* Creates the vertical gap between sidebar and main area */
+            border: none;
         }
 
-        /* --- SIDEBAR (CONTACTS & FAQS) --- */
+        /* --- 2. SIDEBAR PANEL --- */
         .chat-sidebar {
-            width: 340px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
+            width: var(--sidebar-width);
+            display: flex; flex-direction: column;
             background: #ffffff;
+            border-radius: 16px; /* Smooth rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); /* Premium drop shadow */
+            border: 1px solid var(--border-color);
+            overflow: hidden; /* Keeps the tabs inside the rounded corners */
+        }
+
+        /* Upgraded Sidebar Hover Effects */
+        .contact-item {
+            display: flex; align-items: center; padding: 12px 15px;
+            cursor: pointer; transition: all 0.3s ease;
+            border-radius: 12px;
+            margin: 5px 10px; /* Creates a "floating bubble" look for contacts */
+            border: 1px solid transparent;
+        }
+        .contact-item:hover {
+            background: var(--bs-primary-light);
+            transform: translateY(-2px); /* Lifts the card up slightly */
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.06); /* Adds a shadow on hover */
+            border-color: rgba(30, 58, 138, 0.1);
+        }
+        .contact-item.active-chat {
+            background: var(--bs-primary-light);
+            border: 1px solid rgba(30, 58, 138, 0.15);
+            border-left: 4px solid var(--bs-primary);
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.05);
+        }
+
+        /* --- 3. MAIN CHAT AREA (SEPARATED BLOCKS) --- */
+        .chat-main {
+            flex: 1; display: flex; flex-direction: column;
+            background: transparent;
+            gap: 15px; /* Creates the horizontal gaps you drew between header, history, and input! */
+        }
+
+        /* Top Header Block */
+        .chat-header {
+            padding: 15px 25px; background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Middle Messages Block */
+        .chat-history {
+            flex: 1; padding: 30px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 15px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Bottom Input Block */
+        .chat-input-area {
+            padding: 15px 25px; background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
         }
 
         /* Custom Tabs for Sidebar */
-        .sidebar-tabs {
-            display: flex; border-bottom: 1px solid var(--border-color); background: #f8fafc;
-        }
+        .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border-color); background: #f8fafc; }
         .sidebar-tab {
             flex: 1; text-align: center; padding: 15px 0; font-weight: 700; color: var(--text-muted);
             cursor: pointer; transition: 0.2s; border-bottom: 3px solid transparent;
         }
         .sidebar-tab:hover { color: var(--bs-primary); background: white; }
-        .sidebar-tab.active {
-            color: var(--bs-primary); border-bottom-color: var(--bs-primary); background: white;
-        }
+        .sidebar-tab.active { color: var(--bs-primary); border-bottom-color: var(--bs-primary); background: white; }
 
+        /* --- UPGRADED INTERACTIVE SEARCH BAR --- */
         .search-container { padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
-        .search-box {
-            background: var(--bg-color); border: none; border-radius: 8px;
-            padding: 10px 15px; font-size: 0.9rem; width: 100%;
+        .search-wrapper {
+            display: flex; align-items: center; background: #f1f5f9;
+            border: 2px solid #f1f5f9; border-radius: 12px; transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        /* Interactive focus effect */
+        .search-wrapper:focus-within {
+            background: white; border-color: var(--bs-primary);
+            box-shadow: 0 4px 10px rgba(30,58,138,0.1);
+        }
+        .search-wrapper .input-group-text {
+            background: transparent; border: none; color: #94a3b8; padding-left: 15px; font-size: 1.1rem;
+        }
+        .search-wrapper .search-box {
+            background: transparent; border: none !important; box-shadow: none !important;
+            padding: 12px 15px 12px 5px; font-size: 0.95rem; width: 100%;
         }
 
         .tab-content-area { flex: 1; overflow-y: auto; }
 
-        /* Contact List */
-        .contact-item {
-            display: flex; align-items: center; padding: 15px 20px;
-            border-bottom: 1px solid #f8fafc; cursor: pointer; transition: background 0.2s;
-        }
-        .contact-item:hover { background: var(--bs-primary-light); }
-        .contact-item.active {
-            background: var(--bs-primary-light);
-            border-left: 4px solid var(--bs-primary);
+        /* --- RICH CONTACT LIST (WhatsApp Style) --- */
+        .contact-list {
+            padding: 5px;
         }
 
         .avatar {
-            width: 45px; height: 45px; border-radius: 50%;
+            width: 50px; height: 50px; border-radius: 50%; /* Slightly larger avatar */
             background: var(--bs-primary); color: white;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 1.1rem; flex-shrink: 0; position: relative;
+            font-weight: 700; font-size: 1.2rem; flex-shrink: 0; position: relative;
         }
         .avatar.faq-bot { background: #10b981; } /* Green for bot */
         .avatar.admin { background: #f59e0b; } /* Orange for HR */
 
         .status-dot {
             position: absolute; bottom: 0; right: 0;
-            width: 12px; height: 12px; border-radius: 50%;
+            width: 14px; height: 14px; border-radius: 50%;
             border: 2px solid white; background: #cbd5e1;
         }
         .status-dot.online { background: #10b981; }
 
-        .contact-info { margin-left: 15px; flex: 1; overflow: hidden; }
-        .contact-name { font-weight: 700; color: #1e293b; font-size: 0.95rem; margin-bottom: 2px; }
-        .contact-msg { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .contact-time { font-size: 0.7rem; color: #94a3b8; font-weight: 600; }
+        /* Rich Information Layout */
+        .contact-info { margin-left: 18px; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .contact-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .contact-name { font-weight: 700; color: #1e293b; font-size: 1rem; text-truncate; }
+        .contact-time { font-size: 0.75rem; color: #94a3b8; font-weight: 600; white-space: nowrap; margin-left: 10px;}
 
-        /* FAQ Accordion Styling */
+        /* Detailed message row */
+        .contact-details { display: flex; justify-content: space-between; align-items: center; }
+        .contact-msg { font-size: 0.85rem; color: var(--text-muted); text-truncate; max-width: 230px;}
+        .contact-item:hover .contact-msg { color: var(--bs-primary); }
+
+        /* FAQ Accordion Styling (Unchanged) */
         .faq-container { padding: 10px; }
         .accordion-button { font-weight: 600; font-size: 0.9rem; color: #1e293b; padding: 15px; }
         .accordion-button:not(.collapsed) {
@@ -137,23 +233,11 @@
         .accordion-button:focus { box-shadow: none; border-color: rgba(0,0,0,.125); }
         .accordion-body { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; padding: 15px; background: white;}
 
-        /* --- MAIN CHAT AREA --- */
-        .chat-main { flex: 1; display: flex; flex-direction: column; background: #f8fafc; }
+        /* Message Bubbles (UNCHANGED) */
 
-        .chat-header {
-            padding: 20px; background: white; border-bottom: 1px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .chat-history {
-            flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;
-        }
-
-        /* Message Bubbles */
         .msg-row { display: flex; width: 100%; }
         .msg-row.received { justify-content: flex-start; }
         .msg-row.sent { justify-content: flex-end; }
-
         .msg-bubble { max-width: 60%; padding: 12px 18px; font-size: 0.95rem; line-height: 1.5; position: relative; }
         .received .msg-bubble {
             background: white; color: var(--text-main);
@@ -166,42 +250,68 @@
         }
         .msg-time { font-size: 0.7rem; display: block; margin-top: 5px; opacity: 0.7; text-align: right; }
 
-        /* --- CHAT INPUT --- */
-        .chat-input-area { padding: 20px; background: white; border-top: 1px solid var(--border-color); }
+        /* --- CHAT INPUT (ELEGANT UPGRADE) --- */
         .input-wrapper {
             display: flex; align-items: center; background: var(--bg-color);
-            border-radius: 50px; padding: 5px 10px; border: 1px solid var(--border-color);
-            transition: all 0.2s;
+            border-radius: 50px; padding: 5px 10px; border: 2px solid var(--border-color);
+            transition: all 0.3s;
         }
-        .input-wrapper:focus-within { border-color: var(--bs-primary); box-shadow: 0 0 0 3px rgba(30,58,138,0.1); }
+        .input-wrapper:focus-within { border-color: var(--bs-primary); background: white; box-shadow: 0 4px 12px rgba(30,58,138,0.08); }
         .chat-input { flex: 1; border: none; background: transparent; padding: 12px 15px; outline: none; }
-        .btn-icon { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; padding: 10px; border-radius: 50%; transition: 0.2s; }
-        .btn-icon:hover { color: var(--bs-primary); background: #e2e8f0; }
+
+        /* Interactive Icons */
+        .btn-icon-wrapper { position: relative; }
+        .btn-icon { background: transparent; border: none; color: var(--text-muted); font-size: 1.3rem; padding: 10px; border-radius: 50%; transition: all 0.2s; }
+        .btn-icon:hover { color: var(--bs-primary); background: rgba(30,58,138,0.08); transform: translateY(-1px);}
+
+        /* Premium Send Button */
         .btn-send {
             background: var(--bs-primary); color: white; border: none;
-            width: 45px; height: 45px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 1.1rem;
-            transition: 0.2s; margin-left: 5px; box-shadow: 0 3px 8px rgba(30, 58, 138, 0.3);
+            width: 48px; height: 48px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem;
+            transition: all 0.2s; margin-left: 5px; box-shadow: 0 3px 8px rgba(30, 58, 138, 0.3);
         }
-        .btn-send:hover { background: var(--bs-primary-hover); transform: scale(1.05); }
+        .btn-send:hover { background: var(--bs-primary-hover); transform: scale(1.05) rotate(-15deg); }
+
+        /* --- MESSAGE HOVER ACTIONS (EDIT/REPLY/REACT) --- */
+        .msg-actions {
+            display: flex; gap: 8px; align-items: center;
+            opacity: 0; transition: opacity 0.2s ease;
+        }
+        .msg-row:hover .msg-actions { opacity: 1; } /* Show on hover */
+
+        .action-btn {
+            background: white; border: 1px solid var(--border-color);
+            color: var(--text-muted); border-radius: 50%; width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .action-btn:hover { color: var(--bs-primary); border-color: var(--bs-primary); transform: translateY(-2px); }
 
     </style>
+
 </head>
 <body>
 
-<header class="top-header">
+<div class="top-header">
     <div class="d-flex align-items-center">
-        <div class="header-logo me-3">WC</div>
-        <h5 class="mb-0 fw-bold text-white">Communications Hub</h5>
+        <img src="/images/wcg-logo.jpg" alt="White Circle Logo" class="header-logo-img"
+             onerror="this.outerHTML='<div style=\'background:black;color:white;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:bold;border-radius:6px;font-size:0.6rem;text-align:center;line-height:1;\'>White<br>Circle</div>'">
+        <div class="header-separator"></div>
+        <h4 class="header-title">CHAT CENTER</h4>
     </div>
-    <a href="/employee/dashboard" class="btn-back-home"><i class="fas fa-arrow-left me-2"></i>Back to Home</a>
-</header>
+
+    <a href="/employee/dashboard" class="btn-back-home">
+        <i class="fas fa-arrow-left me-2"></i> Back to Home
+    </a>
+</div>
 
 <div class="chat-container">
 
-    <div class="chat-sidebar">
+    <div class="chat-sidebar nav" role="tablist">
 
-        <div class="sidebar-tabs nav" role="tablist">
+        <div class="sidebar-tabs">
             <div class="sidebar-tab active" data-bs-toggle="tab" data-bs-target="#tab-chats" role="tab">
                 <i class="fas fa-comments me-2"></i>Chats
             </div>
@@ -213,75 +323,74 @@
         <div class="tab-content tab-content-area">
 
             <div class="tab-pane fade show active" id="tab-chats" role="tabpanel">
+
                 <div class="search-container">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0 text-muted"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control search-box bg-light" placeholder="Search colleagues...">
+                    <div class="search-wrapper">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control search-box" placeholder="Search colleague ID...">
                     </div>
                 </div>
 
                 <div class="contact-list">
-                    <div class="contact-item active">
+
+                    <div class="contact-item" data-id="0" onclick="loadChat('0', 'HR_Bot', 'HR Helpdesk Bot')">
                         <div class="avatar faq-bot"><i class="fas fa-robot"></i><div class="status-dot online"></div></div>
                         <div class="contact-info">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="contact-name">HR Helpdesk Bot</span>
-                                <span class="contact-time">Just now</span>
+                            <div class="contact-meta">
+                                <span class="contact-name fw-bold">HR Helpdesk Bot</span>
+                                <span class="contact-time text-primary fw-bold">Online</span>
                             </div>
-                            <div class="contact-msg text-primary fw-medium">How can I assist you today?</div>
+                            <div class="contact-details">
+                                <div class="contact-msg text-success fw-medium">How can I assist you today?</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="contact-item">
-                        <div class="avatar admin"><i class="fas fa-user-tie"></i><div class="status-dot online"></div></div>
-                        <div class="contact-info">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="contact-name">HR Administrator</span>
-                                <span class="contact-time">10:42 AM</span>
-                            </div>
-                            <div class="contact-msg">Your leave request has been approved.</div>
-                        </div>
-                    </div>
+                    <div class="contact-item"
+                         th:each="colleague : ${colleagues}"
+                         th:data-id="${colleague.id}"
+                         th:data-username="${colleague.username}"
+                         th:data-fullname="${colleague.fullName != null ? colleague.fullName : colleague.username}"
+                         onclick="loadChat(this.getAttribute('data-id'), this.getAttribute('data-username'), this.getAttribute('data-fullname'))">
 
-                    <div class="contact-item">
-                        <div class="avatar">AK<div class="status-dot online"></div></div>
-                        <div class="contact-info">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="contact-name">Amit Kumar</span>
-                                <span class="contact-time">Yesterday</span>
-                            </div>
-                            <div class="contact-msg">Are we still on for the 3 PM meeting?</div>
+                        <div class="avatar" style="background: var(--bs-primary);">
+                            <span th:text="${colleague.fullName != null and colleague.fullName.length() >= 2 ? #strings.substring(colleague.fullName,0,2).toUpperCase() : 'U'}">US</span>
+                            <div class="status-dot online"></div>
                         </div>
-                    </div>
 
-                    <div class="contact-item">
-                        <div class="avatar" style="background: #6366f1;">SR<div class="status-dot"></div></div>
                         <div class="contact-info">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="contact-name">Suresh Raina</span>
-                                <span class="contact-time">Mon</span>
+                            <div class="contact-meta">
+                                <span class="contact-name" th:text="${colleague.fullName != null ? colleague.fullName : colleague.username}">Full Name</span>
+                                <span class="contact-time" th:text="${colleague.formattedLastTime}">Formatted Time</span>
                             </div>
-                            <div class="contact-msg">Thanks for sending over the timesheet.</div>
+
+                            <div class="contact-details">
+                                <div class="contact-msg text-primary fw-medium" th:text="${colleague.lastMessageSnippet}">Latest message snippet goes here...</div>
+
+                                <span class="badge bg-danger rounded-pill"
+                                      style="font-size: 0.7rem;"
+                                      th:if="${colleague.unreadCount > 0}"
+                                      th:text="${colleague.unreadCount}">1</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tab-faqs" role="tabpanel">
+            <div class="tab-pane" id="tab-faqs" role="tabpanel">
                 <div class="faq-container">
                     <p class="text-muted small px-3 mt-3 mb-2 fw-bold text-uppercase">Most Frequently Asked</p>
-
                     <div class="accordion accordion-flush" id="faqAccordion">
 
                         <div class="accordion-item border-0 border-bottom">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                    <i class="far fa-calendar-times me-2 text-primary"></i> What is the deadline for weekly timesheets?
+                                    <i class="far fa-calendar-times me-2 text-primary"></i> Timesheet Submission
                                 </button>
                             </h2>
                             <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Timesheets must be submitted by <strong>Monday at 10:00 AM IST</strong> for the previous week. If you miss this deadline, your timesheet will be locked and you must request an unlock from your reporting manager.
+                                    Weekly timesheets must be submitted by <strong>Monday at 10:00 AM IST</strong> for the previous week. To submit, navigate to the <em>Timesheets</em> module, enter your hours, and click "Submit". If you miss the deadline, the timesheet will lock and you will need to request manager approval to unlock it.
                                 </div>
                             </div>
                         </div>
@@ -289,12 +398,12 @@
                         <div class="accordion-item border-0 border-bottom">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                    <i class="fas fa-umbrella-beach me-2 text-primary"></i> How do I apply for Sick or Casual Leave?
+                                    <i class="fas fa-umbrella-beach me-2 text-primary"></i> Leave Application Process
                                 </button>
                             </h2>
                             <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Navigate to the <strong>Self Services > Apply Leave</strong> section on your dashboard. Select your leave type, dates, and mode (Online/Offline), and submit. Your manager will review it in the My Approvals section.
+                                    Navigate to <em>Leave Management > Apply Leave</em>. Select your leave type (e.g., Casual, Sick), choose your start and end dates, and provide a brief reason. Once submitted, a notification is sent to your reporting manager for approval. You can track the status in the Leave History tab.
                                 </div>
                             </div>
                         </div>
@@ -302,21 +411,35 @@
                         <div class="accordion-item border-0 border-bottom">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                    <i class="fas fa-user-clock me-2 text-primary"></i> I forgot to punch out. What do I do?
+                                    <i class="fas fa-id-card me-2 text-primary"></i> Updating Personal Profile
                                 </button>
                             </h2>
                             <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Go to the <strong>Attendance Regularization</strong> module. Select the specific date you missed your punch, enter your corrected hours, provide a brief reason, and submit it for HR approval.
+                                    You can update your personal information by clicking your avatar in the top right and selecting <em>My Profile</em>. You have direct access to edit your emergency contacts and current address. Note: Changes to your legal name, PAN, or bank details require HR verification.
                                 </div>
                             </div>
                         </div>
 
+                        <div class="accordion-item border-0 border-bottom">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    <i class="fas fa-file-invoice-dollar me-2 text-primary"></i> Downloading Payslips
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Monthly payslips are typically generated by the 3rd working day of the new month. To view or download them, navigate to the <em>Payroll</em> module and select <em>Payslips</em>. Choose the desired month and year from the dropdown menu, and click the download icon to save it as a PDF.
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="text-center mt-4 px-3">
+                    <div class="text-center mt-4 px-3 mb-4">
                         <p class="small text-muted mb-2">Can't find your answer?</p>
-                        <button class="btn btn-sm btn-outline-primary w-100 fw-bold" onclick="document.querySelector('[data-bs-target=\'#tab-chats\']').click();">Message HR Helpdesk</button>
+                        <button class="btn btn-sm btn-outline-primary w-100 fw-bold py-2" onclick="openHrBot()">
+                            <i class="fas fa-robot me-1"></i> Message HR Helpdesk
+                        </button>
                     </div>
                 </div>
             </div>
@@ -327,67 +450,294 @@
     <div class="chat-main">
         <div class="chat-header">
             <div class="d-flex align-items-center">
-                <div class="avatar faq-bot me-3"><i class="fas fa-robot"></i></div>
+                <div class="avatar me-3" id="activeChatAvatar" style="background: var(--bs-primary);"><i class="fas fa-user"></i></div>
                 <div>
-                    <h6 class="fw-bold mb-0 text-dark">HR Helpdesk Bot</h6>
-                    <small class="text-success fw-medium"><i class="fas fa-circle text-success" style="font-size: 0.5rem; vertical-align: middle;"></i> Online • Automated Support</small>
+                    <h6 class="fw-bold mb-0 text-dark" id="activeChatFullName">Welcome to WC Communications</h6>
+                    <small class="text-muted fw-medium" id="activeChatEmpId">Select a colleague from the left to begin</small>
                 </div>
             </div>
-            <div>
-                <button class="btn-icon"><i class="fas fa-phone-alt"></i></button>
-                <button class="btn-icon"><i class="fas fa-video"></i></button>
-                <button class="btn-icon ms-2"><i class="fas fa-ellipsis-v"></i></button>
-            </div>
+            <div><button class="btn-icon ms-2"><i class="fas fa-ellipsis-v"></i></button></div>
         </div>
 
         <div class="chat-history">
-
-            <div class="text-center my-3">
-                <span class="badge bg-light text-muted border px-3 py-2 rounded-pill fw-medium">Today</span>
+            <div class="text-center my-5 text-muted">
+                <i class="fas fa-comments fs-1 mb-3 opacity-50"></i>
+                <h5>Your Messages</h5>
+                <p>Select a colleague from the sidebar to view your conversation.</p>
             </div>
-
-            <div class="msg-row received">
-                <div class="avatar faq-bot me-2 mt-auto" style="width: 30px; height: 30px; font-size: 0.8rem;"><i class="fas fa-robot"></i></div>
-                <div class="msg-bubble">
-                    Hello! I am the White Circle HR Assistant. How can I help you today? You can ask me about:
-                    <ul class="mb-0 mt-2 ps-3 text-primary fw-medium">
-                        <li style="cursor: pointer;">Leave policies & balances</li>
-                        <li style="cursor: pointer;">Timesheet submission deadlines</li>
-                        <li style="cursor: pointer;">Upcoming holidays</li>
-                    </ul>
-                    <span class="msg-time">11:30 AM</span>
-                </div>
-            </div>
-
-            <div class="msg-row sent">
-                <div class="msg-bubble">
-                    What is the deadline for submitting weekly timesheets?
-                    <span class="msg-time text-light">11:32 AM</span>
-                </div>
-            </div>
-
-            <div class="msg-row received">
-                <div class="avatar faq-bot me-2 mt-auto" style="width: 30px; height: 30px; font-size: 0.8rem;"><i class="fas fa-robot"></i></div>
-                <div class="msg-bubble">
-                    Weekly timesheets must be submitted by <strong>Monday at 10:00 AM IST</strong> for the previous week. If you miss the deadline, you will need to request manager approval to unlock it.
-                    <span class="msg-time">11:32 AM</span>
-                </div>
-            </div>
-
         </div>
 
         <div class="chat-input-area">
             <div class="input-wrapper">
-                <button class="btn-icon" title="Attach File"><i class="fas fa-paperclip"></i></button>
-                <button class="btn-icon" title="Insert Emoji"><i class="far fa-smile"></i></button>
+                <input type="file" id="fileAttachment" style="display: none;">
+                <button class="btn-icon" title="Attach File" onclick="document.getElementById('fileAttachment').click();"><i class="fas fa-paperclip"></i></button>
+
+                <button class="btn-icon" id="emojiBtn" title="Insert Emoji"><i class="far fa-smile"></i></button>
                 <input type="text" class="chat-input" placeholder="Type your message here...">
                 <button class="btn-send"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
-
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
+
+<script th:inline="javascript">
+
+    // 1. GLOBAL VARIABLES
+    let stompClient = null;
+    const currentUserId = /*[[${currentUser.id}]]*/ 0;
+    let activeContactId = null;
+    let activeContactName = "";
+    let activeContactFullName = "";
+
+    // 2. EMOJI PICKER SETUP
+
+    const emojiButton = document.querySelector('#emojiBtn');
+    const picker = new EmojiButton({ position: 'top-start' });
+    picker.on('emoji', emoji => {
+        document.querySelector('.chat-input').value += emoji;
+    });
+    emojiButton.addEventListener('click', () => picker.togglePicker(emojiButton));
+
+    // 3. WEBSOCKET CONNECTION
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null; // Hides console clutter
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected to Chat Engine');
+
+            stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function (message) {
+                const receivedMsg = JSON.parse(message.body);
+
+                // Move the person who just messaged you to the top of the sidebar!
+                moveContactToTop(receivedMsg.senderId);
+
+                // If you are actively looking at their chat, show it instantly
+                if (activeContactId === receivedMsg.senderId) {
+                    displayMessage(receivedMsg, 'received');
+                    scrollToBottom();
+                } else {
+                    console.log("New message from user: " + receivedMsg.senderId);
+                }
+            });
+        });
+    }
+
+    // 4. CHAT FUNCTIONS
+
+    function loadChat(contactId, username, fullname) {
+        activeContactId = contactId;
+        activeContactName = username;
+        activeContactFullName = fullname;
+
+        // 1. HIGHLIGHT THE ACTIVE CHAT IN THE SIDEBAR
+        document.querySelectorAll('.contact-item').forEach(item => item.classList.remove('active-chat'));
+        const clickedItem = document.querySelector(`.contact-item[data-id='${contactId}']`);
+        if (clickedItem) clickedItem.classList.add('active-chat');
+
+        // Update Header UI
+        document.getElementById('activeChatFullName').innerText = fullname;
+        document.getElementById('activeChatEmpId').innerText = contactId == 0 ? "Automated Support" : username;
+        document.getElementById('activeChatAvatar').innerHTML = contactId == 0 ? '<i class="fas fa-robot"></i>' : fullname.substring(0, 2).toUpperCase();
+        if(contactId == 0) document.getElementById('activeChatAvatar').style.background = '#10b981';
+
+        const chatHistoryBox = document.querySelector('.chat-history');
+        chatHistoryBox.innerHTML = '';
+
+        // 2. HR BOT LOGIC (Bypasses database)
+        if (contactId == 0) {
+            displayMessage({content: "Hello! I am the White Circle HR Assistant. Please type your query, and I will assist you.", senderId: 0, timestamp: new Date().toISOString()}, 'received');
+            return;
+        }
+
+        // Normal Employee logic
+        fetch(`/messages/${currentUserId}/${activeContactId}`)
+            .then(response => response.json())
+            .then(messages => {
+                messages.forEach(msg => {
+                    const type = msg.senderId == currentUserId ? 'sent' : 'received';
+                    displayMessage(msg, type);
+                });
+                scrollToBottom();
+            });
+    }
+
+    function sendMessage() {
+        const inputField = document.querySelector('.chat-input');
+        const content = inputField.value.trim();
+
+        if (content && activeContactId) {
+            const chatMessage = {
+                senderId: currentUserId,
+                recipientId: activeContactId,
+                content: content,
+                timestamp: new Date().toISOString()
+            };
+
+            displayMessage(chatMessage, 'sent');
+            inputField.value = '';
+            scrollToBottom();
+
+            // HR Bot Auto-Responder
+            if (activeContactId == 0) {
+                setTimeout(() => {
+                    displayMessage({content: "Thank you. Your query has been logged. An HR Admin will review it shortly.", senderId: 0, timestamp: new Date().toISOString()}, 'received');
+                    scrollToBottom();
+                }, 1000);
+                return;
+            }
+
+            // Normal Employee Send via WebSockets
+            if (stompClient) {
+                stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage));
+                moveContactToTop(activeContactId);
+            }
+        }
+    }
+
+    // 5. UPGRADED UI HELPER FUNCTIONS
+
+    function displayMessage(msg, type) {
+        const chatHistoryBox = document.querySelector('.chat-history');
+        let timeString = "Just now";
+        if (msg.timestamp) {
+            const dateObj = new Date(msg.timestamp);
+            timeString = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        const avatarText = activeContactId == 0 ? '<i class="fas fa-robot"></i>' : (activeContactFullName ? activeContactFullName.substring(0, 2).toUpperCase() : 'U');
+        const avatarBg = activeContactId == 0 ? '#10b981' : 'var(--bs-primary)';
+
+        let html = '';
+        if (type === 'received') {
+            // RECEIVED: ADD REPLY & REACT ICONS
+            html = `
+            <div class="msg-row received">
+                <div class="avatar me-2 mt-auto" style="width: 30px; height: 30px; font-size: 0.8rem; background: ${avatarBg};">${avatarText}</div>
+                <div class="msg-bubble">
+                    <span class="msg-content">${msg.content}</span>
+                    <span class="msg-time">${timeString}</span>
+                </div>
+                <div class="msg-actions ms-2 align-self-center">
+                    <button class="action-btn" title="Reply" onclick="triggerReply(this)"><i class="fas fa-reply"></i></button>
+                    <button class="action-btn" title="React" onclick="triggerReact(this)"><i class="far fa-smile"></i></button>
+                </div>
+            </div>`;
+        } else {
+            // 3. SENT: ADD EDIT ICON
+            html = `
+            <div class="msg-row sent">
+                <div class="msg-actions me-2 align-self-center">
+                    <button class="action-btn" title="Edit Message" onclick="triggerEdit(this)"><i class="fas fa-pencil-alt"></i></button>
+                </div>
+                <div class="msg-bubble">
+                    <span class="msg-content">${msg.content}</span>
+                    <span class="msg-time text-light">${timeString}</span>
+                </div>
+            </div>`;
+        }
+        chatHistoryBox.insertAdjacentHTML('beforeend', html);
+    }
+
+    // --- NEW INTERACTIVE ACTION FUNCTIONS ---
+    function triggerEdit(buttonElement) {
+        // Find the text of the message next to this button
+        const bubble = buttonElement.closest('.msg-row').querySelector('.msg-content');
+        const currentText = bubble.innerText;
+
+        const newText = prompt("Edit your message:", currentText);
+        if (newText !== null && newText.trim() !== "") {
+            bubble.innerHTML = newText.trim() + ' <small class="text-light opacity-75" style="font-size:0.6rem;">(edited)</small>';
+            // Note: This updates the UI only. Backend DB update logic goes here later!
+        }
+    }
+
+    function triggerReply(buttonElement) {
+        const bubble = buttonElement.closest('.msg-row').querySelector('.msg-content');
+        const chatInput = document.querySelector('.chat-input');
+        chatInput.value = `Replying to: "${bubble.innerText.substring(0, 20)}..." - `;
+        chatInput.focus();
+    }
+
+    function triggerReact(buttonElement) {
+        const bubble = buttonElement.closest('.msg-row').querySelector('.msg-bubble');
+        // Simple visual reaction demo
+        bubble.insertAdjacentHTML('beforeend', '<span class="badge bg-light text-dark position-absolute bottom-0 start-100 translate-middle rounded-pill border">👍</span>');
+    }
+
+    // 6. LIVE SEARCH FUNCTIONALITY
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        const contactList = document.querySelector('.contact-list');
+
+        if (query.length > 0) {
+            fetch(`/chat/search?query=${query}`)
+                .then(response => response.json())
+                .then(users => {
+                    contactList.innerHTML = '';
+
+                    if (users.length === 0) {
+                        contactList.innerHTML = '<div class="p-3 text-center text-muted small">No colleagues found.</div>';
+                        return;
+                    }
+
+                    users.forEach(user => {
+                        const displayName = user.fullName ? user.fullName : user.username;
+                        const initials = displayName.length >= 2 ? displayName.substring(0, 2).toUpperCase() : 'U';
+
+                        const html = `
+                            <div class="contact-item" data-id="${user.id}" onclick="loadChat(${user.id}, '${user.username}', '${displayName}')">
+                                <div class="avatar" style="background: var(--bs-primary);">
+                                    <span>${initials}</span>
+                                    <div class="status-dot online"></div>
+                                </div>
+                                <div class="contact-info">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="contact-name fw-bold text-dark">${displayName}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-1">
+                                        <div class="contact-msg text-primary fw-medium">${user.username}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        contactList.insertAdjacentHTML('beforeend', html);
+                    });
+                });
+        } else {
+            // Refresh to restore the full list when search is cleared
+            window.location.reload();
+        }
+    });
+
+    // 7. EVENT LISTENERS
+
+    document.querySelector('.btn-send').addEventListener('click', sendMessage);
+    document.querySelector('.chat-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // Helper function to jump from FAQs directly into the Bot Chat
+    function openHrBot() {
+        const chatsTabButton = document.querySelector('[data-bs-target="#tab-chats"]');
+        if (chatsTabButton) {
+            chatsTabButton.click();
+        }
+        loadChat('0', 'HR_Bot', 'HR Helpdesk Bot');
+    }
+
+    window.onload = connect;
+
+</script>
 </body>
 </html>
