@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Admin Portal - Request Management</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1e3a8a;
+            --navy-hover: #172a6b;
+            --bg-color: #f1f5f9;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #0f172a;
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+
+        .main-container { max-width: 1500px; width: 98%; margin: 0 auto; }
+
+        /* --- ADMIN NAV BAR (SOLID NAVY UPGRADE) --- */
+        .admin-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--navy); /* Solid Navy Background */
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 1000;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.2); /* Deep blue shadow */
+        }
+        .header-logo-box {
+            background: white; color: var(--navy); font-weight: 900;
+            width: 45px; height: 45px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .admin-badge {
+            background: rgba(255, 255, 255, 0.15); color: white; padding: 4px 10px;
+            border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
+            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.3);
+        }
+        .nav-exit-btn {
+            color: #cbd5e1; text-decoration: none; font-weight: 600; transition: all 0.2s;
+            padding: 8px 16px; border-radius: 8px; border: 1px solid transparent;
+        }
+        .nav-exit-btn:hover {
+            color: white; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);
+        }
+
+        /* --- TAB NAVIGATION (PREMIUM HOVER EFFECTS) --- */
+        .admin-tabs { border-bottom: 2px solid var(--border-color); margin-bottom: 25px; display: flex; gap: 10px; }
+        .admin-tab {
+            background: transparent; border: none; font-size: 1.0rem; font-weight: 600; color: #64748b;
+            padding: 12px 20px; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.3s ease;
+            border-radius: 8px 8px 0 0; /* Rounded top corners */
+        }
+        .admin-tab:hover { color: var(--navy); background: #eff6ff; } /* Light blue fill on hover */
+        .admin-tab.active { color: var(--navy); border-bottom-color: var(--navy); background: #eff6ff; }
+
+        /* --- TICKET TABLES (INTERACTIVE ROWS) --- */
+        .table-card {
+            background: white; border-radius: 12px; border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow); overflow: hidden;
+        }
+        .table-custom { margin: 0; }
+        .table-custom thead { background: #f8fafc; color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;}
+        .table-custom th { padding: 15px 20px; font-weight: 700; border-bottom: 2px solid var(--border-color); }
+        .table-custom td { padding: 18px 20px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; transition: all 0.2s ease;}
+
+        /* New Animated Row Hover */
+        .table-custom tbody tr { transition: all 0.2s ease; cursor: pointer; }
+        .table-custom tbody tr:hover {
+            background-color: #eff6ff;
+            transform: scale(1.002); /* Very subtle pop */
+            box-shadow: inset 4px 0 0 var(--navy); /* Navy accent bar on the left */
+        }
+
+        /* --- FILTER CONTROL BAR --- */
+        .filter-bar {
+            background: white; border-radius: 12px; padding: 20px 25px;
+            box-shadow: var(--card-shadow); border: 1px solid var(--border-color);
+            margin-bottom: 25px; display: flex; align-items: flex-end; gap: 15px; flex-wrap: wrap;
+        }
+        .filter-group { flex: 1; min-width: 200px; }
+        .filter-label { font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 5px; display: block; text-transform: uppercase;}
+        .custom-input { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 15px; width: 100%; outline: none; transition: 0.2s;}
+        .custom-input:focus { border-color: var(--navy); background: white; box-shadow: 0 0 0 3px rgba(30,58,138,0.1); }
+        .btn-filter { background: var(--navy); color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 600; height: 45px; transition: 0.2s;}
+        .btn-filter:hover { background: var(--navy-hover); transform: translateY(-1px); }
+
+        /* --- BADGES --- */
+        .ticket-id { font-family: monospace; font-weight: 700; color: var(--navy); background: #eff6ff; padding: 5px 10px; border-radius: 6px; }
+        .emp-name { font-weight: 700; color: #1e293b; display: block; }
+        .emp-id { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+
+        .priority-badge { padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .pr-high { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .pr-medium { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+        .pr-low { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; }
+
+        /* --- ACTION BUTTONS --- */
+        .action-group { display: flex; gap: 8px; justify-content: flex-end; }
+        .btn-action {
+            width: 35px; height: 35px; border-radius: 8px; border: none;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .btn-approve { background: #dcfce7; color: #166534; }
+        .btn-approve:hover { background: #166534; color: white; transform: translateY(-2px); }
+        .btn-deny { background: #fee2e2; color: #dc2626; }
+        .btn-deny:hover { background: #dc2626; color: white; transform: translateY(-2px); }
+        .btn-view { background: #f1f5f9; color: #475569; }
+        .btn-view:hover { background: var(--navy); color: white; transform: translateY(-2px); }
+
+
+    </style>
+</head>
+<body>
+
+<header class="admin-nav">
+    <div class="d-flex align-items-center gap-3">
+        <div class="header-logo-box">WC</div>
+        <div>
+            <span class="fw-bold text-white fs-5 d-block" style="line-height: 1.1;">HELPDESK REQUESTS CENTER</span>
+
+        </div>
+    </div>
+    <a href="/admin/dashboard" class="nav-exit-btn">
+        <i class="fas fa-sign-out-alt me-2"></i>Exit To Dashboard
+    </a>
+</header>
+<div class="main-container">
+
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h3 class="fw-bold text-navy mb-1">Incoming Requests</h3>
+            <p class="text-muted mb-0">Review, approve, or deny employee service requests.</p>
+        </div>
+        <div class="text-end">
+            <h5 class="fw-bold text-dark mb-0">12</h5>
+            <small class="text-muted fw-bold text-uppercase">Pending Actions</small>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label class="filter-label"><i class="far fa-calendar-alt me-1"></i> Date From</label>
+            <input type="date" id="filterDateFrom" class="custom-input" max="9999-12-31">
+        </div>
+        <div class="filter-group">
+            <label class="filter-label"><i class="far fa-calendar-alt me-1"></i> Date To</label>
+            <input type="date" id="filterDateTo" class="custom-input" max="9999-12-31">
+        </div>
+        <div class="filter-group">
+            <label class="filter-label"><i class="fas fa-exclamation-circle me-1"></i> Priority Level</label>
+            <select id="filterPriority" class="custom-input">
+                <option value="All">All Priorities</option>
+                <option value="High">High (Urgent)</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label"><i class="fas fa-laptop me-1"></i> Request Category</label>
+            <select id="filterCategory" class="custom-input">
+                <option value="All">All Categories</option>
+                <option value="Software">Software License</option>
+                <option value="System">System Access</option>
+                <option value="Hardware">Hardware Upgrade</option>
+                <option value="Network">Network / Incident</option>
+            </select>
+        </div>
+        <button class="btn-filter" onclick="applyFilters()"><i class="fas fa-filter me-2"></i>Apply Filters</button>
+        <button class="btn-filter" style="background: #f1f5f9; color: #475569;" onclick="clearFilters()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <ul class="nav admin-tabs" id="requestTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="admin-tab active" id="software-tab" data-bs-toggle="tab" data-bs-target="#software" type="button" role="tab">
+                <i class="fas fa-laptop-code me-2"></i>Software & Access <span class="badge bg-danger ms-1 rounded-pill">2</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="admin-tab" id="hardware-tab" data-bs-toggle="tab" data-bs-target="#hardware" type="button" role="tab">
+                <i class="fas fa-microchip me-2"></i>Hardware Assets <span class="badge bg-danger ms-1 rounded-pill">1</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="admin-tab" id="incident-tab" data-bs-toggle="tab" data-bs-target="#incident" type="button" role="tab">
+                <i class="fas fa-exclamation-triangle me-2"></i>Incident Reports <span class="badge bg-warning ms-1 rounded-pill text-dark">1</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="requestTabsContent">
+
+        <div class="tab-pane fade show active" id="software" role="tabpanel">
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Employee</th>
+                            <th>Request Type & Details</th>
+                            <th>Submitted</th>
+                            <th>Priority</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><span class="ticket-id">SR-1045</span></td>
+                            <td>
+                                <span class="emp-name">Anil Yadav</span>
+                                <span class="emp-id">EMP002</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark mb-1">Software License</div>
+                                <div class="text-muted small">JetBrains IntelliJ IDEA Ultimate (Permanent)</div>
+                            </td>
+                            <td class="text-muted fw-semibold">06 Mar 2026</td>
+                            <td><span class="priority-badge pr-medium">Medium</span></td>
+                            <td>
+                                <div class="action-group">
+                                    <button class="btn-action btn-view" title="View Details" onclick="viewDetails('SR-1045')"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-action btn-approve" title="Approve Request" onclick="processRequest('SR-1045', 'Approved')"><i class="fas fa-check"></i></button>
+                                    <button class="btn-action btn-deny" title="Deny Request" onclick="processRequest('SR-1045', 'Denied')"><i class="fas fa-times"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="ticket-id">SR-1046</span></td>
+                            <td>
+                                <span class="emp-name">Sarang S</span>
+                                <span class="emp-id">EMP004</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark mb-1">System Access</div>
+                                <div class="text-muted small">Production Database (Admin Level)</div>
+                            </td>
+                            <td class="text-muted fw-semibold">05 Mar 2026</td>
+                            <td><span class="priority-badge pr-high">High</span></td>
+                            <td>
+                                <div class="action-group">
+                                    <button class="btn-action btn-view" title="View Details" onclick="viewDetails('SR-1046')"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-action btn-approve" title="Approve Request" onclick="processRequest('SR-1046', 'Approved')"><i class="fas fa-check"></i></button>
+                                    <button class="btn-action btn-deny" title="Deny Request" onclick="processRequest('SR-1046', 'Denied')"><i class="fas fa-times"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="hardware" role="tabpanel">
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Employee</th>
+                            <th>Hardware Subject</th>
+                            <th>Submitted</th>
+                            <th>Priority</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><span class="ticket-id">HW-2104</span></td>
+                            <td>
+                                <span class="emp-name">David Miller</span>
+                                <span class="emp-id">EMP003</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark mb-1">Upgrade Hardware</div>
+                                <div class="text-muted small">RAM Upgrade to 32GB (Asset: WCG-LT-4092)</div>
+                            </td>
+                            <td class="text-muted fw-semibold">04 Mar 2026</td>
+                            <td><span class="priority-badge pr-medium">Medium</span></td>
+                            <td>
+                                <div class="action-group">
+                                    <button class="btn-action btn-view" title="View Details"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-action btn-approve" title="Approve Request"><i class="fas fa-check"></i></button>
+                                    <button class="btn-action btn-deny" title="Deny Request"><i class="fas fa-times"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="incident" role="tabpanel">
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Reported By</th>
+                            <th>Issue Description</th>
+                            <th>Submitted</th>
+                            <th>Priority</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><span class="ticket-id">INC-0092</span></td>
+                            <td>
+                                <span class="emp-name">Ritu Tiwari</span>
+                                <span class="emp-id">EMP009</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark mb-1">Network Outage</div>
+                                <div class="text-muted small">Unable to connect to Corporate VPN from home.</div>
+                            </td>
+                            <td class="text-muted fw-semibold">06 Mar 2026</td>
+                            <td><span class="priority-badge pr-high">High</span></td>
+                            <td>
+                                <div class="action-group">
+                                    <button class="btn-action btn-view" title="View Details"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-action btn-approve" title="Mark as Resolved"><i class="fas fa-wrench"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Placeholder logic for the Action Buttons
+    function processRequest(requestId, status) {
+        if(confirm(`Are you sure you want to mark ${requestId} as ${status}?`)) {
+            alert(`Backend Call: Updating ${requestId} to ${status}`);
+            // Later we will link this to your Spring Boot Controller using a fetch() call
+        }
+    }
+
+    function viewDetails(requestId) {
+        alert(`Opening detailed modal for ${requestId}... (We will connect this to the database to fetch the full justification)`);
+    }
+
+    function applyFilters() {
+        // 1. Grab the current values from the filter bar
+        const dateFromVal = document.getElementById('filterDateFrom').value;
+        const dateToVal = document.getElementById('filterDateTo').value;
+        const priorityVal = document.getElementById('filterPriority').value.toLowerCase();
+        const categoryVal = document.getElementById('filterCategory').value.toLowerCase();
+
+        // Convert selected dates into Javascript Date Objects for easy comparison
+        const dateFrom = dateFromVal ? new Date(dateFromVal).setHours(0,0,0,0) : null;
+        const dateTo = dateToVal ? new Date(dateToVal).setHours(23,59,59,999) : null;
+
+        // 2. Grab all the ticket rows across all tables
+        const allRows = document.querySelectorAll('.table-custom tbody tr');
+
+        // 3. Loop through every single row and check if it matches
+        allRows.forEach(row => {
+
+            // Extract the data written inside the row's columns
+            const rowCategoryText = row.querySelector('td:nth-child(3) .fw-bold').innerText.trim().toLowerCase();
+            const rowDateText = row.querySelector('td:nth-child(4)').innerText.trim();
+            const rowPriorityText = row.querySelector('td:nth-child(5)').innerText.trim().toLowerCase();
+
+            // Convert the row's text date (e.g., "06 Mar 2026") into a Date Object
+            const rowDate = new Date(rowDateText).setHours(0,0,0,0);
+
+            // 4. Run the checks! (Assume it's a match until proven false)
+            let matchDate = true;
+            if (dateFrom && rowDate < dateFrom) matchDate = false;
+            if (dateTo && rowDate > dateTo) matchDate = false;
+
+            let matchPriority = true;
+            if (priorityVal !== 'all' && rowPriorityText !== priorityVal) matchPriority = false;
+
+            let matchCategory = true;
+            if (categoryVal !== 'all' && !rowCategoryText.includes(categoryVal)) matchCategory = false;
+
+            // 5. Hide or Show the row based on the results
+            if (matchDate && matchPriority && matchCategory) {
+                row.style.display = ''; // Show row
+            } else {
+                row.style.display = 'none'; // Hide row
+            }
+        });
+    }
+
+    // Helper function to instantly reset all filters
+    function clearFilters() {
+        document.getElementById('filterDateFrom').value = '';
+        document.getElementById('filterDateTo').value = '';
+        document.getElementById('filterPriority').value = 'All';
+        document.getElementById('filterCategory').value = 'All';
+        applyFilters(); // Re-run the filter to show all rows again
+    }
+</script>
+
+</body>
+</html>
