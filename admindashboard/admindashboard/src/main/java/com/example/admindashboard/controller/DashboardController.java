@@ -97,13 +97,6 @@ public class DashboardController {
 
     // -- EMPLOYEE PORTAL PAGES --
 
-    @GetMapping("/chat")
-    public String viewChatPage(Model model) {
-        // We will add real-time WebSocket logic here later!
-        // For now, it just loads the UI.
-        return "chat";
-    }
-
     @GetMapping("/my-profile")
     public String showProfilePage() { return "my-profile"; }
 
@@ -476,6 +469,11 @@ public class DashboardController {
         redirectAttributes.addFlashAttribute("successMessage", "Employee Details Updated Successfully!");
 
         return "redirect:/admin/staff";
+    }
+
+    @GetMapping("/admin-helpdesk-requests")
+    public String viewAdminHelpdeskPortal(Model model) {
+        return "admin-helpdesk-requests"; // This is the actual HTML file name
     }
 
 }
