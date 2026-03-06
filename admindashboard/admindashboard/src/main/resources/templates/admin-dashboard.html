@@ -437,8 +437,8 @@
     </div>
     <a href="#" class="nav-item active"><i class="fas fa-th-large"></i> <span>Home</span></a>
     <a href="/admin/staff" class="nav-item"><i class="fas fa-users"></i> <span>Staff</span></a>
-    <a href="#" class="nav-item"><i class="fas fa-user-plus"></i> <span>Onboard</span></a>
-    <a href="#" class="nav-item"><i class="fas fa-clock"></i> <span>Attend</span></a>
+    <a href="/admin/add-employee" class="nav-item"><i class="fas fa-user-plus"></i> <span>Onboard</span></a>
+    <a href="/conference-room" class="nav-item"><i class="fas fa-clock"></i> <span>Attend</span></a>
     <a href="#" class="nav-item"><i class="fas fa-cog"></i> <span>Settings</span></a>
 
     <div class="sidebar-footer">
@@ -519,17 +519,18 @@
                     <a href="/admin/timesheet-approval " class="feature-btn"><i class="fas fa-calendar-check"></i><span>Approve Timesheet</span></a>
                     <a href="/admin/attendance-regularization" class="feature-btn"><i class="fas fa-history"></i><span>Attendance Regularization</span></a>
                     <a href=" " class="feature-btn"><i class="fas fa-file-invoice-dollar"></i><span>Manage Payroll</span></a>
-                    <a href="/conference-room " class="feature-btn"><i class="fas fa-handshake"></i><span>Conference Room</span></a>
+                    <a href="/conference-room" class="feature-btn"><i class="fas fa-handshake"></i><span>Conference Room</span></a>
 
                 </div>
             </div>
         </div>
 
-        <div class="dashboard-card col-40">
-            <div class="card-header-navy" style="background: white; color: var(--text-main); border-bottom: 1px solid var(--border);">
-                <i class="fas fa-chart-pie text-success"></i> Today's Attendance
+        <div class="dashboard-card col-40 dynamic-card-hover">
+            <div class="card-header-navy">
+                <i class="fas fa-chart-bar" style="color: #bfdbfe;"></i> Weekly Attendance Trend
             </div>
-            <div class="card-body-flex">
+
+            <div class="card-body-flex" style="padding: 20px; background: #ffffff;">
                 <div class="chart-wrapper">
                     <canvas id="attendanceChart"></canvas>
                 </div>
@@ -574,15 +575,17 @@
 
         <div class="dashboard-card col-40 dynamic-card-hover">
             <div class="card-header-navy">
-                <i class="fas fa-chart-line"></i> Weekly Timesheet Reports
+                <i class="fas fa-headset"></i> IT Helpdesk & Requests
             </div>
             <div class="card-body-flex d-flex flex-column align-items-center justify-content-center text-center p-4">
-                <p class="text-muted mb-4 px-3">
-                    View live employee timesheets, track daily hours, and monitor submission status week-by-week.
+
+                <h6 class="fw-bold text-dark mb-2">Service Command Center</h6>
+                <p class="text-muted mb-4 px-2" style="font-size: 0.85rem;">
+                    Manage employee hardware upgrades, software licenses, system permissions, and incident reports.
                 </p>
 
-                <a href="/admin/timesheets/view" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm">
-                    <i class="fas fa-external-link-alt me-2"></i> View Employee Timesheet Reports
+                <a href="/admin-helpdesk-requests" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm" style="padding: 10px 0;">
+                    <i class="fas fa-external-link-alt me-2"></i> Access Request Center
                 </a>
             </div>
         </div>
@@ -591,26 +594,132 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // 1. Attendance Chart
-    const ctx1 = document.getElementById('attendanceChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'doughnut',
-        data: {
-            labels: ['Present', 'Absent', 'Remote'],
-            datasets: [{
-                data: [240, 20, 60],
-                backgroundColor: ['#10b981', '#ef4444', '#3b82f6'],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
+    // 1. Dynamic Weekly Attendance Bar Chart
+const ctx1 = document.getElementById('attendanceChart').getContext('2d');
+
+// Helper Function: Creates a diagonal stripe pattern
+function createStripePattern(baseColor, stripeColor) {
+    const patternCanvas = document.createElement('canvas');
+    const pctx = patternCanvas.getContext('2d');
+    patternCanvas.width = 16; // Pattern width
+    patternCanvas.height = 16; // Pattern height
+
+    // Fill the background base color
+    pctx.fillStyle = baseColor;
+    pctx.fillRect(0, 0, 16, 16);
+
+    // Draw the diagonal stripes
+    pctx.strokeStyle = stripeColor;
+    pctx.lineWidth = 4;
+    pctx.beginPath();
+    pctx.moveTo(0, 16); pctx.lineTo(16, 0);
+    pctx.moveTo(-4, 4); pctx.lineTo(4, -4);
+    pctx.moveTo(12, 20); pctx.lineTo(20, 12);
+    pctx.stroke();
+
+    return ctx1.createPattern(patternCanvas, 'repeat');
+}
+
+// Generate the striped patterns using your brand colors with a semi-transparent white stripe
+const patternPresent = createStripePattern('#10b981', 'rgba(255, 255, 255, 0.2)');
+const patternRemote  = createStripePattern('#3b82f6', 'rgba(255, 255, 255, 0.2)');
+const patternAbsent  = createStripePattern('#ef4444', 'rgba(255, 255, 255, 0.2)');
+
+// Destroy the old chart instance if it exists (prevents overlap bugs when reloading data)
+let attendanceChart;
+if (attendanceChart) {
+    attendanceChart.destroy();
+}
+
+attendanceChart = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        // X-Axis Labels (Days of the week)
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        datasets: [
+            {
+                label: 'Present',
+                // Adjusted data to total ~100 with other metrics
+                data: [60, 65, 55, 70, 50],
+                backgroundColor: patternPresent,
+                borderColor: '#059669', // Solid border to contain the pattern sharply
+                borderWidth: 1,
+                borderRadius: 4,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            },
+            {
+                label: 'Remote',
+                // Increased visual representation
+                data: [25, 20, 30, 20, 35],
+                backgroundColor: patternRemote,
+                borderColor: '#2563eb',
+                borderWidth: 1,
+                borderRadius: 4,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            },
+            {
+                label: 'Absent',
+                // Increased visual representation
+                data: [15, 15, 15, 10, 15],
+                backgroundColor: patternAbsent,
+                borderColor: '#dc2626',
+                borderWidth: 1,
+                borderRadius: 4,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    usePointStyle: true,
+                    padding: 20,
+                    font: {
+                        family: "'Plus Jakarta Sans', sans-serif",
+                        weight: '600'
+                    }
+                }
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                titleFont: { family: "'Plus Jakarta Sans', sans-serif" },
+                bodyFont: { family: "'Plus Jakarta Sans', sans-serif" }
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'right' } },
-            cutout: '65%'
+        scales: {
+            x: {
+                grid: { display: false },
+                ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' } }
+            },
+            y: {
+                beginAtZero: true,
+                max: 100, // Hard-caps the Y-axis at 100
+                grid: {
+                    color: '#f1f5f9',
+                    drawBorder: false
+                },
+                ticks: {
+                    stepSize: 20, // Forces the intervals to be 0, 20, 40...
+                    font: { family: "'Plus Jakarta Sans', sans-serif" }
+                }
+            }
+        },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
         }
-    });
+    }
+});
 
     // NOTE: Removed Revenue Chart script because the HTML element was removed.
     // This was causing the Sidebar script to crash.
