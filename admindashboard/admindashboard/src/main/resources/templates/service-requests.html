@@ -84,6 +84,78 @@
         .bg-resolved { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
 
         .ticket-id { font-family: monospace; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; }
+
+        /* --- RICH MODAL STYLING --- */
+        .modal-content {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        .modal-header-custom {
+            background: var(--navy);
+            padding: 20px 30px;
+            color: white;
+            border-bottom: none;
+        }
+        .modal-title-custom {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+            opacity: 0.8;
+        }
+        .btn-close-white:hover { opacity: 1; }
+
+        .modal-body-custom { padding: 30px; background: #ffffff; }
+
+        .custom-form-label {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .custom-form-control {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .custom-form-control:focus {
+            background-color: #ffffff;
+            border-color: var(--navy);
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+            outline: none;
+        }
+
+        .modal-footer-custom {
+            padding: 20px 30px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .btn-cancel {
+            background: white;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-cancel:hover { background: #f1f5f9; color: #0f172a; }
+
     </style>
 </head>
 <body>
@@ -198,14 +270,286 @@
             </table>
         </div>
     </div>
+</div>
 
+<div class="modal fade" id="softwareLicenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header-custom d-flex justify-content-between align-items-center">
+                <h5 class="modal-title-custom" id="modalDynamicTitle">
+                    <i class="fas fa-laptop-code"></i> Request Software License
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body-custom">
+                <form id="softwareRequestForm">
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+                            <label class="custom-form-label">Select Software / Tool <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="" selected disabled>Choose from catalog...</option>
+                                <option value="IntelliJ IDEA Ultimate">JetBrains IntelliJ IDEA Ultimate</option>
+                                <option value="Adobe Creative Cloud">Adobe Creative Cloud (All Apps)</option>
+                                <option value="Microsoft Visio">Microsoft Visio Professional</option>
+                                <option value="Docker Desktop">Docker Desktop Pro</option>
+                                <option value="Other">Other (Specify in justification)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="custom-form-label">Required Duration <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="Permanent">Permanent / Annual Renewal</option>
+                                <option value="6 Months">Project Based (6 Months)</option>
+                                <option value="3 Months">Project Based (3 Months)</option>
+                                <option value="Trial">Trial / Evaluation (30 Days)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Operating System <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="" selected disabled>Select OS...</option>
+                                <option value="Windows 11">Windows 11</option>
+                                <option value="Windows 10">Windows 10</option>
+                                <option value="macOS">macOS</option>
+                                <option value="Linux">Linux (Ubuntu/CentOS)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Priority Level <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="Low">Low </option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High (Urgent)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Date Submitted</label>
+                            <input type="text" class="form-control custom-form-control text-muted fw-bold" id="submissionDate" readonly style="background-color: #e2e8f0; cursor: not-allowed;">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="custom-form-label">Business Justification & Cost Center <span class="text-danger">*</span></label>
+                            <textarea class="form-control custom-form-control" rows="3" placeholder="Please explain why this software is required for your role, and provide your project code if applicable..." required></textarea>
+                            <small class="text-muted mt-2 d-block"><i class="fas fa-info-circle me-1"></i> IT will verify this request with your reporting manager for cost approval.</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-navy" style="padding: 10px 24px; border-radius: 10px; font-weight: 600;" onclick="submitSoftwareRequest()">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Request
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="systemAccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header-custom d-flex justify-content-between align-items-center">
+                <h5 class="modal-title-custom" id="systemModalTitle">
+                    <i class="fas fa-key"></i> Request System Access
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body-custom">
+                <form id="systemAccessForm">
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+                            <label class="custom-form-label">Target System / Portal <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="" selected disabled>Select system...</option>
+                                <option value="AWS Console">AWS Environment Console</option>
+                                <option value="Jira / Confluence">Jira / Confluence Workspace</option>
+                                <option value="Staging Database">Staging Database</option>
+                                <option value="Production Database">Production Database</option>
+                                <option value="Corporate VPN">Corporate VPN</option>
+                                <option value="Other">Other (Specify below)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="custom-form-label">Requested Access Level <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="" selected disabled>Select access level...</option>
+                                <option value="Read-Only">Viewer / Read-Only</option>
+                                <option value="Contributor">Contributor / Editor</option>
+                                <option value="Admin">Administrator / Superuser</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Environment <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="Not Applicable">Not Applicable</option>
+                                <option value="Development">Development (DEV)</option>
+                                <option value="Staging">Staging (UAT)</option>
+                                <option value="Production">Production (PROD)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Required Duration <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="Permanent" selected>Permanent (Role Based)</option>
+                                <option value="Temporary - 1 Month">Temporary (1 Month)</option>
+                                <option value="Temporary - 1 Week">Temporary (1 Week)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Date Submitted</label>
+                            <input type="text" class="form-control custom-form-control text-muted fw-bold" id="sysSubmissionDate" readonly style="background-color: #e2e8f0; cursor: not-allowed;">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="custom-form-label">Business Justification <span class="text-danger">*</span></label>
+                            <textarea class="form-control custom-form-control" rows="3" placeholder="Please detail why you need this access, linking any relevant Jira tickets or project codes..." required></textarea>
+                            <small class="text-muted mt-2 d-block"><i class="fas fa-shield-alt me-1 text-success"></i> Production and Admin access requests require secondary security approval from the IT Director.</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-navy" style="padding: 10px 24px; border-radius: 10px; font-weight: 600;" onclick="submitSystemAccessRequest()">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Request
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modifyPermissionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header-custom d-flex justify-content-between align-items-center">
+                <h5 class="modal-title-custom" id="permissionModalTitle">
+                    <i class="fas fa-user-shield"></i> Modify Permissions
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body-custom">
+                <form id="permissionRequestForm">
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+                            <label class="custom-form-label">Application / System <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="" selected disabled>Select application...</option>
+                                <option value="GitHub Enterprise">GitHub Enterprise</option>
+                                <option value="Jira">Jira Workspace</option>
+                                <option value="AWS IAM">AWS IAM Roles</option>
+                                <option value="Internal HRMS">Internal HRMS Portal</option>
+                                <option value="Other">Other (Specify below)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="custom-form-label">Action Required <span class="text-danger">*</span></label>
+                            <select class="form-select custom-form-control" required>
+                                <option value="" selected disabled>Select action...</option>
+                                <option value="Elevate">Elevate Access (Upgrade)</option>
+                                <option value="Revoke">Revoke Access (Downgrade/Remove)</option>
+                                <option value="Transfer">Transfer Role (Department Change)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Current Role <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-form-control" placeholder="e.g., Developer, Viewer" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Requested Role <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-form-control" placeholder="e.g., Admin, Maintainer" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="custom-form-label">Date Submitted</label>
+                            <input type="text" class="form-control custom-form-control text-muted fw-bold" id="permSubmissionDate" readonly style="background-color: #e2e8f0; cursor: not-allowed;">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="custom-form-label">Business Justification <span class="text-danger">*</span></label>
+                            <textarea class="form-control custom-form-control" rows="3" placeholder="Please explain why your current permissions are insufficient and why this change is needed..." required></textarea>
+                            <small class="text-muted mt-2 d-block"><i class="fas fa-exclamation-triangle me-1 text-warning"></i> Elevating privileges to Admin/Superuser will trigger an automatic audit review.</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-navy" style="padding: 10px 24px; border-radius: 10px; font-weight: 600;" onclick="submitPermissionRequest()">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Request
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Placeholder function for opening the new request modal
+    // 1. Initialize all three Bootstrap Modals
+    const softwareModal = new bootstrap.Modal(document.getElementById('softwareLicenseModal'));
+    const systemModal = new bootstrap.Modal(document.getElementById('systemAccessModal'));
+    const permissionModal = new bootstrap.Modal(document.getElementById('modifyPermissionModal'));
+
+    // 2. Main function to open the correct modal and auto-fill the date
     function openRequestModal(type) {
-        alert("You clicked to open a new request for: " + type + "\n\nWe will build the pop-up modal for this next!");
+        // Grab today's date once
+        const today = new Date();
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        const formattedDate = today.toLocaleDateString('en-GB', options);
+
+        if (type === 'Software License') {
+            document.getElementById('submissionDate').value = formattedDate;
+            softwareModal.show();
+        }
+        else if (type === 'System Access') {
+            document.getElementById('sysSubmissionDate').value = formattedDate;
+            systemModal.show();
+        }
+        else if (type === 'Permission Modification') {
+            document.getElementById('permSubmissionDate').value = formattedDate;
+            permissionModal.show();
+        }
+    }
+
+    // 3. Dummy Submission Functions for UI testing
+    function submitSoftwareRequest() {
+        alert("Success! Your software license request has been submitted to the IT Helpdesk.");
+        softwareModal.hide();
+        document.getElementById('softwareRequestForm').reset();
+    }
+
+    function submitSystemAccessRequest() {
+        alert("Success! Your system access request has been submitted for security review.");
+        systemModal.hide();
+        document.getElementById('systemAccessForm').reset();
+    }
+
+    function submitPermissionRequest() {
+        alert("Success! Your permission modification request has been routed for manager approval.");
+        permissionModal.hide();
+        document.getElementById('permissionRequestForm').reset();
     }
 </script>
 
