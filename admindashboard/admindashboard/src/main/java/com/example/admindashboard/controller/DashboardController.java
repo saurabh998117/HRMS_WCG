@@ -14,12 +14,15 @@ import java.util.List;
 import com.example.admindashboard.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.example.admindashboard.repository.TimesheetRepository;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.admindashboard.model.EmployeeProfile;
+import com.whitecircle.hrms.repository.ServiceRequestRepository;
 
 @Controller
 public class DashboardController {
@@ -35,6 +38,9 @@ public class DashboardController {
 
     @Autowired
     private com.example.admindashboard.repository.MeetingRepository meetingRepository;
+
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
     // --- 1. LOGIN PAGE MAPPINGS ---
 
@@ -322,17 +328,53 @@ public class DashboardController {
     public String showTicketsPage() { return "tickets"; }
 
     @GetMapping("/service-requests")
-    public String showServiceRequestsPage() {
+    public String showServiceRequests(Model model, Principal principal) {
+        if (principal != null) {
+            String loginId = principal.getName();
+            User currentUser = userRepository.findByUsername(loginId).orElse(new User());
+            model.addAttribute("user", currentUser);
+
+            List<com.whitecircle.hrms.model.ServiceRequest> userRequests = serviceRequestRepository.findByEmployeeIdOrderBySubmissionDateDesc(loginId);
+            model.addAttribute("myRequests", userRequests);
+
+        } else {
+            model.addAttribute("user", new User());
+        }
         return "service-requests";
     }
+
     @GetMapping("/my-assets")
-    public String showMyAssetsPage() {
+    public String showMyAssets(Model model, Principal principal) {
+        if (principal != null) {
+            String loginId = principal.getName();
+            User currentUser = userRepository.findByUsername(loginId).orElse(new User());
+            model.addAttribute("user", currentUser);
+
+            List<com.whitecircle.hrms.model.ServiceRequest> userRequests = serviceRequestRepository.findByEmployeeIdOrderBySubmissionDateDesc(loginId);
+            model.addAttribute("myRequests", userRequests);
+
+        } else {
+            model.addAttribute("user", new User());
+        }
         return "my-assets";
     }
+
     @GetMapping("/report-incident")
-    public String showReportIncidentPage() {
+    public String showReportIncident(Model model, Principal principal) {
+        if (principal != null) {
+            String loginId = principal.getName();
+            User currentUser = userRepository.findByUsername(loginId).orElse(new User());
+            model.addAttribute("user", currentUser);
+
+            List<com.whitecircle.hrms.model.ServiceRequest> userRequests = serviceRequestRepository.findByEmployeeIdOrderBySubmissionDateDesc(loginId);
+            model.addAttribute("myRequests", userRequests);
+
+        } else {
+            model.addAttribute("user", new User());
+        }
         return "report-incident";
     }
+
     @GetMapping("/knowledge-base")
     public String showKnowledgeBasePage() {
         return "knowledge-base";
@@ -471,9 +513,27 @@ public class DashboardController {
         return "redirect:/admin/staff";
     }
 
+
+    @Autowired
+    private com.whitecircle.hrms.repository.ServiceRequestRepository repository;
+
     @GetMapping("/admin-helpdesk-requests")
     public String viewAdminHelpdeskPortal(Model model) {
-        return "admin-helpdesk-requests"; // This is the actual HTML file name
+        // Fetch all requests from database
+        List<com.whitecircle.hrms.model.ServiceRequest> allRequests = repository.findAll();
+
+        // Pass the list to Thymeleaf
+        model.addAttribute("allRequests", allRequests);
+
+        // Optional: Pass counts for the red badges on the tabs
+        long softwareCount = allRequests.stream().filter(r -> "SOFTWARE".equals(r.getType())).count();
+        long hardwareCount = allRequests.stream().filter(r -> "HARDWARE".equals(r.getType())).count();
+
+        model.addAttribute("softwareCount", softwareCount);
+        model.addAttribute("hardwareCount", hardwareCount);
+
+        return "admin-helpdesk-requests";
     }
+
 
 }
