@@ -7,145 +7,146 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --bs-primary: #1e3a8a; /* Navy Blue Theme */
+            --navy-dark: #172554;
             --bg-color: #f3f4f6;
+            --premium-shadow: 0 20px 25px -5px rgba(30, 58, 138, 0.1), 0 10px 10px -5px rgba(30, 58, 138, 0.04);
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: #334155;
-            padding-top: 70px;
+            padding-top: 100px; /* Adjusted for larger header */
             overflow-x: hidden;
         }
 
-        /* --- DASHING WHITE HEADER --- */
+        /* --- DASHING WHITE HEADER (SOLID NAVY TEXT) --- */
         .top-nav-bar {
             position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             background: white;
             height: 80px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 30px;
-            border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.1),
-                        0 8px 10px -6px rgba(30, 58, 138, 0.1);
+            padding: 0 40px;
+            border-bottom: 2px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
         .brand-section {
             display: flex; align-items: center;
-            color: #1e3a8a; font-weight: 700; font-size: 1.5rem; min-width: 250px;
+            color: #1e3a8a; font-weight: 800; font-size: 1.6rem; min-width: 250px;
         }
 
         .btn-back {
             background: #1e3a8a; color: white;
-            padding: 10px 24px; border-radius: 10px; font-size: 0.95rem; text-decoration: none;
-            border: none; transition: all 0.2s;
+            padding: 12px 28px; border-radius: 12px; font-size: 1.0rem; text-decoration: none;
+            border: none; transition: all 0.2s; font-weight: 600;
             box-shadow: 0 2px 5px rgba(30, 58, 138, 0.2);
         }
-        .btn-back:hover { background: #172554; color: white; transform: translateY(-1px); }
+        .btn-back:hover { background: var(--navy-dark); color: white; transform: translateY(-1px); }
 
-        /* --- HERO SECTION (Updated with Gap) --- */
+        /* --- UPGRADED PREMIUM NAVY HERO SECTION --- */
         .hero-section {
-            background: white;
-            padding: 20px 20px;
+            background: #1e3a8a; /* Navy background */
+            padding: 25px 15px; /* Increased vertical padding */
             text-align: center;
-
-            /* ADDED GAP HERE */
-            margin-top: 30px;
-            margin-bottom: 25px;
-
-            /* Added border and radius for a "floating card" look */
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-
-            /* Ensure it doesn't touch the edges on very large screens if desired,
-               or keep it full width. Here we keep it full width but constrained by container usually.
-               Since this is a top-level div, let's add a max-width to match content */
-            max-width: 1300px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-radius: 25px; /* Softer radius */
+            max-width: 1400px;
+            margin-left: auto; margin-right: auto;
+            border: none;
+            box-shadow: var(--premium-shadow);
         }
 
-        .greeting-text { font-size: 1.85rem; font-weight: 700; color: #1e3a8a; margin-bottom: 5px; }
-        .sub-text { font-size: 0.98rem; color: #64748b; margin-bottom: 20px; }
+        .greeting-text {
+            font-size: 2.2rem; /* Scared up text */
+            font-weight: 800; color: white; margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .sub-text {
+            font-size: 1.05rem; color: #bfdbfe; /* Muted light blue for contrast */
+            margin-bottom: 30px;
+        }
 
+        /* Hero Search Input (Internal dark mode) */
         .search-container {
-            max-width: 600px; margin: 0 auto; position: relative;
+            max-width: 650px; margin: 0 auto; position: relative;
         }
         .search-input {
-            height: 45px;
-            border-radius: 30px; border: 2px solid #e2e8f0;
-            padding-left: 45px; font-size: 0.95rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            height: 35px; /* Taller input */
+            border-radius: 30px; border: 2px solid white;
+            background-color: white; /* clean white input on navy bg */
+            color: #0f172a;
+            padding-left: 55px; font-size: 1.0rem; font-weight: 500;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             transition: all 0.3s;
         }
+        .search-input::placeholder { color: #94a3b8; font-weight: 400;}
         .search-input:focus {
-            border-color: #1e3a8a; box-shadow: 0 4px 20px rgba(30, 58, 138, 0.15); outline: none;
+            background-color: white;
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 5px rgba(147, 197, 253, 0.3); /* Soft blue focus glow */
+            outline: none;
         }
         .search-icon {
-            position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
-            color: #94a3b8; font-size: 1rem;
+            position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
+            color: #94a3b8; font-size: 1.15rem;
         }
 
-        /* --- ACTION CARDS --- */
+        /* --- SCALED UP ACTION CARDS (TO FILL THE PAGE) --- */
         .action-card {
             background: white;
-            border: 2px solid #1e3a8a;
-            border-radius: 12px;
-            padding: 30px 20px;
-            min-height: 220px;
+            border: 2px solid #e2e8f0; /* Default border */
+            border-radius: 16px;
+            padding: 50px 30px; /* Heavily increased padding to increase size */
+            min-height: 280px; /* Increased min height */
             height: 100%;
             text-decoration: none; display: flex; flex-direction: column;
             align-items: center; justify-content: center; text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         .action-card:hover {
-            transform: translateY(-8px);
-            background-color: #f8fafc;
-            box-shadow: 0 15px 35px rgba(30, 58, 138, 0.15);
+            transform: translateY(-10px); /* Subtle pop */
+            background-color: #ffffff;
+            border-color: #1e3a8a; /* Border becomes active on hover */
+            box-shadow: var(--premium-shadow);
         }
 
         .icon-circle {
-            width: 60px; height: 60px; border-radius: 50%;
+            width: 80px; height: 80px; /* Scaled up icon size */
+            border-radius: 50%;
             background: #eff6ff; color: #1e3a8a;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.75rem; margin-bottom: 15px;
+            font-size: 2.2rem; /* Scaled up icon font */
+            margin-bottom: 25px;
             transition: all 0.3s;
+            border: 1px solid #bfdbfe;
         }
 
-        .action-card:hover .icon-circle { background: #1e3a8a; color: white; transform: scale(1.1); }
-
-        .card-heading { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; margin-bottom: 8px; }
-        .card-desc { font-size: 0.9rem; color: #64748b; line-height: 1.4; }
-
-        /* --- ACTIVITY TABLES --- */
-        .table-card {
-            background: white; border-radius: 12px; border: 1px solid #e2e8f0;
-            overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            height: 100%;
-        }
-
-        .table-header {
-            padding: 12px 20px;
+        .action-card:hover .icon-circle {
             background: #1e3a8a;
-            border-bottom: 1px solid #172554;
-            display: flex; justify-content: space-between; align-items: center;
+            color: white;
+            transform: scale(1.05);
+            border-color: #1e3a8a;
         }
-        .table-title { font-weight: 700; color: white; margin: 0; font-size: 0.95rem; }
-        .view-all-link { font-size: 0.8rem; color: #bfdbfe; font-weight: 600; text-decoration: none; }
-        .view-all-link:hover { color: white; text-decoration: underline; }
 
-        .custom-table th { font-size: 0.8rem; text-transform: uppercase; color: #64748b; background: white; border-bottom: 2px solid #f1f5f9; }
-        .custom-table td { font-size: 0.85rem; color: #334155; vertical-align: middle; padding: 10px 15px; }
-
-        .badge-open { background: #dbeafe; color: #1e40af; }
-        .badge-progress { background: #fef3c7; color: #92400e; }
-        .badge-closed { background: #dcfce7; color: #166534; }
+        .card-heading {
+            font-size: 1.3rem; /* Scaled up heading */
+            font-weight: 800; color: #1e3a8a; margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+        .card-desc {
+            font-size: 1.0rem; /* Scaled up description */
+            color: #64748b; line-height: 1.5;
+            font-weight: 500;
+        }
 
     </style>
 </head>
@@ -161,131 +162,58 @@
     </a>
 </nav>
 
-<div class="container">
+<div class="container-fluid px-4 px-md-5">
+
     <div class="hero-section">
         <h2 class="greeting-text">
             Hello, <span th:text="${session.loggedInUser}">User</span>
         </h2>
-        <p class="sub-text">Find all your requests in one place. Search and raise new requests easily.</p>
+        <p class="sub-text">Find all your requests in one place. Search or raise new tickets from the cards below.</p>
 
         <div class="search-container">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" class="form-control search-input" placeholder="Search for requests, articles, or assets...">
+            <input type="text" class="form-control search-input" placeholder="Search knowledge articles, past requests, or assets...">
         </div>
     </div>
 </div>
 
-<div class="container">
+<div class="container-fluid px-4 px-md-5">
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
+    <div class="text-center mb-5 mt-2">
+        <h5 class="fw-semibold text-muted" style="letter-spacing: 0.5px;">
+            Select a service requirement from the four categories below to begin.
+        </h5>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-xl-3 col-md-4">
             <a href="/service-requests" class="action-card">
                 <div class="icon-circle"><i class="fas fa-laptop-medical"></i></div>
                 <div class="card-heading">Service Request</div>
-                <div class="card-desc">Request new hardware, software, or access permissions.</div>
+                <div class="card-desc">Request new hardware, specialized software licenses, or elevate access permissions.</div>
             </a>
         </div>
-        <div class="col-md-3">
+        <div class="col-xl-3 col-md-4">
             <a href="/my-assets" class="action-card">
                 <div class="icon-circle"><i class="fas fa-box-open"></i></div>
                 <div class="card-heading">My Assets</div>
-                <div class="card-desc">View your assigned devices, software licenses, and accessories.</div>
+                <div class="card-desc">View your assigned devices, active software licenses, and IT accessories.</div>
             </a>
         </div>
-        <div class="col-md-3">
+        <div class="col-xl-3 col-md-4">
             <a href="/report-incident" class="action-card">
-                <div class="icon-circle" style="background: #fee2e2; color: #b91c1c;"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="icon-circle" style="background: #fee2e2; color: #b91c1c; border-color: #fecaca;"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="card-heading text-danger">Report Incident</div>
-                <div class="card-desc">Report something that is broken or not working correctly.</div>
+                <div class="card-desc">Report equipment that is damaged or system software that is not working correctly.</div>
             </a>
         </div>
-        <div class="col-md-3">
+        <div class="col-xl-3 col-md-4">
             <a href="/knowledge-base" class="action-card">
                 <div class="icon-circle"><i class="fas fa-book-open"></i></div>
                 <div class="card-heading">Knowledge Base</div>
-                <div class="card-desc">Browse FAQs, how-to guides, and troubleshooting articles.</div>
+                <div class="card-desc">Browse through FAQs, how-to guides, and troubleshooting articles for self-help.</div>
             </a>
         </div>
-    </div>
-
-    <div class="row g-4 pb-4">
-
-        <div class="col-md-6">
-            <div class="table-card">
-                <div class="table-header">
-                    <h6 class="table-title"><i class="fas fa-history me-2"></i>Recent Service Requests</h6>
-                    <a href="#" class="view-all-link">View All</a>
-                </div>
-                <div class="table-responsive">
-                    <table class="table custom-table table-hover mb-0">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Subject</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="fw-bold">SR-1024</td>
-                            <td>New Monitor Request</td>
-                            <td>Jan 28</td>
-                            <td><span class="badge badge-progress rounded-pill">In Progress</span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">SR-1011</td>
-                            <td>VPN Access</td>
-                            <td>Jan 15</td>
-                            <td><span class="badge badge-closed rounded-pill">Closed</span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">SR-0998</td>
-                            <td>IntelliJ License</td>
-                            <td>Jan 10</td>
-                            <td><span class="badge badge-closed rounded-pill">Closed</span></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="table-card">
-                <div class="table-header">
-                    <h6 class="table-title"><i class="fas fa-fire-extinguisher me-2"></i>Recent Incidents</h6>
-                    <a href="#" class="view-all-link">View All</a>
-                </div>
-                <div class="table-responsive">
-                    <table class="table custom-table table-hover mb-0">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Issue</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="fw-bold">INC-505</td>
-                            <td>Wifi Connectivity Issue</td>
-                            <td>Jan 29</td>
-                            <td><span class="badge badge-open rounded-pill">Open</span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold">INC-402</td>
-                            <td>Outlook Not Syncing</td>
-                            <td>Jan 05</td>
-                            <td><span class="badge badge-closed rounded-pill">Resolved</span></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
     </div>
 
 </div>

@@ -45,36 +45,55 @@
         }
         .btn-back:hover { background: #172554; color: white; transform: translateY(-1px); }
 
-        /* --- SEARCH HERO SECTION (Compact Version) --- */
+        /* --- SEARCH HERO SECTION --- */
         .search-hero {
             background: var(--navy);
             border-radius: 12px;
-            padding: 25px 20px; /* Significantly reduced vertical padding */
+            padding: 20px 10px;
             text-align: center;
             color: white;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: var(--card-shadow);
             background-image: radial-gradient(circle at top right, #2563eb 0%, transparent 40%);
         }
+
+       /* --- KNOWLEDGE BASE SEARCH BAR (SIMPLE OUTLINE) --- */
         .search-bar-wrapper {
             position: relative;
-            max-width: 600px; /* Reduced max-width for a sleeker look */
-            margin: 15px auto 0; /* Tighter margin */
+            max-width: 700px;
+            margin: 20px auto 0;
         }
+
         .search-bar-wrapper .form-control {
-            border-radius: 50px;
-            padding: 12px 20px 12px 45px; /* Slimmer input box */
-            font-size: 1rem; /* Scaled down text */
-            border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Softer shadow */
+            background-color: rgba(255, 255, 255, 0.15); /* Frosted transparent fill */
+            border: 1px solid rgba(255, 255, 255, 0.4); /* Crisp white outline */
+            border-radius: 8px; /* Soft edges */
+            padding: 14px 20px 14px 50px; /* Spaced out for the icon */
+            color: #ffffff; /* White typing text */
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            box-shadow: none;
         }
+
+        .search-bar-wrapper .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7); /* Slightly faded white placeholder */
+        }
+
+        .search-bar-wrapper .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.25); /* Solidifies slightly on click */
+            border-color: #ffffff; /* Brighter border on click */
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1); /* Soft glow */
+            outline: none;
+        }
+
         .search-bar-wrapper .search-icon {
             position: absolute;
-            left: 18px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.9); /* White icon */
             font-size: 1.1rem;
+            pointer-events: none; /* Allows clicking "through" the icon */
         }
 
         /* --- CATEGORY CARDS --- */
@@ -98,11 +117,11 @@
         /* --- FAQ ACCORDION --- */
         .faq-section {
             background: white; border-radius: 16px; box-shadow: var(--card-shadow);
-            border: 1px solid #e2e8f0; overflow: hidden; /* Added overflow hidden for the header */
+            border: 1px solid #e2e8f0; overflow: hidden;
         }
         .faq-header {
             background: var(--navy); padding: 18px 18px; color: white;
-            border-bottom: 3px solid #10b981; /* Green accent to match portal theme */
+            border-bottom: 3px solid #10b981;
         }
         .faq-body { padding: 25px 30px; }
 
@@ -153,11 +172,9 @@
 <div class="main-container mb-5">
 
     <div class="search-hero">
-        <h4 class="fw-bold mb-1">How can we help you today?</h4>
-        <p class="text-white-50 small mb-0">Search for troubleshooting guides, setup manuals, and IT policies.</p>
         <div class="search-bar-wrapper">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" class="form-control" placeholder="Search Box">
+            <input type="text" class="form-control" placeholder="Search for troubleshooting guides, setup manuals, and IT policies...">
         </div>
     </div>
 
