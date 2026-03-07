@@ -28,24 +28,19 @@
 
         .main-container { max-width: 1500px; width: 98%; margin: 0 auto; }
 
-        /* --- ADMIN NAV BAR (SOLID NAVY UPGRADE) --- */
+        /* --- ADMIN NAV BAR --- */
         .admin-nav {
             position: fixed; top: 0; left: 0; right: 0; height: 80px;
-            background: var(--navy); /* Solid Navy Background */
+            background: var(--navy);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 40px; z-index: 1000;
-            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.2); /* Deep blue shadow */
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.2);
         }
         .header-logo-box {
             background: white; color: var(--navy); font-weight: 900;
             width: 45px; height: 45px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .admin-badge {
-            background: rgba(255, 255, 255, 0.15); color: white; padding: 4px 10px;
-            border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
-            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.3);
         }
         .nav-exit-btn {
             color: #cbd5e1; text-decoration: none; font-weight: 600; transition: all 0.2s;
@@ -55,32 +50,57 @@
             color: white; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);
         }
 
-        /* --- TAB NAVIGATION (PREMIUM HOVER EFFECTS) --- */
-        .admin-tabs { border-bottom: 2px solid var(--border-color); margin-bottom: 25px; display: flex; gap: 10px; }
-        .admin-tab {
-            background: transparent; border: none; font-size: 1.0rem; font-weight: 600; color: #64748b;
-            padding: 12px 20px; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.3s ease;
-            border-radius: 8px 8px 0 0; /* Rounded top corners */
+        /* --- MASTER STATUS BOXES --- */
+        .status-box {
+            background: white; border: 2px solid #e2e8f0; border-radius: 10px; padding: 10px 20px;
+            display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.2s;
+            min-width: 150px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        .admin-tab:hover { color: var(--navy); background: #eff6ff; } /* Light blue fill on hover */
-        .admin-tab.active { color: var(--navy); border-bottom-color: var(--navy); background: #eff6ff; }
+        .status-box .count { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+        .status-box .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #64748b; }
 
-        /* --- TICKET TABLES (INTERACTIVE ROWS) --- */
+        .status-box.pending { border-color: #cbd5e1; }
+        .status-box.pending.active { border-color: var(--navy); background: #eff6ff; box-shadow: 0 4px 10px rgba(30,58,138,0.1); }
+        .status-box.pending.active .count, .status-box.pending.active .label { color: var(--navy); }
+
+        .status-box.approved { border-color: #bbf7d0; }
+        .status-box.approved.active { border-color: #166534; background: #f0fdf4; box-shadow: 0 4px 10px rgba(22,101,52,0.1); }
+        .status-box.approved.active .count, .status-box.approved.active .label { color: #166534; }
+
+        .status-box.denied { border-color: #fecaca; }
+        .status-box.denied.active { border-color: #dc2626; background: #fef2f2; box-shadow: 0 4px 10px rgba(220,38,38,0.1); }
+        .status-box.denied.active .count, .status-box.denied.active .label { color: #dc2626; }
+
+        /* --- TICKET TABLES (UPGRADED HEADERS) --- */
         .table-card {
             background: white; border-radius: 12px; border: 1px solid var(--border-color);
             box-shadow: var(--card-shadow); overflow: hidden;
         }
         .table-custom { margin: 0; }
-        .table-custom thead { background: #f8fafc; color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;}
-        .table-custom th { padding: 15px 20px; font-weight: 700; border-bottom: 2px solid var(--border-color); }
-        .table-custom td { padding: 18px 20px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; transition: all 0.2s ease;}
 
-        /* New Animated Row Hover */
+        .table-custom thead {
+            background: #e2e8f0; /* Distinct slate background */
+            border-bottom: 3px solid #94a3b8; /* Thick, pronounced separator line */
+        }
+        .table-custom th {
+            padding: 16px 20px;
+            font-size: 0.75rem;
+            font-weight: 800; /* Extra bold text */
+            color: #1e293b; /* High-contrast near-black text */
+            text-transform: uppercase;
+            letter-spacing: 1px; /* Spaced out for clear readability */
+            border-bottom: none;
+        }
+
+        .table-custom td { padding: 18px 20px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; transition: all 0.2s ease;}
         .table-custom tbody tr { transition: all 0.2s ease; cursor: pointer; }
-        .table-custom tbody tr:hover {
-            background-color: #eff6ff;
-            transform: scale(1.002); /* Very subtle pop */
-            box-shadow: inset 4px 0 0 var(--navy); /* Navy accent bar on the left */
+        .table-custom tbody tr:hover { background-color: #eff6ff; box-shadow: inset 4px 0 0 var(--navy); }
+
+        /* --- EMPTY STATE STYLING --- */
+        .empty-state-box {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: white;
         }
 
         /* --- FILTER CONTROL BAR --- */
@@ -96,7 +116,7 @@
         .btn-filter { background: var(--navy); color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 600; height: 45px; transition: 0.2s;}
         .btn-filter:hover { background: var(--navy-hover); transform: translateY(-1px); }
 
-        /* --- BADGES --- */
+        /* --- BADGES & BUTTONS --- */
         .ticket-id { font-family: monospace; font-weight: 700; color: var(--navy); background: #eff6ff; padding: 5px 10px; border-radius: 6px; }
         .emp-name { font-weight: 700; color: #1e293b; display: block; }
         .emp-id { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
@@ -106,12 +126,8 @@
         .pr-medium { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
         .pr-low { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; }
 
-        /* --- ACTION BUTTONS --- */
         .action-group { display: flex; gap: 8px; justify-content: flex-end; }
-        .btn-action {
-            width: 35px; height: 35px; border-radius: 8px; border: none;
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
+        .btn-action { width: 35px; height: 35px; border-radius: 8px; border: none; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-approve { background: #dcfce7; color: #166534; }
         .btn-approve:hover { background: #166534; color: white; transform: translateY(-2px); }
         .btn-deny { background: #fee2e2; color: #dc2626; }
@@ -119,6 +135,14 @@
         .btn-view { background: #f1f5f9; color: #475569; }
         .btn-view:hover { background: var(--navy); color: white; transform: translateY(-2px); }
 
+        /* --- CUSTOM ADMIN CATEGORY TABS --- */
+        .custom-admin-tabs { gap: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 25px; }
+        .custom-admin-tabs .nav-link {
+            color: #475569; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px 24px; font-weight: 700; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px;
+        }
+        .custom-admin-tabs .nav-link:hover { background: #f1f5f9; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .custom-admin-tabs .nav-link.active { background: #1e3a8a; color: white; border-color: #1e3a8a; box-shadow: 0 8px 15px rgba(30, 58, 138, 0.2); }
+        .custom-admin-tabs .nav-link.active .badge { background-color: white !important; color: #1e3a8a !important; }
 
     </style>
 </head>
@@ -129,23 +153,40 @@
         <div class="header-logo-box">WC</div>
         <div>
             <span class="fw-bold text-white fs-5 d-block" style="line-height: 1.1;">HELPDESK REQUESTS CENTER</span>
-
         </div>
     </div>
-    <a href="/admin/dashboard" class="nav-exit-btn">
-        <i class="fas fa-sign-out-alt me-2"></i>Exit To Dashboard
+    <a href="/admin/dashboard" class="btn btn-outline-light btn-sm">
+        <i class="fas fa-arrow-left me-2"></i>Exit to Dashboard
     </a>
 </header>
+
 <div class="main-container">
 
-    <div class="d-flex justify-content-between align-items-end mb-4">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
         <div>
             <h3 class="fw-bold text-navy mb-1">Incoming Requests</h3>
             <p class="text-muted mb-0">Review, approve, or deny employee service requests.</p>
         </div>
-        <div class="text-end">
-            <h5 class="fw-bold text-dark mb-0">12</h5>
-            <small class="text-muted fw-bold text-uppercase">Pending Actions</small>
+
+        <div class="d-flex gap-3">
+            <div class="status-box pending active" onclick="switchStatus('pending', this)">
+                <div>
+                    <div class="count" th:text="${allRequests.?[status == 'Pending Approval' or status == 'Open'].size()}">0</div>
+                    <div class="label">Pending</div>
+                </div>
+            </div>
+            <div class="status-box approved" onclick="switchStatus('approved', this)">
+                <div>
+                    <div class="count" th:text="${allRequests.?[status == 'Approved' or status == 'Resolved'].size()}">0</div>
+                    <div class="label">Approved</div>
+                </div>
+            </div>
+            <div class="status-box denied" onclick="switchStatus('denied', this)">
+                <div>
+                    <div class="count" th:text="${allRequests.?[status == 'Denied'].size()}">0</div>
+                    <div class="label">Denied</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -177,34 +218,34 @@
                 <option value="Network">Network / Incident</option>
             </select>
         </div>
-        <button class="btn-filter" onclick="applyFilters()"><i class="fas fa-filter me-2"></i>Apply Filters</button>
-        <button class="btn-filter" style="background: #f1f5f9; color: #475569;" onclick="clearFilters()"><i class="fas fa-times"></i></button>
+        <button type="button" class="btn-filter" onclick="applyFilters()"><i class="fas fa-filter me-2"></i>Apply Filters</button>
+        <button type="button" class="btn-filter" style="background: #f1f5f9; color: #475569;" onclick="clearFilters()"><i class="fas fa-times"></i></button>
     </div>
 
-    <ul class="nav admin-tabs" id="requestTabs" role="tablist">
+    <ul class="nav nav-pills custom-admin-tabs" id="helpdeskTabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="admin-tab active" id="software-tab" data-bs-toggle="tab" data-bs-target="#software" type="button" role="tab">
-                <i class="fas fa-laptop-code me-2"></i>Software & Access <span class="badge bg-danger ms-1 rounded-pill">2</span>
+            <button class="nav-link active" id="nav-software-tab" data-bs-toggle="pill" data-bs-target="#softwareTab" type="button" role="tab">
+                <i class="fas fa-laptop-code"></i> Software & Access <span class="badge rounded-pill bg-danger shadow-sm">0</span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="admin-tab" id="hardware-tab" data-bs-toggle="tab" data-bs-target="#hardware" type="button" role="tab">
-                <i class="fas fa-microchip me-2"></i>Hardware Assets <span class="badge bg-danger ms-1 rounded-pill">1</span>
+            <button class="nav-link" id="nav-hardware-tab" data-bs-toggle="pill" data-bs-target="#hardwareTab" type="button" role="tab">
+                <i class="fas fa-microchip"></i> Hardware Assets <span class="badge rounded-pill bg-danger shadow-sm">0</span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="admin-tab" id="incident-tab" data-bs-toggle="tab" data-bs-target="#incident" type="button" role="tab">
-                <i class="fas fa-exclamation-triangle me-2"></i>Incident Reports <span class="badge bg-warning ms-1 rounded-pill text-dark">1</span>
+            <button class="nav-link" id="nav-incident-tab" data-bs-toggle="pill" data-bs-target="#incidentTab" type="button" role="tab">
+                <i class="fas fa-exclamation-triangle"></i> Incident Reports <span class="badge rounded-pill bg-warning text-dark shadow-sm">0</span>
             </button>
         </li>
     </ul>
 
     <div class="tab-content" id="requestTabsContent">
 
-        <div class="tab-pane fade show active" id="software" role="tabpanel">
+        <div class="tab-pane fade show active" id="softwareTab" role="tabpanel">
             <div class="table-card">
                 <div class="table-responsive">
-                    <table class="table table-custom">
+                    <table class="table table-custom" id="softwareTable">
                         <thead>
                         <tr>
                             <th>Request ID</th>
@@ -215,57 +256,47 @@
                             <th class="text-end">Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td><span class="ticket-id">SR-1045</span></td>
+                        <tbody id="softwareTableBody">
+                        <tr th:each="req : ${allRequests}" th:if="${req.type == 'SOFTWARE' or req.type == 'ACCESS' or req.type == 'PERMISSION'}" th:data-status="${req.status}">
+                            <td><span class="ticket-id" th:text="${req.ticketId}">SR-0000</span></td>
                             <td>
-                                <span class="emp-name">Anil Yadav</span>
-                                <span class="emp-id">EMP002</span>
+                                <span class="emp-name" th:text="${req.employeeName}">Employee Name</span>
+                                <span class="emp-id" th:text="${req.employeeId}">EMP-ID</span>
                             </td>
                             <td>
-                                <div class="fw-bold text-dark mb-1">Software License</div>
-                                <div class="text-muted small">JetBrains IntelliJ IDEA Ultimate (Permanent)</div>
+                                <div class="fw-bold text-dark mb-1" th:text="${req.category}">Category</div>
+                                <div class="text-muted small" th:text="${req.detailItem + ' (' + req.durationOrLevel + ')'}">Details</div>
                             </td>
-                            <td class="text-muted fw-semibold">06 Mar 2026</td>
-                            <td><span class="priority-badge pr-medium">Medium</span></td>
+                            <td class="text-muted fw-semibold" th:text="${#temporals.format(req.submissionDate, 'dd MMM yyyy')}">Date</td>
+                            <td>
+                                <span th:classappend="${req.priority == 'High' ? 'pr-high' : (req.priority == 'Medium' ? 'pr-medium' : 'pr-low')}"
+                                      class="priority-badge" th:text="${req.priority}">Priority</span>
+                            </td>
                             <td>
                                 <div class="action-group">
-                                    <button class="btn-action btn-view" title="View Details" onclick="viewDetails('SR-1045')"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-approve" title="Approve Request" onclick="processRequest('SR-1045', 'Approved')"><i class="fas fa-check"></i></button>
-                                    <button class="btn-action btn-deny" title="Deny Request" onclick="processRequest('SR-1045', 'Denied')"><i class="fas fa-times"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="ticket-id">SR-1046</span></td>
-                            <td>
-                                <span class="emp-name">Sarang S</span>
-                                <span class="emp-id">EMP004</span>
-                            </td>
-                            <td>
-                                <div class="fw-bold text-dark mb-1">System Access</div>
-                                <div class="text-muted small">Production Database (Admin Level)</div>
-                            </td>
-                            <td class="text-muted fw-semibold">05 Mar 2026</td>
-                            <td><span class="priority-badge pr-high">High</span></td>
-                            <td>
-                                <div class="action-group">
-                                    <button class="btn-action btn-view" title="View Details" onclick="viewDetails('SR-1046')"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-approve" title="Approve Request" onclick="processRequest('SR-1046', 'Approved')"><i class="fas fa-check"></i></button>
-                                    <button class="btn-action btn-deny" title="Deny Request" onclick="processRequest('SR-1046', 'Denied')"><i class="fas fa-times"></i></button>
+                                    <button class="btn-action btn-view" th:onclick="'viewRequestDetails(' + ${req.id} + ')'"><i class="fas fa-eye"></i></button>
+                                    <th:block th:if="${req.status == 'Pending Approval'}">
+                                        <button class="btn-action btn-approve" th:onclick="'updateStatus(' + ${req.id} + ', \'Approved\')'"><i class="fas fa-check"></i></button>
+                                        <button class="btn-action btn-deny" th:onclick="'updateStatus(' + ${req.id} + ', \'Denied\')'"><i class="fas fa-times"></i></button>
+                                    </th:block>
                                 </div>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+                <div id="softwareEmptyState" class="empty-state-box" style="display: none;">
+                    <i class="fas fa-folder-open fa-3x mb-3" style="color: #cbd5e1;"></i>
+                    <h5 class="fw-bold" style="color: #475569;">No Requests/Tickets for now</h5>
+                    <p class="text-muted small">Try exploring other sections or adjusting your filters to View/Approve/Deny employee requests.</p>
+                </div>
             </div>
         </div>
 
-        <div class="tab-pane fade" id="hardware" role="tabpanel">
+        <div class="tab-pane fade" id="hardwareTab" role="tabpanel">
             <div class="table-card">
                 <div class="table-responsive">
-                    <table class="table table-custom">
+                    <table class="table table-custom" id="hardwareTable">
                         <thead>
                         <tr>
                             <th>Request ID</th>
@@ -276,37 +307,52 @@
                             <th class="text-end">Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td><span class="ticket-id">HW-2104</span></td>
+                        <tbody id="hardwareTableBody">
+                        <tr th:each="req : ${allRequests}" th:if="${req.type == 'HARDWARE'}" th:data-status="${req.status}">
+                            <td><span class="ticket-id" th:text="${req.ticketId}">HW-0000</span></td>
                             <td>
-                                <span class="emp-name">David Miller</span>
-                                <span class="emp-id">EMP003</span>
+                                <span class="emp-name" th:text="${req.employeeName}">Employee Name</span>
+                                <span class="emp-id" th:text="${req.employeeId}">EMP-ID</span>
                             </td>
                             <td>
-                                <div class="fw-bold text-dark mb-1">Upgrade Hardware</div>
-                                <div class="text-muted small">RAM Upgrade to 32GB (Asset: WCG-LT-4092)</div>
+                                <div class="fw-bold text-dark mb-1" th:text="${req.category}">Hardware Subject</div>
+                                <div class="text-muted small">
+                                    <span th:text="${req.detailItem}">Detail</span>
+                                    <span th:if="${req.durationOrLevel != null and req.durationOrLevel != 'N/A'}" th:text="${' ' + req.durationOrLevel}"></span>
+                                    <span th:if="${req.assetTag != null and req.assetTag != ''}" th:text="${' (Asset: ' + req.assetTag + ')'}"></span>
+                                    <span th:if="${req.location != null and req.location != ''}" th:text="${' - Delivery: ' + req.location}"></span>
+                                </div>
                             </td>
-                            <td class="text-muted fw-semibold">04 Mar 2026</td>
-                            <td><span class="priority-badge pr-medium">Medium</span></td>
+                            <td class="text-muted fw-semibold" th:text="${#temporals.format(req.submissionDate, 'dd MMM yyyy')}">Date</td>
+                            <td>
+                                <span th:classappend="${req.priority == 'High' ? 'pr-high' : (req.priority == 'Medium' ? 'pr-medium' : 'pr-low')}"
+                                      class="priority-badge" th:text="${req.priority}">Priority</span>
+                            </td>
                             <td>
                                 <div class="action-group">
-                                    <button class="btn-action btn-view" title="View Details"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-approve" title="Approve Request"><i class="fas fa-check"></i></button>
-                                    <button class="btn-action btn-deny" title="Deny Request"><i class="fas fa-times"></i></button>
+                                    <button class="btn-action btn-view" th:onclick="'viewRequestDetails(' + ${req.id} + ')'"><i class="fas fa-eye"></i></button>
+                                    <th:block th:if="${req.status == 'Pending Approval'}">
+                                        <button class="btn-action btn-approve" th:onclick="'updateStatus(' + ${req.id} + ', \'Approved\')'"><i class="fas fa-check"></i></button>
+                                        <button class="btn-action btn-deny" th:onclick="'updateStatus(' + ${req.id} + ', \'Denied\')'"><i class="fas fa-times"></i></button>
+                                    </th:block>
                                 </div>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+                <div id="hardwareEmptyState" class="empty-state-box" style="display: none;">
+                    <i class="fas fa-box-open fa-3x mb-3" style="color: #cbd5e1;"></i>
+                    <h5 class="fw-bold" style="color: #475569;">No Hardware Requests Found</h5>
+                    <p class="text-muted small">Try exploring other sections or adjusting your filters to View/Approve/Deny employee requests.</p>
+                </div>
             </div>
         </div>
 
-        <div class="tab-pane fade" id="incident" role="tabpanel">
+        <div class="tab-pane fade" id="incidentTab" role="tabpanel">
             <div class="table-card">
                 <div class="table-responsive">
-                    <table class="table table-custom">
+                    <table class="table table-custom" id="incidentTable">
                         <thead>
                         <tr>
                             <th>Ticket ID</th>
@@ -317,28 +363,40 @@
                             <th class="text-end">Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td><span class="ticket-id">INC-0092</span></td>
+                        <tbody id="incidentTableBody">
+                        <tr th:each="req : ${allRequests}" th:if="${req.type == 'INCIDENT'}" th:data-status="${req.status}">
+                            <td><span class="ticket-id bg-danger bg-opacity-10 text-danger" th:text="${req.ticketId}">INC-0000</span></td>
                             <td>
-                                <span class="emp-name">Ritu Tiwari</span>
-                                <span class="emp-id">EMP009</span>
+                                <span class="emp-name" th:text="${req.employeeName}">Employee Name</span>
+                                <span class="emp-id" th:text="${req.employeeId}">EMP-ID</span>
                             </td>
                             <td>
-                                <div class="fw-bold text-dark mb-1">Network Outage</div>
-                                <div class="text-muted small">Unable to connect to Corporate VPN from home.</div>
+                                <div class="fw-bold text-dark mb-1" th:text="${req.detailItem}">Incident Subject</div>
+                                <div class="text-muted small">
+                                    <i class="fas fa-exclamation-circle me-1 text-warning"></i>
+                                    <span th:text="${req.category}">Category</span>
+                                    <span th:if="${req.durationOrLevel != null}">&rsaquo; <span th:text="${req.durationOrLevel}">Sub-Category</span></span>
+                                </div>
                             </td>
-                            <td class="text-muted fw-semibold">06 Mar 2026</td>
-                            <td><span class="priority-badge pr-high">High</span></td>
+                            <td class="text-muted fw-semibold" th:text="${#temporals.format(req.submissionDate, 'dd MMM yyyy')}">Date</td>
+                            <td>
+                                <span th:classappend="${req.priority == 'High' ? 'pr-high' : (req.priority == 'Medium' ? 'pr-medium' : 'pr-low')}"
+                                      class="priority-badge" th:text="${req.priority}">Severity</span>
+                            </td>
                             <td>
                                 <div class="action-group">
-                                    <button class="btn-action btn-view" title="View Details"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-approve" title="Mark as Resolved"><i class="fas fa-wrench"></i></button>
+                                    <button class="btn-action btn-view" title="View Details" th:onclick="'viewRequestDetails(' + ${req.id} + ')'"><i class="fas fa-eye"></i></button>
+                                    <button th:if="${req.status == 'Open'}" class="btn-action btn-approve" title="Mark Resolved" th:onclick="'updateStatus(' + ${req.id} + ', \'Resolved\')'"><i class="fas fa-check-double"></i></button>
                                 </div>
                             </td>
                         </tr>
                         </tbody>
                     </table>
+                </div>
+                <div id="incidentEmptyState" class="empty-state-box" style="display: none;">
+                    <i class="fas fa-check-circle fa-3x mb-3" style="color: #cbd5e1;"></i>
+                    <h5 class="fw-bold" style="color: #475569;">No Incidents to Display</h5>
+                    <p class="text-muted small">The queue is clean! Try exploring other sections or adjusting your filters.</p>
                 </div>
             </div>
         </div>
@@ -346,46 +404,113 @@
     </div>
 </div>
 
+<div class="modal fade" id="viewRequestModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background-color: #1e3a8a; color: white; border-bottom: none; padding: 20px 30px;">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
+                    <i class="fas fa-file-invoice"></i> Ticket Details: <span id="modalTicketId" class="badge bg-light text-dark ms-2"></span>
+                </h5>
+                <button type="button" class="btn-close" style="filter: invert(1);" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div class="row g-4">
+                    <div class="col-md-6 border-end">
+                        <p class="text-muted small mb-1 fw-bold text-uppercase">Requester Profile</p>
+                        <h6 class="fw-bold text-dark mb-0" id="modalEmpName"></h6>
+                        <p class="small text-muted mb-2" id="modalEmpId"></p>
+                        <div class="d-flex align-items-center gap-2 text-muted small">
+                            <i class="fas fa-building"></i> <span id="modalDept"></span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 text-muted small mt-1">
+                            <i class="fas fa-user-tie"></i> <span id="modalManager"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Submitted</p>
+                                <h6 class="fw-bold mb-0" id="modalDate"></h6>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Priority</p>
+                                <span class="badge bg-secondary px-3 py-2" id="modalPriority"></span>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Category</p>
+                                <h6 class="fw-bold text-navy mb-0" id="modalCategory"></h6>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Status</p>
+                                <span class="badge bg-primary px-3 py-2" id="modalStatus"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12"><hr class="text-muted opacity-25"></div>
+                    <div class="col-12">
+                        <p class="text-muted small mb-1 fw-bold text-uppercase">Requested Item / Subject</p>
+                        <h5 class="fw-bold text-dark mb-1" id="modalDetails"></h5>
+                        <p class="text-muted small mb-0" id="modalDuration"></p>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <div class="p-4 rounded" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #1e3a8a;">
+                            <p class="text-navy small mb-2 fw-bold"><i class="fas fa-comment-dots me-2"></i>BUSINESS JUSTIFICATION / DESCRIPTION</p>
+                            <p class="mb-0 text-dark" id="modalJustification" style="white-space: pre-wrap; line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 15px 30px;">
+                <button type="button" class="btn btn-light border fw-bold text-muted" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Placeholder logic for the Action Buttons
-    function processRequest(requestId, status) {
-        if(confirm(`Are you sure you want to mark ${requestId} as ${status}?`)) {
-            alert(`Backend Call: Updating ${requestId} to ${status}`);
-            // Later we will link this to your Spring Boot Controller using a fetch() call
-        }
-    }
+    // --- MASTER STATUS CONTROL ---
+    let currentStatusFilter = 'pending'; // Default View
 
-    function viewDetails(requestId) {
-        alert(`Opening detailed modal for ${requestId}... (We will connect this to the database to fetch the full justification)`);
+    // Run filters immediately when the page finishes loading
+    document.addEventListener("DOMContentLoaded", () => {
+        applyFilters();
+    });
+
+    function switchStatus(status, element) {
+        document.querySelectorAll('.status-box').forEach(box => box.classList.remove('active'));
+        element.classList.add('active');
+        currentStatusFilter = status;
+        applyFilters();
     }
 
     function applyFilters() {
-        // 1. Grab the current values from the filter bar
         const dateFromVal = document.getElementById('filterDateFrom').value;
         const dateToVal = document.getElementById('filterDateTo').value;
         const priorityVal = document.getElementById('filterPriority').value.toLowerCase();
         const categoryVal = document.getElementById('filterCategory').value.toLowerCase();
 
-        // Convert selected dates into Javascript Date Objects for easy comparison
         const dateFrom = dateFromVal ? new Date(dateFromVal).setHours(0,0,0,0) : null;
         const dateTo = dateToVal ? new Date(dateToVal).setHours(23,59,59,999) : null;
 
-        // 2. Grab all the ticket rows across all tables
         const allRows = document.querySelectorAll('.table-custom tbody tr');
 
-        // 3. Loop through every single row and check if it matches
-        allRows.forEach(row => {
+        let softwareVisibleCount = 0;
+        let hardwareVisibleCount = 0;
+        let incidentVisibleCount = 0;
 
-            // Extract the data written inside the row's columns
+        allRows.forEach(row => {
             const rowCategoryText = row.querySelector('td:nth-child(3) .fw-bold').innerText.trim().toLowerCase();
             const rowDateText = row.querySelector('td:nth-child(4)').innerText.trim();
             const rowPriorityText = row.querySelector('td:nth-child(5)').innerText.trim().toLowerCase();
-
-            // Convert the row's text date (e.g., "06 Mar 2026") into a Date Object
             const rowDate = new Date(rowDateText).setHours(0,0,0,0);
 
-            // 4. Run the checks! (Assume it's a match until proven false)
+            const rowStatusRaw = row.getAttribute('data-status');
+
+            let rowStatusCategory = 'pending';
+            if (rowStatusRaw === 'Approved' || rowStatusRaw === 'Resolved') rowStatusCategory = 'approved';
+            if (rowStatusRaw === 'Denied') rowStatusCategory = 'denied';
+
             let matchDate = true;
             if (dateFrom && rowDate < dateFrom) matchDate = false;
             if (dateTo && rowDate > dateTo) matchDate = false;
@@ -396,24 +521,113 @@
             let matchCategory = true;
             if (categoryVal !== 'all' && !rowCategoryText.includes(categoryVal)) matchCategory = false;
 
-            // 5. Hide or Show the row based on the results
-            if (matchDate && matchPriority && matchCategory) {
-                row.style.display = ''; // Show row
+            let matchStatus = (rowStatusCategory === currentStatusFilter);
+
+            if (matchDate && matchPriority && matchCategory && matchStatus) {
+                row.style.display = '';
+                if(row.closest('tbody').id === 'softwareTableBody') softwareVisibleCount++;
+                if(row.closest('tbody').id === 'hardwareTableBody') hardwareVisibleCount++;
+                if(row.closest('tbody').id === 'incidentTableBody') incidentVisibleCount++;
             } else {
-                row.style.display = 'none'; // Hide row
+                row.style.display = 'none';
             }
         });
+
+        // Update Badges
+        document.querySelector('#nav-software-tab .badge').innerText = softwareVisibleCount;
+        document.querySelector('#nav-hardware-tab .badge').innerText = hardwareVisibleCount;
+        document.querySelector('#nav-incident-tab .badge').innerText = incidentVisibleCount;
+
+        // Toggle Empty States based on counts
+        document.getElementById('softwareTable').style.display = softwareVisibleCount === 0 ? 'none' : '';
+        document.getElementById('softwareEmptyState').style.display = softwareVisibleCount === 0 ? 'block' : 'none';
+
+        document.getElementById('hardwareTable').style.display = hardwareVisibleCount === 0 ? 'none' : '';
+        document.getElementById('hardwareEmptyState').style.display = hardwareVisibleCount === 0 ? 'block' : 'none';
+
+        document.getElementById('incidentTable').style.display = incidentVisibleCount === 0 ? 'none' : '';
+        document.getElementById('incidentEmptyState').style.display = incidentVisibleCount === 0 ? 'block' : 'none';
     }
 
-    // Helper function to instantly reset all filters
+    // Reset filters and trigger refresh
     function clearFilters() {
         document.getElementById('filterDateFrom').value = '';
         document.getElementById('filterDateTo').value = '';
         document.getElementById('filterPriority').value = 'All';
         document.getElementById('filterCategory').value = 'All';
-        applyFilters(); // Re-run the filter to show all rows again
+        applyFilters();
+    }
+
+    async function updateStatus(ticketId, newStatus) {
+        if (confirm(`Are you sure you want to mark Ticket ID: ${ticketId} as ${newStatus}?`)) {
+            try {
+                const params = new URLSearchParams({ id: ticketId, status: newStatus });
+                const response = await fetch('/api/requests/update-status?' + params.toString(), { method: 'POST' });
+
+                if (response.ok) {
+                    alert(`✅ Success! Ticket has been updated to ${newStatus}.`);
+                    location.reload();
+                } else {
+                    alert("❌ Failed to update the ticket. Please check the server.");
+                }
+            } catch (error) {
+                alert("Network connection error. Ensure the server is running.");
+            }
+        }
+    }
+
+    async function viewRequestDetails(id) {
+        try {
+            const response = await fetch('/api/requests/' + id);
+
+            if (response.ok) {
+                const data = await response.json();
+
+                document.getElementById('modalTicketId').textContent = data.ticketId;
+                document.getElementById('modalEmpName').textContent = data.employeeName;
+                document.getElementById('modalEmpId').textContent = data.employeeId;
+                document.getElementById('modalDept').textContent = data.department || 'Department N/A';
+                document.getElementById('modalManager').textContent = 'Manager: ' + (data.managerName || 'N/A');
+
+                document.getElementById('modalCategory').textContent = data.category;
+                document.getElementById('modalDetails').textContent = data.detailItem;
+
+                let subText = data.durationOrLevel !== 'N/A' ? data.durationOrLevel : '';
+                if (data.assetTag) subText += ` | Asset: ${data.assetTag}`;
+                if (data.location) subText += ` | Delivery: ${data.location}`;
+                document.getElementById('modalDuration').textContent = subText;
+
+                document.getElementById('modalPriority').textContent = data.priority;
+                document.getElementById('modalDate').textContent = data.submissionDate;
+                document.getElementById('modalJustification').textContent = data.justification;
+
+                const pBadge = document.getElementById('modalPriority');
+                pBadge.className = 'badge px-3 py-2 ' +
+                    (data.priority === 'High' ? 'bg-danger' : (data.priority === 'Medium' ? 'bg-warning text-dark' : 'bg-success'));
+
+                const statusBadge = document.getElementById('modalStatus');
+                statusBadge.textContent = data.status;
+                statusBadge.className = 'badge px-3 py-2 ';
+
+                if (data.status === 'Pending Approval' || data.status === 'Pending' || data.status === 'Open') {
+                    statusBadge.classList.add('bg-primary');
+                } else if (data.status === 'Approved' || data.status === 'Resolved') {
+                    statusBadge.classList.add('bg-success');
+                } else if (data.status === 'Denied') {
+                    statusBadge.classList.add('bg-danger');
+                } else {
+                    statusBadge.classList.add('bg-secondary');
+                }
+
+                const detailsModal = new bootstrap.Modal(document.getElementById('viewRequestModal'));
+                detailsModal.show();
+            } else {
+                alert("Could not locate ticket details in the database.");
+            }
+        } catch (error) {
+            alert("Network connection error.");
+        }
     }
 </script>
-
 </body>
 </html>
