@@ -214,11 +214,11 @@
         <div class="ticket-header">
             <h6>Recent Software Tickets</h6>
             <div class="d-flex gap-2">
-                <select class="form-select form-select-sm border-0 rounded-pill px-3 shadow-sm" style="width: 150px;">
-                    <option>All Statuses</option>
-                    <option>Pending</option>
-                    <option>In Progress</option>
-                    <option>Resolved</option>
+                <select id="statusFilter" class="form-select form-select-sm border-0 rounded-pill px-3 shadow-sm" style="width: 150px;" onchange="filterMyRequests()">
+                    <option value="All">All Statuses</option>
+                    <option value="Pending Approval">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Denied">Denied</option>
                 </select>
             </div>
         </div>
@@ -235,35 +235,36 @@
                     <th class="text-end">Action</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td><span class="ticket-id">SR-1045</span></td>
-                    <td><span class="fw-bold text-dark">Software License</span></td>
-                    <td class="text-muted">JetBrains IntelliJ IDEA Ultimate License Renewal</td>
-                    <td class="text-muted fw-semibold">27 Feb 2026</td>
-                    <td><span class="status-badge bg-pending">Pending Approval</span></td>
+                <tbody id="employeeTicketTableBody">
+                <tr th:each="req : ${myRequests}" th:if="${req.type == 'SOFTWARE' or req.type == 'ACCESS' or req.type == 'PERMISSION'}" th:data-status="${req.status}" class="ticket-row">
+                    <td><span class="ticket-id" th:text="${req.ticketId}">SR-0000</span></td>
+                    <td><span class="fw-bold text-dark" th:text="${req.category}">Category</span></td>
+                    <td class="text-muted" th:text="${req.detailItem + (req.durationOrLevel != 'N/A' ? ' (' + req.durationOrLevel + ')' : '')}">
+                        Subject Details
+                    </td>
+                    <td class="text-muted fw-semibold" th:text="${#temporals.format(req.submissionDate, 'dd MMM yyyy')}">Date</td>
+
+                    <td>
+                            <span class="status-badge"
+                                  th:classappend="${req.status == 'Pending Approval' ? 'bg-pending' : (req.status == 'Approved' or req.status == 'Resolved' ? 'bg-resolved' : (req.status == 'Denied' ? 'bg-danger text-white' : 'bg-progress'))}"
+                                  th:text="${req.status}">Status</span>
+                    </td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3">View</button>
+                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3"
+                                th:onclick="'viewMyRequestDetails(' + ${req.id} + ')'">View</button>
                     </td>
                 </tr>
-                <tr>
-                    <td><span class="ticket-id">SR-1012</span></td>
-                    <td><span class="fw-bold text-dark">System Access</span></td>
-                    <td class="text-muted">Access to Staging Database (Read-Only)</td>
-                    <td class="text-muted fw-semibold">20 Feb 2026</td>
-                    <td><span class="status-badge bg-progress">In Progress</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3">View</button>
+                <tr id="emptyFilterRow" style="display: none;">
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-search fa-2x mb-3 opacity-50"></i>
+                        <p class="mb-0 fw-bold">No requests match this filter.</p>
                     </td>
                 </tr>
-                <tr>
-                    <td><span class="ticket-id">SR-0988</span></td>
-                    <td><span class="fw-bold text-dark">Permission Mod</span></td>
-                    <td class="text-muted">VPN Access for Remote Client Deployment</td>
-                    <td class="text-muted fw-semibold">05 Jan 2026</td>
-                    <td><span class="status-badge bg-resolved">Resolved</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-light border text-navy fw-bold rounded-pill px-3">View</button>
+                <tr th:if="${#lists.isEmpty(myRequests.?[type == 'SOFTWARE' or type == 'ACCESS' or type == 'PERMISSION'])}">
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-inbox fa-2x mb-3 opacity-50"></i>
+                        <p class="mb-0 fw-bold">No active requests found.</p>
+                        <small>Your submitted software and access requests will appear here.</small>
                     </td>
                 </tr>
                 </tbody>
@@ -505,53 +506,271 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // 1. Initialize all three Bootstrap Modals
-    const softwareModal = new bootstrap.Modal(document.getElementById('softwareLicenseModal'));
-    const systemModal = new bootstrap.Modal(document.getElementById('systemAccessModal'));
-    const permissionModal = new bootstrap.Modal(document.getElementById('modifyPermissionModal'));
+<div class="modal fade" id="viewMyRequestModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+            <div class="modal-header" style="background-color: #1e3a8a; color: white; border-bottom: none; padding: 20px 30px;">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
+                    <i class="fas fa-file-invoice"></i> Ticket Details: <span id="myModalTicketId" class="badge bg-light text-dark ms-2"></span>
+                </h5>
+                <button type="button" class="btn-close" style="filter: invert(1);" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div class="row g-4">
+                    <div class="col-md-6 border-end">
+                        <p class="text-muted small mb-1 fw-bold text-uppercase">Submitted By</p>
+                        <h6 class="fw-bold text-dark mb-0" id="myModalEmpName"></h6>
+                        <p class="small text-muted mb-2" id="myModalEmpId"></p>
+                        <div class="d-flex align-items-center gap-2 text-muted small">
+                            <i class="fas fa-building"></i> <span id="myModalDept"></span>
+                        </div>
+                    </div>
 
-    // 2. Main function to open the correct modal and auto-fill the date
+                    <div class="col-md-6">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Submitted On</p>
+                                <h6 class="fw-bold mb-0" id="myModalDate"></h6>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Priority</p>
+                                <span class="badge bg-secondary px-3 py-2" id="myModalPriority"></span>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Category</p>
+                                <h6 class="fw-bold text-navy mb-0" id="myModalCategory"></h6>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">Current Status</p>
+                                <span class="badge px-3 py-2" id="myModalStatus"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12"><hr class="text-muted opacity-25"></div>
+
+                    <div class="col-12">
+                        <p class="text-muted small mb-1 fw-bold text-uppercase">Requested Item / Subject</p>
+                        <h5 class="fw-bold text-dark mb-1" id="myModalDetails"></h5>
+                        <p class="text-muted small mb-0" id="myModalDuration"></p>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <div class="p-4 rounded" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #1e3a8a;">
+                            <p class="text-navy small mb-2 fw-bold"><i class="fas fa-comment-dots me-2"></i>MY JUSTIFICATION</p>
+                            <p class="mb-0 text-dark" id="myModalJustification" style="white-space: pre-wrap; line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 15px 30px;">
+                <button type="button" class="btn btn-light border fw-bold text-muted" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+
+    // 1. Safe Thymeleaf extraction (Declared ONLY ONCE)
+    const sessionUser = {
+        id: /*[[${user != null ? user.username : 'EMP-0000'}]]*/ 'EMP-0000',
+        name: /*[[${user != null ? user.fullName : 'Unknown User'}]]*/ 'Unknown User',
+        dept: /*[[${user != null ? user.businessUnit : 'General'}]]*/ 'General',
+        manager: /*[[${user != null ? user.reportingManager : 'Admin'}]]*/ 'Admin'
+    };
+
+    // 2. Main function to open the correct modal (Lazy Initialization)
     function openRequestModal(type) {
-        // Grab today's date once
+        console.log("Card clicked! Opening modal for: " + type);
+
         const today = new Date();
         const options = { day: '2-digit', month: 'short', year: 'numeric' };
         const formattedDate = today.toLocaleDateString('en-GB', options);
 
         if (type === 'Software License') {
             document.getElementById('submissionDate').value = formattedDate;
+            setupValidation('softwareRequestForm');
+            let softwareModal = new bootstrap.Modal(document.getElementById('softwareLicenseModal'));
             softwareModal.show();
-        }
-        else if (type === 'System Access') {
+        } else if (type === 'System Access') {
             document.getElementById('sysSubmissionDate').value = formattedDate;
+            setupValidation('systemAccessForm');
+            let systemModal = new bootstrap.Modal(document.getElementById('systemAccessModal'));
             systemModal.show();
-        }
-        else if (type === 'Permission Modification') {
+        } else if (type === 'Permission Modification') {
             document.getElementById('permSubmissionDate').value = formattedDate;
+            setupValidation('permissionRequestForm');
+            let permissionModal = new bootstrap.Modal(document.getElementById('modifyPermissionModal'));
             permissionModal.show();
         }
     }
 
-    // 3. Dummy Submission Functions for UI testing
-    function submitSoftwareRequest() {
-        alert("Success! Your software license request has been submitted to the IT Helpdesk.");
-        softwareModal.hide();
-        document.getElementById('softwareRequestForm').reset();
+    function setupValidation(formId) {
+        const form = document.getElementById(formId);
+        const submitBtn = form.closest('.modal-content').querySelector('.btn-navy');
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.5";
+
+        const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                const allFilled = Array.from(inputs).every(i => i.value.trim() !== "");
+                submitBtn.disabled = !allFilled;
+                submitBtn.style.opacity = allFilled ? "1" : "0.5";
+            });
+        });
     }
 
-    function submitSystemAccessRequest() {
-        alert("Success! Your system access request has been submitted for security review.");
-        systemModal.hide();
-        document.getElementById('systemAccessForm').reset();
+    // 3. Generic function to handle all 3 submissions
+    async function handleSubmission(formId, type, category) {
+        const form = document.getElementById(formId);
+        const submitBtn = form.closest('.modal-content').querySelector('.btn-navy');
+
+        // Capture the modal specific data
+        const selects = form.querySelectorAll('select');
+
+        // DYNAMIC PRIORITY FINDER:
+        // Looks for any dropdown in the current form that contains "Medium" as an option
+        let priorityValue = "Medium"; // Default fallback
+        const priorityDropdown = Array.from(selects).find(sel =>
+            Array.from(sel.options).some(opt => opt.value === 'Medium')
+        );
+        if (priorityDropdown) {
+            priorityValue = priorityDropdown.value;
+        }
+
+        const formData = {
+            // --- REAL LOGGED-IN DATA ---
+            employeeId: sessionUser.id,
+            employeeName: sessionUser.name,
+            department: sessionUser.dept,
+            managerName: sessionUser.manager,
+
+            // --- FORM DATA ---
+            type: type,
+            category: category,
+            detailItem: selects[0].value,
+            durationOrLevel: selects[1] ? selects[1].value : "N/A",
+            priority: priorityValue, // <--- Now uses the dynamic value!
+            justification: form.querySelector('textarea').value,
+            status: "Pending Approval"
+        };
+
+        const confirmMsg = `Submit ${category} request?\n\nRequester: ${formData.employeeName}\nPriority: ${priorityValue}`;
+
+        if (confirm(confirmMsg)) {
+            try {
+                const response = await fetch('/api/requests/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    alert("✅ Success! Your request has been sent to " + formData.managerName + " for review.");
+                    location.reload();
+                }
+            } catch (error) {
+                alert("Network error. Please try again.");
+            }
+        }
     }
 
-    function submitPermissionRequest() {
-        alert("Success! Your permission modification request has been routed for manager approval.");
-        permissionModal.hide();
-        document.getElementById('permissionRequestForm').reset();
+    // Connect buttons to the handler - ALL are type 'SOFTWARE', but distinct categories
+    function submitSoftwareRequest() { handleSubmission('softwareRequestForm', 'SOFTWARE', 'Software License'); }
+    function submitSystemAccessRequest() { handleSubmission('systemAccessForm', 'SOFTWARE', 'System Access'); }
+    function submitPermissionRequest() { handleSubmission('permissionRequestForm', 'SOFTWARE', 'Permission Mod'); }
+
+    async function viewMyRequestDetails(id) {
+        try {
+            // Fetch data from the endpoint
+            const response = await fetch('/api/requests/' + id);
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // Populate Modal fields
+                document.getElementById('myModalTicketId').textContent = data.ticketId;
+                document.getElementById('myModalEmpName').textContent = data.employeeName;
+                document.getElementById('myModalEmpId').textContent = data.employeeId;
+                document.getElementById('myModalDept').textContent = data.department || 'Department N/A';
+
+                document.getElementById('myModalCategory').textContent = data.category;
+                document.getElementById('myModalDetails').textContent = data.detailItem;
+
+                let subText = data.durationOrLevel !== 'N/A' ? data.durationOrLevel : '';
+                document.getElementById('myModalDuration').textContent = subText;
+
+                document.getElementById('myModalDate').textContent = data.submissionDate;
+                document.getElementById('myModalJustification').textContent = data.justification;
+
+                // Priority Badge Colors
+                const pBadge = document.getElementById('myModalPriority');
+                pBadge.textContent = data.priority;
+                pBadge.className = 'badge px-3 py-2 ' +
+                    (data.priority === 'High' ? 'bg-danger' : (data.priority === 'Medium' ? 'bg-warning text-dark' : 'bg-info text-dark'));
+
+                // Status Badge Colors (Matching Employee Table Styles)
+                const statusBadge = document.getElementById('myModalStatus');
+                statusBadge.textContent = data.status;
+                statusBadge.className = 'badge px-3 py-2 ';
+
+                if (data.status === 'Pending Approval' || data.status === 'Pending') {
+                    statusBadge.style.backgroundColor = '#fef3c7';
+                    statusBadge.style.color = '#b45309';
+                    statusBadge.style.border = '1px solid #fde68a';
+                } else if (data.status === 'Approved' || data.status === 'Resolved') {
+                    statusBadge.style.backgroundColor = '#dcfce7';
+                    statusBadge.style.color = '#166534';
+                    statusBadge.style.border = '1px solid #bbf7d0';
+                } else if (data.status === 'Denied') {
+                    statusBadge.style.backgroundColor = '#fee2e2';
+                    statusBadge.style.color = '#dc2626';
+                    statusBadge.style.border = '1px solid #fecaca';
+                } else {
+                    statusBadge.style.backgroundColor = '#e0e7ff';
+                    statusBadge.style.color = '#4338ca';
+                    statusBadge.style.border = '1px solid #c7d2fe';
+                }
+
+                // Show the Modal
+                const detailsModal = new bootstrap.Modal(document.getElementById('viewMyRequestModal'));
+                detailsModal.show();
+            } else {
+                alert("Could not locate ticket details in the database.");
+            }
+        } catch (error) {
+            console.error("Error fetching ticket details:", error);
+            alert("Network connection error.");
+        }
     }
+
+    function filterMyRequests() {
+        const filterValue = document.getElementById('statusFilter').value;
+        const rows = document.querySelectorAll('.ticket-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+
+            // Show if "All" is selected, or if the row's status matches the dropdown
+            if (filterValue === 'All' || rowStatus === filterValue || (filterValue === 'Pending Approval' && rowStatus === 'Pending')) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Show/Hide the "No matching requests" message
+        const emptyRow = document.getElementById('emptyFilterRow');
+        if (emptyRow) {
+            emptyRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+        }
+    }
+
 </script>
-
 </body>
 </html>
