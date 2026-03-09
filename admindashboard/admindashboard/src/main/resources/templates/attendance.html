@@ -257,15 +257,33 @@
     document.addEventListener('DOMContentLoaded', updateTableDates);
 
 
-    // SMARTER HELPER: Finds the row first (row-0), then grabs the input inside it!
-    const getValFromRow = (rowId) => {
+    // --- NEW HELPER: Extracts ALL data (Hours, Status, Mode, Reason) from a row ---
+    const getRowData = (rowId) => {
         const row = document.getElementById(rowId);
+        let hours = 0;
+        let status = 'Present';
+        let mode = 'Office';
+        let reason = '';
+
         if (row) {
-            // Find the number input inside this specific row
-            const input = row.querySelector('input[type="number"]');
-            return input ? (parseFloat(input.value) || 0) : 0;
+            // 1. Get Hours
+            const hoursInput = row.querySelector('input[type="number"]');
+            hours = hoursInput ? (parseFloat(hoursInput.value) || 0) : 0;
+
+            // 2. Get Status (Present, Absent, etc.)
+            const statusSelect = row.querySelector('.status-select');
+            status = statusSelect ? statusSelect.value : (hours === 0 ? 'Absent' : 'Present');
+
+            // 3. Get Mode (Office, Remote)
+            const modeSelect = row.querySelector('.mode-select');
+            mode = modeSelect ? modeSelect.value : '-';
+
+            // 4. Get Reason
+            const reasonInput = row.querySelector('.reason-input');
+            reason = reasonInput ? reasonInput.value.trim() : '';
         }
-        return 0;
+
+        return { hours, status, mode, reason };
     };
 
     // Helper to convert week format
@@ -280,16 +298,43 @@
         return ISOweekStart.toISOString().split('T')[0];
     }
 
+    // --- UPDATED GATHER FUNCTION: Packages ALL data for the backend ---
     function gatherTimesheetData() {
         const rawWeek = document.getElementById("weekInput").value;
+
+        const monData = getRowData("row-0");
+        const tueData = getRowData("row-1");
+        const wedData = getRowData("row-2");
+        const thuData = getRowData("row-3");
+        const friData = getRowData("row-4");
+
         return {
             weekStartDate: getWeekStartDate(rawWeek),
-            // Now mapping to your specific row IDs!
-            mondayHours: getValFromRow("row-0"),
-            tuesdayHours: getValFromRow("row-1"),
-            wednesdayHours: getValFromRow("row-2"),
-            thursdayHours: getValFromRow("row-3"),
-            fridayHours: getValFromRow("row-4")
+
+            mondayHours: monData.hours,
+            mondayStatus: monData.status,
+            mondayMode: monData.mode,
+            mondayReason: monData.reason,
+
+            tuesdayHours: tueData.hours,
+            tuesdayStatus: tueData.status,
+            tuesdayMode: tueData.mode,
+            tuesdayReason: tueData.reason,
+
+            wednesdayHours: wedData.hours,
+            wednesdayStatus: wedData.status,
+            wednesdayMode: wedData.mode,
+            wednesdayReason: wedData.reason,
+
+            thursdayHours: thuData.hours,
+            thursdayStatus: thuData.status,
+            thursdayMode: thuData.mode,
+            thursdayReason: thuData.reason,
+
+            fridayHours: friData.hours,
+            fridayStatus: friData.status,
+            fridayMode: friData.mode,
+            fridayReason: friData.reason
         };
     }
 
@@ -326,28 +371,50 @@
         }
     }
 
-    // 5. Submit Week
+    // 5. Submit Week (With Absent Validation)
     async function submitWeek() {
-        // Step 1: Ask for confirmation on the main screen
+
+        const rows = document.querySelectorAll('#timesheetBody tr');
+        let isValid = true;
+        let missingReasonDay = "";
+
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const statusSelect = row.querySelector('.status-select');
+            const reasonInput = row.querySelector('.reason-input');
+            if (!statusSelect || !reasonInput) continue;
+
+            // Check if status is Absent AND the reason box is completely empty
+            if (statusSelect.value === 'Absent' && reasonInput.value.trim() === '') {
+                isValid = false;
+                // Grab the day name (e.g., "Tuesday") from the first column to show in the error
+                missingReasonDay = row.querySelector('td.fw-bold').innerText.split('\n')[0].trim();
+                break; // Stop checking after the first error is found
+            }
+        }
+
+        if (!isValid) {
+            alert(`Missing Information: Please provide a reason for being Absent on ${missingReasonDay} before submitting.`);
+            return; // Stop the submission process entirely
+        }
+
         const userConfirmed = confirm("Are you sure you want to submit this timesheet? Once submitted, it cannot be edited.");
 
         if (!userConfirmed) {
             return; // Stop the process if they click Cancel
         }
 
-        // Step 2: Save the draft silently (pass 'false' so the draft alert doesn't pop up)
+        // Save the draft silently (pass 'false' so the draft alert doesn't pop up)
         const savedSheet = await saveDraft(false);
 
         if (savedSheet && savedSheet.id) {
             try {
-                // Step 3: Hit the submit endpoint
+                // Hit the submit endpoint
                 const response = await fetch(`/api/timesheet/submit/${savedSheet.id}`, {
                     method: 'POST'
                 });
-
                 if (response.ok) {
-                    // Step 4: Show final success message and reload
-                    alert("Timesheet Submitted successfully for the approval");
+                    alert("Timesheet Submitted successfully for approval");
                     window.location.reload();
                 } else {
                     alert("Submission failed: " + await response.text());
@@ -358,11 +425,27 @@
         }
     }
 
-    // Force all date inputs to have a maximum year of 9999 (4 digits)
-    document.querySelectorAll('input[type="date"]').forEach(function(dateInput) {
-        if (!dateInput.getAttribute('max')) {
-            dateInput.setAttribute('max', '9999-12-31');
-        }
+    document.addEventListener("DOMContentLoaded", function() {
+        // Fix for standard Date inputs
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+            if (!input.getAttribute('max')) {
+                input.setAttribute('max', '9999-12-31');
+            }
+        });
+
+        // Fix for Week inputs
+        document.querySelectorAll('input[type="week"]').forEach(function(input) {
+            if (!input.getAttribute('max')) {
+                input.setAttribute('max', '9999-W52');
+            }
+        });
+
+        // Fix for Month inputs
+        document.querySelectorAll('input[type="month"]').forEach(function(input) {
+            if (!input.getAttribute('max')) {
+                input.setAttribute('max', '9999-12');
+            }
+        });
     });
 
 </script>
