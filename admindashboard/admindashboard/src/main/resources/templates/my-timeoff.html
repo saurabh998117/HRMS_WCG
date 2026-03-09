@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Timeoff & Leaves - WhiteCircle</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bs-primary: #1e3a8a;
+            --bs-primary-hover: #172a6b;
+            --bg-color: #f8fafc;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #334155;
+            padding-top: 100px;
+        }
+
+        /* --- HEADER --- */
+        .master-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 1000; border-bottom: 2px solid var(--bs-primary);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        .btn-apply {
+            background-color: var(--bs-primary); color: white; border: none;
+            border-radius: 10px; padding: 10px 24px; font-weight: 600; transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
+        }
+        .btn-apply:hover { background-color: var(--bs-primary-hover); color: white; transform: translateY(-2px); }
+
+       /* --- UPGRADED BALANCE CARDS --- */
+        .balance-card {
+            background: white; border-radius: 10px; padding: 15px; /* Reduced padding & radius */
+            border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%;
+            display: flex; flex-direction: column;
+        }
+        .balance-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(30, 58, 138, 0.08); border-color: #cbd5e1; }
+
+        /* Professional Top Accents */
+        .card-cl { border-top: 3px solid #4338ca; }
+        .card-sl { border-top: 3px solid #15803d; }
+        .card-el { border-top: 3px solid #b45309; }
+
+        .icon-box {
+            width: 40px; height: 40px; border-radius: 10px; /* Smaller icons */
+            display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+        }
+        .bg-cl { background: #e0e7ff; color: #4338ca; }
+        .bg-sl { background: #dcfce7; color: #15803d; }
+        .bg-el { background: #fef3c7; color: #b45309; }
+
+        .balance-value { font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1; margin: 12px 0 2px; } /* Scaled down */
+        .balance-label { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* --- UPGRADED DATA TABLE & NAVY HEADER --- */
+        .history-section {
+            background: white; border-radius: 12px; border: 1px solid #cbd5e1;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.04); overflow: hidden; margin-top: 25px;
+        }
+        .history-header {
+            padding: 16px 25px; border-bottom: none;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bs-primary); /* Navy Theme Applied */
+        }
+        .history-header h6 { color: white !important; }
+        .history-header i { color: #bfdbfe !important; } /* Soft blue icon on navy bg */
+
+        .table-custom th {
+            background-color: #f8fafc; color: #475569; font-size: 0.75rem;
+            text-transform: uppercase; font-weight: 800; padding: 14px 25px;
+            border-bottom: 2px solid #cbd5e1; letter-spacing: 0.5px;
+        }
+        .table-custom td { padding: 16px 25px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 0.9rem; }
+
+        .badge-status { padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .status-pending { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+        .status-approved { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
+        .status-rejected { background: #fef2f2; color: #b91c1c; border: 1px solid #fee2e2; }
+
+        .btn-back-home {
+            background-color: var(--bs-primary); color: white;
+            border-radius: 10px; padding: 10px 24px; font-weight: 600;
+            font-size: 0.85rem; text-decoration: none; display: flex; align-items: center;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2); transition: all 0.3s ease;
+        }
+        .btn-back-home:hover { background-color: #172554; transform: translateY(-2px); color: white; }
+
+    </style>
+</head>
+<body>
+
+<header class="master-nav">
+    <div class="d-flex align-items-center">
+        <img src="/images/wcg-logo.jpg" alt="Logo" style="height: 60px; border-radius: 6px;">
+        <div class="ms-3 border-start ps-3 border-2 border-primary border-opacity-25">
+            <span class="fw-bold text-navy fs-5 d-block" style="line-height: 1.2; color: var(--bs-primary);">LEAVE REQUESTS</span>
+            <small class="text-muted fw-bold">Leave Balances & History</small>
+        </div>
+    </div>
+    <div class="d-flex gap-3">
+        <a href="/apply-leave" class="btn-apply text-decoration-none"><i class="fas fa-calendar-plus me-2"></i>Apply for Leave</a>
+        <a th:href="@{/my-whitecircle}" class="btn-back-home ms-3">
+            <i class="fas fa-arrow-left me-2"></i> Back to My WhiteCircle
+        </a>
+    </div>
+</header>
+
+<div class="container-fluid px-4 px-lg-5" style="max-width: 1400px; padding-bottom: 50px;">
+
+    <div class="mb-4">
+        <h4 class="fw-bold text-dark">My Leave Balances</h4>
+        <p class="text-muted">Overview of your available time off for the current calendar year.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="balance-card card-cl">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="icon-box bg-cl"><i class="fas fa-umbrella-beach"></i></div>
+                    <span class="badge bg-light text-muted border">Reset Jan 1st</span>
+                </div>
+                <div class="balance-value" id="cl-big">--</div>
+                <div class="balance-label mb-3">Casual Leaves Remaining</div>
+
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between mb-1 small fw-bold">
+                        <span class="text-muted" style="font-size: 0.75rem;">Used: <span id="cl-used">0</span></span>
+                        <span class="text-dark" style="font-size: 0.75rem;">Total: 12</span>
+                    </div>
+                    <div class="progress" style="height: 6px; background-color: #e2e8f0;">
+                        <div class="progress-bar bg-primary" id="cl-bar" style="width: 0%; transition: 1s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="balance-card card-sl">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="icon-box bg-sl"><i class="fas fa-briefcase-medical"></i></div>
+                    <span class="badge bg-light text-muted border">Reset Jan 1st</span>
+                </div>
+                <div class="balance-value text-success" id="sl-big">--</div>
+                <div class="balance-label mb-3">Sick Leaves Remaining</div>
+
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between mb-1 small fw-bold">
+                        <span class="text-muted" style="font-size: 0.75rem;">Used: <span id="sl-used">0</span></span>
+                        <span class="text-dark" style="font-size: 0.75rem;">Total: 20</span>
+                    </div>
+                    <div class="progress" style="height: 6px; background-color: #e2e8f0;">
+                        <div class="progress-bar bg-success" id="sl-bar" style="width: 0%; transition: 1s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="balance-card card-el">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="icon-box bg-el"><i class="fas fa-star"></i></div>
+                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning">Rollover Eligible</span>
+                </div>
+                <div class="balance-value text-warning" id="el-big">--</div>
+                <div class="balance-label mb-3">Earned Leaves Accrued</div>
+
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between mb-1 small fw-bold">
+                        <span class="text-muted" style="font-size: 0.75rem;">Used: <span id="el-used">0</span></span>
+                        <span class="text-dark" style="font-size: 0.75rem;">Credited: <span id="el-total">0</span></span>
+                    </div>
+                    <div class="progress" style="height: 6px; background-color: #e2e8f0;">
+                        <div class="progress-bar bg-warning" id="el-bar" style="width: 0%; transition: 1s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-section">
+        <div class="history-header">
+            <h6 class="fw-bold m-0"><i class="fas fa-history me-2"></i>Leave Application History</h6>
+            <select class="form-select form-select-sm w-auto shadow-sm border-0" id="statusFilter" onchange="filterTable()">
+                <option value="ALL">All Statuses</option>
+                <option value="APPROVED">Approved</option>
+                <option value="PENDING">Pending</option>
+                <option value="REJECTED">Rejected</option>
+            </select>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-custom table-hover mb-0">
+                <thead>
+                <tr>
+                    <th>Leave Type</th>
+                    <th>Duration (Dates)</th>
+                    <th>Days</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                <tr><td colspan="5" class="text-center py-5 text-muted"><div class="spinner-border text-primary" role="status"></div><br>Loading history...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="leaveDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <div class="modal-header" style="background-color: #1e3a8a; color: white; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+                <h5 class="modal-title fw-bold"><i class="fas fa-file-alt me-2"></i>Leave Request Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <small class="text-muted fw-bold text-uppercase d-block">Leave Type</small>
+                        <span id="modalLeaveType" class="fw-bold text-dark"></span>
+                    </div>
+                    <div class="col-6 text-end">
+                        <small class="text-muted fw-bold text-uppercase d-block">Status</small>
+                        <span id="modalLeaveStatus" class="badge badge-status"></span>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <small class="text-muted fw-bold text-uppercase d-block">From Date</small>
+                        <span id="modalFromDate" class="text-dark fw-semibold"></span>
+                    </div>
+                    <div class="col-6 text-end">
+                        <small class="text-muted fw-bold text-uppercase d-block">To Date</small>
+                        <span id="modalToDate" class="text-dark fw-semibold"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted fw-bold text-uppercase d-block">Total Days</small>
+                    <span id="modalTotalDays" class="text-dark fw-semibold"></span>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted fw-bold text-uppercase d-block">Employee Reason</small>
+                    <div class="p-3 bg-light border rounded mt-1 text-dark" id="modalLeaveReason" style="font-size: 0.9rem; line-height: 1.5;"></div>
+                </div>
+                <div id="modalManagerCommentsBox" class="d-none">
+                    <small class="text-muted fw-bold text-uppercase d-block">Manager Comments</small>
+                    <div class="p-3 border rounded mt-1 bg-danger-subtle text-danger fw-semibold" id="modalManagerComments" style="font-size: 0.9rem; line-height: 1.5;"></div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+                <button type="button" class="btn btn-secondary fw-bold rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let globalLeavesData = [];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        fetchLeaveBalance();
+        fetchLeaveHistory();
+    });
+
+    // --- FETCH AND POPULATE BALANCE CARDS ---
+    async function fetchLeaveBalance() {
+        try {
+            const response = await fetch('/api/leave/balance');
+            if (!response.ok) throw new Error("Failed to fetch balance");
+            const data = await response.json();
+
+            // Override Sick Leave Total to 20
+            if (data.Sick) {
+                data.Sick.total = 20;
+                data.Sick.left = data.Sick.total - (data.Sick.used || 0);
+            }
+
+            // Calculations
+            const clPercent = (data.Casual.used / data.Casual.total) * 100;
+            const slPercent = (data.Sick.used / data.Sick.total) * 100;
+            const elPercent = (data.Earned.used / data.Earned.total) * 100;
+
+            // DOM Updates - Casual
+            document.getElementById('cl-big').textContent = data.Casual.left;
+            document.getElementById('cl-used').textContent = data.Casual.used;
+            document.getElementById('cl-bar').style.width = `${clPercent}%`;
+
+            // DOM Updates - Sick
+            document.getElementById('sl-big').textContent = data.Sick.left;
+            document.getElementById('sl-used').textContent = data.Sick.used;
+            document.getElementById('sl-bar').style.width = `${slPercent}%`;
+
+            // DOM Updates - Earned
+            document.getElementById('el-big').textContent = data.Earned.left;
+            document.getElementById('el-used').textContent = data.Earned.used;
+            document.getElementById('el-total').textContent = data.Earned.total;
+            document.getElementById('el-bar').style.width = `${elPercent}%`;
+
+        } catch (error) {
+            console.error("Error fetching balance:", error);
+        }
+    }
+
+    // --- FETCH AND POPULATE HISTORY TABLE ---
+    async function fetchLeaveHistory() {
+        const tbody = document.getElementById('historyTableBody');
+        try {
+            const response = await fetch('/api/leave/my-leaves');
+            if (!response.ok) throw new Error("Failed to fetch history");
+
+            globalLeavesData = await response.json();
+            renderTable(globalLeavesData);
+
+        } catch (error) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Error loading history data.</td></tr>';
+        }
+    }
+
+    function renderTable(dataArray) {
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+
+        if (dataArray.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fas fa-folder-open fa-2x mb-3 opacity-50"></i><br>No leave records found matching this filter.</td></tr>`;
+            return;
+        }
+
+        dataArray.forEach((leave, index) => {
+            const status = (leave.status || 'PENDING').toUpperCase();
+            let badgeClass = status === 'APPROVED' ? 'status-approved' : (status === 'REJECTED' ? 'status-rejected' : 'status-pending');
+            let displayStatus = status.charAt(0) + status.slice(1).toLowerCase();
+
+            const fromObj = new Date(leave.fromDate);
+            const toObj = new Date(leave.toDate);
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            const dateStr = `${fromObj.toLocaleDateString('en-GB', options)} &rsaquo; ${toObj.toLocaleDateString('en-GB', options)}`;
+
+            const row = `
+                <tr class="leave-row" data-status="${status}">
+                    <td class="fw-bold text-dark"><i class="fas fa-circle me-2 small ${status === 'APPROVED' ? 'text-success' : (status === 'REJECTED' ? 'text-danger' : 'text-warning')}"></i>${leave.leaveType} Leave</td>
+                    <td class="text-muted">${dateStr}</td>
+                    <td class="fw-bold">${leave.totalDays}</td>
+                    <td><span class="badge badge-status ${badgeClass}">${displayStatus}</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light border text-primary fw-bold px-3 rounded-pill" onclick="openDetailsModal(${index})">View Details</button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function filterTable() {
+        const filterVal = document.getElementById('statusFilter').value;
+        const rows = document.querySelectorAll('.leave-row');
+
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            if (filterVal === 'ALL' || rowStatus === filterVal) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // --- MODAL LOGIC ---
+    function openDetailsModal(index) {
+        const leave = globalLeavesData[index];
+        if (!leave) return;
+
+        document.getElementById('modalLeaveType').textContent = leave.leaveType + ' Leave';
+
+        const statusBadge = document.getElementById('modalLeaveStatus');
+        const currentStatus = (leave.status || 'PENDING').toUpperCase();
+        statusBadge.textContent = currentStatus.charAt(0) + currentStatus.slice(1).toLowerCase();
+        statusBadge.className = 'badge badge-status ' +
+            (currentStatus === 'APPROVED' ? 'status-approved' :
+            (currentStatus === 'REJECTED' ? 'status-rejected' : 'status-pending'));
+
+        document.getElementById('modalFromDate').textContent = leave.fromDate;
+        document.getElementById('modalToDate').textContent = leave.toDate;
+        document.getElementById('modalTotalDays').textContent = leave.totalDays;
+        document.getElementById('modalLeaveReason').textContent = leave.reason || "No specific reason provided.";
+
+        const commentsBox = document.getElementById('modalManagerCommentsBox');
+        if (currentStatus === 'REJECTED' && leave.managerComments) {
+            commentsBox.classList.remove('d-none');
+            document.getElementById('modalManagerComments').textContent = leave.managerComments;
+        } else {
+            commentsBox.classList.add('d-none');
+        }
+
+        new bootstrap.Modal(document.getElementById('leaveDetailsModal')).show();
+    }
+</script>
+</body>
+</html>

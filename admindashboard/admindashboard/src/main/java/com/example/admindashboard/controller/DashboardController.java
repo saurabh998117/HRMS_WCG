@@ -323,6 +323,16 @@ public class DashboardController {
         return "timesheet-report";
     }
 
+    @GetMapping("/my-timeoff")
+    public String showMyTimeoff(Model model, Principal principal) {
+        if (principal != null) {
+            String loginId = principal.getName();
+            User currentUser = userRepository.findByUsername(loginId).orElse(new User());
+            model.addAttribute("user", currentUser);
+        }
+        return "my-timeoff";
+    }
+
 
     @GetMapping("/tickets")
     public String showTicketsPage() { return "tickets"; }
