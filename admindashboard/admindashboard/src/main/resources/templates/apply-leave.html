@@ -68,6 +68,36 @@
         .app-card-header i { color: #bfdbfe; margin-right: 10px; font-size: 1.1rem; }
         .app-card-body { padding: 25px; }
 
+        /* --- VIEW ALL LINK INTERACTIVITY --- */
+        .view-all-link {
+            color: white;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: none;
+            opacity: 0.85;
+            letter-spacing: 0.5px;
+            position: relative; /* Needed for the underline animation */
+            transition: opacity 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .view-all-link:hover { color: white;opacity: 1; /* Brightens up on hover */}
+
+        .view-all-link::after {
+            content: '';
+            position: absolute;
+            width: 0; /* Starts at 0 width */
+            height: 2px;
+            bottom: -4px; /* Placed just below the text */
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease-in-out; /* Smooth sliding animation */
+            border-radius: 2px;
+        }
+        .view-all-link:hover::after { width: 100%; /* Expands to full width on hover */}
+
         /* --- FORMS --- */
         .form-label {
             font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 6px;
@@ -219,8 +249,11 @@
 
         <div class="col-lg-4">
             <div class="app-card">
-                <div class="app-card-header">
-                    <i class="fas fa-history"></i> Recent Status
+                <div class="app-card-header justify-content-between">
+                    <div><i class="fas fa-history"></i> Recent Status</div>
+                    <a href="/my-timeoff" class="view-all-link">
+                        View All
+                    </a>
                 </div>
                 <div class="app-card-body p-0">
                     <div class="list-group list-group-flush" id="recentStatusContainer">
@@ -254,12 +287,12 @@
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="fw-bold text-dark" style="font-size: 0.9rem;">Sick Leave (SL)</span>
-                            <span class="fw-bold text-success" style="font-size: 0.9rem;" id="sl-text">-- / 10 Left</span>
+                            <span class="fw-bold text-success" style="font-size: 0.9rem;" id="sl-text">-- / 20 Left</span>
                         </div>
                         <div class="progress" style="height: 8px; background-color: #e2e8f0;">
                             <div class="progress-bar bg-success" id="sl-bar" role="progressbar" style="width: 0%; transition: width 1s ease-in-out;"></div>
                         </div>
-                        <small class="text-muted" style="font-size: 0.75rem;" id="sl-subtext">Used: 0 &bull; Total: 10</small>
+                        <small class="text-muted" style="font-size: 0.75rem;" id="sl-subtext">Used: 0 &bull; Total: 20</small>
                     </div>
 
                     <div class="p-3 bg-light border rounded">
@@ -288,6 +321,54 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="leaveDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <div class="modal-header" style="background-color: #1e3a8a; color: white; border-top-left-radius: 16px; border-top-right-radius: 16px;">
+                <h5 class="modal-title fw-bold"><i class="fas fa-file-alt me-2"></i>Leave Request Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <small class="text-muted fw-bold text-uppercase d-block">Leave Type</small>
+                        <span id="modalLeaveType" class="fw-bold text-dark"></span>
+                    </div>
+                    <div class="col-6 text-end">
+                        <small class="text-muted fw-bold text-uppercase d-block">Status</small>
+                        <span id="modalLeaveStatus" class="badge badge-status"></span>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <small class="text-muted fw-bold text-uppercase d-block">From Date</small>
+                        <span id="modalFromDate" class="text-dark fw-semibold"></span>
+                    </div>
+                    <div class="col-6 text-end">
+                        <small class="text-muted fw-bold text-uppercase d-block">To Date</small>
+                        <span id="modalToDate" class="text-dark fw-semibold"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted fw-bold text-uppercase d-block">Total Days</small>
+                    <span id="modalTotalDays" class="text-dark fw-semibold"></span>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted fw-bold text-uppercase d-block">Reason</small>
+                    <div class="p-3 bg-light border rounded mt-1 text-dark" id="modalLeaveReason" style="font-size: 0.9rem; line-height: 1.5;"></div>
+                </div>
+                <div id="modalManagerCommentsBox" class="d-none">
+                    <small class="text-muted fw-bold text-uppercase d-block">Manager Comments</small>
+                    <div class="p-3 border rounded mt-1 bg-danger-subtle text-danger" id="modalManagerComments" style="font-size: 0.9rem; line-height: 1.5;"></div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+                <button type="button" class="btn btn-secondary fw-bold rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
@@ -426,7 +507,6 @@
         const container = document.getElementById('recentStatusContainer');
 
         try {
-            // Assuming this is your endpoint to get the current user's leave requests
             const response = await fetch('/api/leave/my-leaves');
 
             if (!response.ok) {
@@ -434,20 +514,20 @@
             }
 
             const leaves = await response.json();
-            container.innerHTML = ''; // Clear the loading spinner
+
+            // Store globally so the modal can access the full data easily
+            window.recentLeavesData = leaves;
+
+            container.innerHTML = '';
 
             if (leaves.length === 0) {
                 container.innerHTML = '<div class="p-4 text-center text-muted small fw-bold">No recent leave requests found.</div>';
                 return;
             }
 
-            // Loop through the recent leaves (limiting to top 5 for the card)
-            leaves.slice(0, 5).forEach(leave => {
-
-                // NEW: Force the status to uppercase so we can safely compare it
+            leaves.slice(0, 5).forEach((leave, index) => {
                 const currentStatus = (leave.status || 'PENDING').toUpperCase();
 
-                // Determine Badge Color based on status
                 let badgeClass = 'status-pending';
                 let displayStatus = 'Pending';
 
@@ -459,13 +539,11 @@
                     displayStatus = 'Rejected';
                 }
 
-                // Format the dates nicely (e.g., "10 Jan - 12 Jan")
                 const fromDateObj = new Date(leave.fromDate);
                 const toDateObj = new Date(leave.toDate);
                 const dateOptions = { day: '2-digit', month: 'short' };
                 const dateRangeStr = `${fromDateObj.toLocaleDateString('en-GB', dateOptions)} - ${toDateObj.toLocaleDateString('en-GB', dateOptions)}`;
 
-                // Create the HTML for the list item
                 let html = `
                     <div class="list-group-item p-3">
                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -473,18 +551,23 @@
                             <span class="badge badge-status ${badgeClass}">${displayStatus}</span>
                         </div>
                         <small class="text-muted d-block mb-1">${dateRangeStr} (${leave.totalDays} Days)</small>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
                 `;
 
-                // Add a rejection reason if it exists, otherwise show the approver
                 if (leave.status === 'REJECTED' && leave.managerComments) {
                     html += `<small class="text-danger fw-bold" style="font-size: 0.75rem;">Reason: ${leave.managerComments}</small>`;
                 } else {
                     html += `<small class="text-secondary" style="font-size: 0.75rem;">Approver: Manager</small>`;
                 }
 
-                html += `</div>`; // Close the list-group-item
+                // Add the new View Details button
+                html += `
+                            <button type="button" class="btn btn-sm btn-light border text-primary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onclick="openLeaveModal(${index})" title="View Details" onmouseover="this.classList.replace('btn-light', 'btn-primary'); this.classList.replace('text-primary', 'text-white');" onmouseout="this.classList.replace('btn-primary', 'btn-light'); this.classList.replace('text-white', 'text-primary');">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>`;
 
-                // Inject into the container
                 container.innerHTML += html;
             });
 
@@ -494,12 +577,37 @@
         }
     }
 
-    // Call this function automatically when the page loads
-    document.addEventListener("DOMContentLoaded", function() {
-        fetchRecentLeaves();
-    });
+    // Function to populate and open the Modal
+    function openLeaveModal(index) {
+        const leave = window.recentLeavesData[index];
+        if (!leave) return;
 
-    // NEW: 6. Fetch and Render Yearly Balance
+        document.getElementById('modalLeaveType').textContent = leave.leaveType + ' Leave';
+
+        const statusBadge = document.getElementById('modalLeaveStatus');
+        const currentStatus = (leave.status || 'PENDING').toUpperCase();
+        statusBadge.textContent = currentStatus;
+        statusBadge.className = 'badge badge-status ' +
+            (currentStatus === 'APPROVED' ? 'status-approved' :
+            (currentStatus === 'REJECTED' ? 'status-rejected' : 'status-pending'));
+
+        document.getElementById('modalFromDate').textContent = leave.fromDate;
+        document.getElementById('modalToDate').textContent = leave.toDate;
+        document.getElementById('modalTotalDays').textContent = leave.totalDays + " Days";
+        document.getElementById('modalLeaveReason').textContent = leave.reason || "No reason provided.";
+
+        const commentsBox = document.getElementById('modalManagerCommentsBox');
+        if (currentStatus === 'REJECTED' && leave.managerComments) {
+            commentsBox.classList.remove('d-none');
+            document.getElementById('modalManagerComments').textContent = leave.managerComments;
+        } else {
+            commentsBox.classList.add('d-none');
+        }
+
+        const detailsModal = new bootstrap.Modal(document.getElementById('leaveDetailsModal'));
+        detailsModal.show();
+    }
+
     async function fetchLeaveBalance() {
         try {
             const response = await fetch('/api/leave/balance');
@@ -507,22 +615,25 @@
 
             const data = await response.json();
 
-            // Calculate progress bar percentages
+            // --- SICK LEAVE OVERRIDE: Force Total to 20 and recalculate ---
+            if (data.Sick) {
+                data.Sick.total = 20;
+                data.Sick.left = data.Sick.total - (data.Sick.used || 0);
+            }
+            // --------------------------------------------------------------
+
             const clPercent = (data.Casual.used / data.Casual.total) * 100;
             const slPercent = (data.Sick.used / data.Sick.total) * 100;
             const elPercent = (data.Earned.used / data.Earned.total) * 100;
 
-            // Update Casual Leave UI
             document.getElementById('cl-text').textContent = `${data.Casual.left} / ${data.Casual.total} Left`;
             document.getElementById('cl-subtext').innerHTML = `Used: ${data.Casual.used} &bull; Total: ${data.Casual.total}`;
             document.getElementById('cl-bar').style.width = `${clPercent}%`;
 
-            // Update Sick Leave UI
             document.getElementById('sl-text').textContent = `${data.Sick.left} / ${data.Sick.total} Left`;
             document.getElementById('sl-subtext').innerHTML = `Used: ${data.Sick.used} &bull; Total: ${data.Sick.total}`;
             document.getElementById('sl-bar').style.width = `${slPercent}%`;
 
-            // Update Earned Leave UI
             document.getElementById('el-left').textContent = data.Earned.left;
             document.getElementById('el-used').textContent = `Used: ${data.Earned.used}`;
             document.getElementById('el-total').textContent = `Total Credited: ${data.Earned.total}`;
