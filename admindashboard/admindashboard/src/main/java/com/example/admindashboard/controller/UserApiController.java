@@ -26,4 +26,10 @@ public class UserApiController {
         // 3. Return the list of users as JSON back to the frontend
         return ResponseEntity.ok(matchingUsers);
     }
+
+    @GetMapping("/api/users/birthdays-today")
+    public ResponseEntity<List<User>> getBirthdaysToday() {
+        List<User> users = userRepository.findByBirthdayToday();
+        return ResponseEntity.ok(users);
+    }
 }

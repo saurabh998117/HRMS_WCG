@@ -176,6 +176,7 @@ public class User {
         this.buHrContact = buHrContact;
     }
 
+
     // --- MANUAL GETTERS/SETTERS FOR KEY FIELDS (Ensure these exist) ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

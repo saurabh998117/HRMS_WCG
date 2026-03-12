@@ -49,5 +49,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "LOWER(u.businessUnit) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<User> searchByKeyword(@Param("keyword") String keyword);
 
+    // --- 5. BIRTHDAY WIDGET ---
+    // This method joins the User table with the EmployeeProfile table to find today's birthdays
+    @Query("SELECT u FROM User u JOIN u.employeeProfile ep WHERE " +
+            "EXTRACT(MONTH FROM ep.dob) = EXTRACT(MONTH FROM CURRENT_DATE) AND " +
+            "EXTRACT(DAY FROM ep.dob) = EXTRACT(DAY FROM CURRENT_DATE)")
+    List<User> findByBirthdayToday();
+
 
 }
