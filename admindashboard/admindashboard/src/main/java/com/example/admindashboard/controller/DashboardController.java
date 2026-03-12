@@ -394,6 +394,11 @@ public class DashboardController {
     @GetMapping("/payroll")
     public String showPayrollPage() { return "payroll"; }
 
+    @GetMapping("/holiday-list")
+    public String showHolidayList() {
+        return "holiday-list"; // This matches the name of your new HTML file
+    }
+
 
 
     // -- CLIENT PORTAL PAGES --
