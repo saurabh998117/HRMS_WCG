@@ -42,4 +42,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<User> searchEmployees(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT u FROM User u WHERE " +
+            "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(u.businessUnit) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<User> searchByKeyword(@Param("keyword") String keyword);
+
+
 }

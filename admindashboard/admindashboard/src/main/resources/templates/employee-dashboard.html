@@ -439,6 +439,64 @@
             text-decoration: none;
         }
 
+        /* --- SEARCH BOX ACTIVE ANIMATION --- */
+        .search-box-wrapper {
+            border-color: #cbd5e1 !important;
+            border-radius: 50px; /* Pill shape */
+            transition: all 0.3s ease;
+        }
+
+        /* When the employee clicks inside the search bar */
+        .search-box-wrapper:focus-within {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2) !important;
+            transform: translateY(-2px); /* Lifts it up smoothly */
+        }
+
+        /* --- MODERN DROPDOWN CARD --- */
+        .search-dropdown-card {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 12px; /* Perfect gap below the search bar */
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); /* Strong shadow */
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            z-index: 1050;
+        }
+
+        /* --- RESULT ITEM LAYOUT --- */
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+        .search-result-item:last-child {
+            border-bottom: none; /* Removes line from the very last item */
+        }
+        .search-result-item:hover {
+            background: #f8fafc;
+        }
+
+        /* A clean icon placeholder instead of a bulky avatar */
+        .search-icon-wrapper {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #3b82f6;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+
+
 
         /* ==========================================================================
            MOBILE RESPONSIVENESS PATCH (Applies ONLY to Screens < 991px)
@@ -520,7 +578,108 @@
             .widget-body .col-md-6 { width: 50% !important; padding: 5px !important; }
 
             .parallel-col { height: auto !important; gap: 20px !important; }
+
+            /* --- SEARCH BAR ACTIVE/FOCUS ANIMATION --- */
+        .search-box-wrapper {
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
+        /* When the user clicks inside the search bar: */
+        .search-box-wrapper:focus-within {
+            transform: translateY(-3px); /* Lifts it up */
+            border-color: #3b82f6; /* Changes border to blue */
+            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.15); /* Adds a deep blue glowing shadow */
+        }
+    }
+
+    /* ==========================================================================
+           IMPROVED HIGH-CONTRAST DARK MODE STYLES
+           ========================================================================== */
+        body.dark-mode {
+            background-color: #121212 !important; /* True Dark/Black-Grey Background */
+            color: #e0e0e0 !important;
+        }
+
+        /* Surfaces (Cards, Navbar, Sidebar) */
+        body.dark-mode .sidebar,
+        body.dark-mode .top-navbar,
+        body.dark-mode .widget-card,
+        body.dark-mode .dash-calendar-card,
+        body.dark-mode .search-box-wrapper,
+        body.dark-mode .search-dropdown-card,
+        body.dark-mode .search-result-item,
+        body.dark-mode .modal-content,
+        body.dark-mode .bg-white,
+        body.dark-mode .bg-light {
+            background-color: #1e1e1e !important; /* Slightly lighter grey for depth */
+            border-color: #333333 !important;
+        }
+
+        /* Text Contrast Fixes */
+        body.dark-mode .text-dark,
+        body.dark-mode .app-text,
+        body.dark-mode h5,
+        body.dark-mode h6,
+        body.dark-mode span {
+            color: #ffffff !important; /* Bright white for primary text */
+        }
+        body.dark-mode .text-muted,
+        body.dark-mode .sidebar-link {
+            color: #a0aec0 !important; /* Soft grey for secondary text */
+        }
+
+        /* App Buttons (Restores borders so they pop against the card) */
+        body.dark-mode .app-btn {
+            background-color: #252525 !important;
+            color: #ffffff !important;
+            border: 1px solid #444444 !important; /* Visible border */
+        }
+        body.dark-mode .app-btn:hover {
+            background-color: #2d2d2d !important;
+            border-color: #3b82f6 !important; /* Bright blue hover accent */
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.2) !important;
+        }
+
+        /* Section Headers (.navy-header, .cal-header-navy) */
+        body.dark-mode .navy-header,
+        body.dark-mode .cal-header-navy {
+            background-color: #0f172a !important; /* Very dark rich blue */
+            color: #ffffff !important;
+            border-bottom: 1px solid #1e3a8a !important;
+        }
+        body.dark-mode .navy-header i,
+        body.dark-mode .navy-header a,
+        body.dark-mode .cal-header-navy i,
+        body.dark-mode .cal-header-navy a {
+            color: #93c5fd !important; /* Bright cyan/blue for icons to stand out */
+        }
+
+        /* Calendar Fixes */
+        body.dark-mode .cal-month-title { color: #ffffff !important; }
+        body.dark-mode .cal-day-cell { color: #cbd5e1 !important; }
+        body.dark-mode .day-event {
+            background-color: #333333 !important;
+            color: #ffffff !important;
+            border-color: #555555 !important;
+        }
+        body.dark-mode .day-today {
+            background-color: #3b82f6 !important; /* Bright blue for 'Today' */
+            color: #ffffff !important;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4) !important;
+        }
+
+        /* Search Bar & Dropdown */
+        body.dark-mode .form-control { color: #ffffff !important; }
+        body.dark-mode .form-control::placeholder { color: #a0aec0 !important; }
+        body.dark-mode .search-result-item:hover { background-color: #2a2a2a !important; border-left-color: #3b82f6 !important; }
+        body.dark-mode .search-icon-wrapper { background-color: #2a2a2a !important; color: #60a5fa !important; }
+
+        /* Dividers & Misc */
+        body.dark-mode .widget-header { border-bottom-color: #333333 !important; }
+        body.dark-mode hr { border-color: #444444 !important; }
+        body.dark-mode .widget-card.bg-dark { background-color: #121212 !important; border: 1px solid #333333 !important; }
+
     </style>
 </head>
 <body>
@@ -552,11 +711,18 @@
     </span>
         </div>
 
-        <div class="col-md-4">
-            <div class="input-group">
-                <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control bg-light border-start-0" placeholder="Search...">
+        <div class="col-md-4 position-relative z-3">
+
+            <div class="search-box-wrapper d-flex align-items-center bg-white border px-3 py-2 shadow-sm">
+                <i class="fas fa-search text-muted"></i>
+                <input type="text" class="form-control border-0 shadow-none bg-transparent ms-2 p-0" id="empSearchInput" placeholder="Search colleagues..." autocomplete="off">
             </div>
+
+            <div id="searchResultsDropdown" class="search-dropdown-card d-none">
+                <div id="searchResultsList" class="d-flex flex-column mb-0">
+                </div>
+            </div>
+
         </div>
 
         <div class="col-md-4 pe-4 text-end">
@@ -683,7 +849,88 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
+<div class="modal fade" id="employeeDirModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+
+        <div style="height: 120px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); position: relative;">
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 10;"></button>
+        </div>
+
+        <div class="modal-body px-4 px-md-5 pb-5 pt-0 text-center text-md-start">
+
+            <div class="d-flex flex-column flex-md-row align-items-center align-items-md-end" style="margin-top: -50px; margin-bottom: 25px;">
+                <div class="bg-white p-1 rounded-circle shadow-sm" style="z-index: 1;">
+                    <div id="modalEmpAvatar" class="d-flex align-items-center justify-content-center text-primary fw-bold rounded-circle"
+                         style="width: 100px; height: 100px; font-size: 2.5rem; background: #f8fafc; border: 2px solid #e2e8f0;">
+                        A
+                    </div>
+                </div>
+                <div class="ms-md-4 mt-3 mt-md-0 pb-md-2 text-center text-md-start flex-grow-1">
+                    <h3 class="fw-bold text-dark mb-1" id="modalEmpName">Employee Name</h3>
+                    <p class="text-primary fw-semibold mb-0" id="modalEmpDesignation">Designation / Role</p>
+                </div>
+                <div class="pb-md-2 mt-3 mt-md-0">
+                        <span class="badge bg-light text-dark border px-3 py-2 rounded-pill shadow-sm" style="font-weight: 600;">
+                            <i class="fas fa-map-marker-alt text-danger me-1"></i> <span id="modalEmpLocation">Location</span>
+                        </span>
+                </div>
+            </div>
+
+            <hr class="text-muted opacity-25 mb-4">
+
+            <div class="row g-4 text-start">
+
+                <div class="col-md-6 border-end-md">
+                    <h6 class="fw-bold text-uppercase text-muted mb-3" style="font-size: 0.75rem; letter-spacing: 1px;"><i class="fas fa-briefcase me-2"></i>Work Details</h6>
+
+                    <div class="mb-3">
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">DEPARTMENT</small>
+                        <span class="text-dark fw-bold" id="modalEmpDept">N/A</span>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">EMPLOYEE ID</small>
+                        <span class="text-dark fw-bold" id="modalEmpId">N/A</span>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">JOINING DATE & EXP</small>
+                        <span class="text-dark fw-bold" id="modalEmpExp">N/A</span>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">CURRENT PROJECT</small>
+                        <span class="text-dark fw-bold" id="modalEmpProject">N/A</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6 ps-md-4">
+                    <h6 class="fw-bold text-uppercase text-muted mb-3" style="font-size: 0.75rem; letter-spacing: 1px;"><i class="fas fa-address-book me-2"></i>Contact & Reporting</h6>
+
+                    <div class="mb-3">
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">EMAIL ADDRESS</small>
+                        <a href="#" class="text-primary fw-bold text-decoration-none" id="modalEmpEmail">N/A</a>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">MOBILE NUMBER</small>
+                        <a href="#" class="text-dark fw-bold text-decoration-none" id="modalEmpPhone">N/A</a>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">REPORTING MANAGER</small>
+                        <div class="d-flex align-items-center mt-1">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold me-2" style="width: 24px; height: 24px; font-size: 0.7rem;" id="modalManagerInitial">M</div>
+                            <span class="text-dark fw-bold" id="modalEmpManager">N/A</span>
+                        </div>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">HR CONTACT</small>
+                        <span class="text-dark fw-bold" id="modalEmpHr">N/A</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
     </div>
 </div>
 
@@ -763,6 +1010,173 @@
     // Run the function when the page loads
     renderDashboardCalendar();
 });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById('empSearchInput');
+        const dropdown = document.getElementById('searchResultsDropdown');
+        const resultsList = document.getElementById('searchResultsList');
+
+        let searchTimeout = null;
+
+        // Listen for typing in the search bar
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+
+            clearTimeout(searchTimeout);
+
+            // Hide dropdown if query is too short
+            if (query.length < 2) {
+                dropdown.classList.add('d-none');
+                dropdown.classList.remove('show'); // NEW: Added Bootstrap show toggle
+                return;
+            }
+
+            // Debounce: Wait 300ms after user stops typing to hit the database
+            searchTimeout = setTimeout(() => {
+                fetchSearchResults(query);
+            }, 300);
+        });
+
+        // Hide dropdown when clicking anywhere outside of it
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('d-none');
+                dropdown.classList.remove('show'); // NEW: Added Bootstrap show toggle
+            }
+        });
+
+        async function fetchSearchResults(query) {
+            try {
+                const response = await fetch(`/api/users/search?query=${encodeURIComponent(query)}`);
+                if (!response.ok) {
+                    throw new Error(`Search failed with status: ${response.status}`);
+                }
+
+                const users = await response.json();
+                renderResults(users);
+            } catch (error) {
+                console.error("Search API Error:", error);
+                // If it fails, show an error message in the dropdown
+                dropdown.classList.remove('d-none');
+                dropdown.classList.add('show');
+                resultsList.innerHTML = `<div class="p-3 text-center text-danger small fw-bold">Unable to fetch results. Check console.</div>`;
+            }
+        }
+
+        function renderResults(users) {
+            // NEW: Make sure both classes are updated to force visibility
+            dropdown.classList.remove('d-none');
+            dropdown.classList.add('show');
+
+            resultsList.innerHTML = '';
+
+            if (users.length === 0) {
+                resultsList.innerHTML = `<div class="p-3 text-center text-muted small fw-bold">No colleagues found matching your search.</div>`;
+                return;
+            }
+
+            users.forEach(user => {
+                // Generate a quick initial for the avatar
+                const initial = user.fullName ? user.fullName.charAt(0).toUpperCase() : '?';
+                const dept = user.businessUnit || 'General';
+                const role = user.designation || user.role || 'Employee';
+
+                const item = document.createElement('div');
+                // Force perfect horizontal alignment using Bootstrap flex classes
+                item.className = 'search-result-item d-flex align-items-center justify-content-between w-100';
+                item.dataset.user = JSON.stringify(user);
+
+                item.innerHTML = `
+                    <div class="d-flex align-items-center gap-3 overflow-hidden">
+                        <div class="search-icon-wrapper flex-shrink-0">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="text-truncate">
+                            <h6 class="mb-1 fw-bold text-dark lh-1 text-truncate">${user.fullName}</h6>
+                            <small class="text-muted text-truncate d-block" style="font-size: 0.8rem;">
+                                <i class="fas fa-briefcase me-1 opacity-75"></i>${dept} &bull; ${role}
+                            </small>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-muted small opacity-50 flex-shrink-0 ms-3"></i>
+                `;
+
+                // Add click listener to open the modal
+                item.addEventListener('click', function() {
+                    openEmployeeModal(JSON.parse(this.dataset.user));
+                    dropdown.classList.add('d-none');
+                    dropdown.classList.remove('show'); // Hide dropdown after click
+                    searchInput.value = ''; // Clear search bar
+                });
+
+                resultsList.appendChild(item);
+            });
+        }
+
+        function openEmployeeModal(user) {
+            // Header Info
+            document.getElementById('modalEmpName').textContent = user.fullName || 'N/A';
+            document.getElementById('modalEmpAvatar').textContent = user.fullName ? user.fullName.charAt(0).toUpperCase() : '?';
+            document.getElementById('modalEmpDesignation').textContent = user.designation || user.role || 'Employee';
+
+            // Location Badge
+            let location = user.city || user.workLocation || 'Head Office';
+            document.getElementById('modalEmpLocation').textContent = location;
+
+            // Work Details
+            document.getElementById('modalEmpDept').textContent = user.businessUnit || 'General';
+            document.getElementById('modalEmpId').textContent = user.username || 'N/A';
+
+            let joining = user.joiningDate || 'Unknown Date';
+            let exp = user.experience ? `(${user.experience})` : '';
+            document.getElementById('modalEmpExp').textContent = `${joining} ${exp}`;
+
+            document.getElementById('modalEmpProject').textContent = user.projectName || 'Internal Core';
+
+            // Contact & Reporting
+            const emailEl = document.getElementById('modalEmpEmail');
+            emailEl.textContent = user.email || 'N/A';
+            emailEl.href = user.email ? `mailto:${user.email}` : '#';
+
+            const phoneEl = document.getElementById('modalEmpPhone');
+            phoneEl.textContent = user.mobileNumber || 'Not Provided';
+            phoneEl.href = user.mobileNumber ? `tel:${user.mobileNumber}` : '#';
+
+            document.getElementById('modalEmpManager').textContent = user.reportingManager || 'N/A';
+            document.getElementById('modalManagerInitial').textContent = user.reportingManager ? user.reportingManager.charAt(0).toUpperCase() : '-';
+
+            document.getElementById('modalEmpHr').textContent = user.buHrContact || 'General HR';
+
+            // Show the Modal
+            new bootstrap.Modal(document.getElementById('employeeDirModal')).show();
+        }
+    });
+
+    // ==========================================
+    // DARK MODE TOGGLE LOGIC
+    // ==========================================
+    const darkModeSwitch = document.getElementById('darkModeSwitch');
+    const bodyElement = document.body;
+
+    // 1. Check if the user previously enabled dark mode
+    if (localStorage.getItem('theme') === 'dark') {
+        bodyElement.classList.add('dark-mode');
+        darkModeSwitch.checked = true;
+    }
+
+    // 2. Listen for the toggle switch click
+    darkModeSwitch.addEventListener('change', function() {
+        if (this.checked) {
+            bodyElement.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark'); // Save preference
+        } else {
+            bodyElement.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light'); // Save preference
+        }
+    });
+
+
 </script>
 </body>
 </html>

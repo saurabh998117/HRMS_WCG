@@ -23,10 +23,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
 
-                        // --- FIX 1: Change "USER" to "EMPLOYEE" ---
+                        // --- ROLE BASED ROUTING ---
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/employee/**").hasRole("EMPLOYEE")
                         .requestMatchers("/client/**").hasRole("CLIENT")
+
+                        // --- NEW: EXPLICITLY ALLOW API ACCESS ---
+                        .requestMatchers("/api/**").authenticated()
 
                         .anyRequest().authenticated()
                 )
