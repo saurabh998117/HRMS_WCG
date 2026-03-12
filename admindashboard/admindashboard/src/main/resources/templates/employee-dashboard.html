@@ -528,6 +528,37 @@
             font-size: 1.1rem;
         }
 
+        /* --- FESTIVE BIRTHDAY WIDGET STYLES --- */
+        .birthday-card-active {
+            background: linear-gradient(135deg, #ffffff 0%, #fdf4ff 100%);
+            border: 1px solid #f5d0fe !important;
+            transition: all 0.3s ease;
+        }
+        .birthday-cake-icon {
+            color: #d946ef; /* Vibrant Pink/Purple */
+            animation: cakeFloat 2s ease-in-out infinite;
+        }
+        @keyframes cakeFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .btn-wish {
+            background-color: #fdf4ff;
+            color: #a21caf;
+            border: 1px solid #f5d0fe;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 50px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-wish:hover {
+            background-color: #a21caf;
+            color: white;
+            transform: scale(1.05);
+        }
+
 
 
         /* ==========================================================================
@@ -864,13 +895,15 @@
         <div class="col-lg-4 h-100">
             <div class="parallel-col">
                 <div class="widget-card" style="flex: 1;">
-                    <div class="widget-header"><span>BIRTHDAYS</span><a href="#" class="small text-decoration-none">View All</a></div>
+                    <div class="widget-header"><span>BIRTHDAYS</span></div>
                     <div class="widget-body">
                         <div class="d-flex align-items-center mt-2">
                             <i class="fas fa-birthday-cake text-primary fa-lg me-3"></i>
                             <div>
-                                <h6 class="mb-0 small fw-bold">26 January</h6>
-                                <small class="text-muted">No birthdays today</small>
+                                <h6 class="mb-0 small fw-bold" id="todayDateLabel">Loading...</h6>
+                                <div id="birthdayListContainer">
+                                    <small class="text-muted">Checking...</small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1235,6 +1268,8 @@
             // Show the Modal
             new bootstrap.Modal(document.getElementById('employeeDirModal')).show();
         }
+
+        updateBirthdayWidget();
     });
 
     // ==========================================
@@ -1260,6 +1295,73 @@
         }
     });
 
+    // --- DYNAMIC BIRTHDAY WIDGET LOGIC ---
+    async function updateBirthdayWidget() {
+    const container = document.getElementById('birthdayListContainer');
+    const dateLabel = document.getElementById('todayDateLabel');
+    const card = container.closest('.widget-card'); // Select the whole card
+
+    const today = new Date();
+    dateLabel.textContent = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+
+    try {
+        const response = await fetch('/api/users/birthdays-today');
+        const birthdays = await response.json();
+
+        container.innerHTML = '';
+
+        if (birthdays.length === 0) {
+            container.innerHTML = `<small class="text-muted">No birthdays today</small>`;
+            card.classList.remove('birthday-card-active');
+            return;
+        }
+
+        // Apply celebratory style if there are birthdays
+        card.classList.add('birthday-card-active');
+        const cakeIcon = document.querySelector('.fa-birthday-cake');
+        if(cakeIcon) cakeIcon.classList.add('birthday-cake-icon');
+
+        const profileInitials = document.querySelector('.profile-btn div')?.textContent || "";
+
+        birthdays.forEach(user => {
+            const bdayDiv = document.createElement('div');
+            bdayDiv.className = "mt-3 p-2 rounded-3 bg-white shadow-sm border border-light";
+
+            const userInitials = user.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+            if (userInitials === profileInitials) {
+                // IT'S YOUR BIRTHDAY!
+                bdayDiv.style.background = "linear-gradient(to right, #fae8ff, #f5d0fe)";
+                bdayDiv.innerHTML = `
+                    <h6 class="text-dark mb-1 fw-bold">🎉 Happy Birthday, You!</h6>
+                    <small class="text-muted d-block">The whole team is celebrating with you today!</small>
+                `;
+            } else {
+                // COLLEAGUE'S BIRTHDAY + SEND WISH BUTTON
+                const subject = encodeURIComponent(`Happy Birthday, ${user.fullName}! 🎂`);
+                const body = encodeURIComponent(`Hi ${user.fullName.split(' ')[0]},\n\nWishing you a very Happy Birthday and a fantastic year ahead!\n\nBest regards,`);
+                const mailtoLink = `mailto:${user.email}?subject=${subject}&body=${body}`;
+
+                bdayDiv.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="overflow-hidden">
+                            <small class="text-dark fw-bold d-block text-truncate">${user.fullName}</small>
+                            <small class="text-muted d-block text-truncate" style="font-size: 0.7rem;">${user.designation || 'Team Member'}</small>
+                        </div>
+                        <a href="${mailtoLink}" class="btn-wish flex-shrink-0 ms-2">
+                            <i class="fas fa-paper-plane me-1"></i> Wish
+                        </a>
+                    </div>
+                `;
+            }
+            container.appendChild(bdayDiv);
+        });
+
+    } catch (error) {
+        console.error("Birthday Fetch Error:", error);
+        container.innerHTML = `<small class="text-danger">Syncing...</small>`;
+    }
+}
 
 </script>
 </body>
