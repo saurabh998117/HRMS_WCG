@@ -58,26 +58,33 @@
         /* --- 1. ACTION CARDS (Top Row) --- */
         .action-card {
             background: white;
-            /* ADDED: Navy Border */
-            border: 2px solid var(--bs-primary);
+            border: 3px solid var(--bs-primary);
             border-radius: 12px;
             padding: 35px 25px;
             height: 100%;
             display: flex; align-items: center; gap: 20px;
             cursor: pointer;
+            /* Added transition so the hover effect isn't jerky */
+            transition: all 0.3s ease;
         }
 
         .ac-icon {
-            /* Increased icon size slightly */
             width: 60px; height: 60px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.8rem; flex-shrink: 0;
+            /* Ensure the icon color transition is smooth */
+            transition: all 0.3s ease;
         }
 
-        /* Specific Colors */
+        /* --- Default State (Light Backgrounds) --- */
         .ac-create .ac-icon { background: #eff6ff; color: var(--bs-primary); }
         .ac-template .ac-icon { background: #fdf2f8; color: #db2777; }
         .ac-report .ac-icon { background: #f0fdf4; color: #15803d; }
+
+        /* --- Hover State (Dark Backgrounds) --- */
+        .ac-create:hover .ac-icon { background: var(--bs-primary); color: white; }
+        .ac-template:hover .ac-icon { background: #db2777; color: white; }
+        .ac-report:hover .ac-icon { background: #15803d; color: white; }
 
         /* --- 2. CALENDAR VIEW --- */
         .calendar-card {
