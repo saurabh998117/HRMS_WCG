@@ -18,4 +18,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findByUserAndStatusIgnoreCaseOrderByIdDesc(User user, String status);
 
     List<Attendance> findByUserAndApprovalStatusIgnoreCaseOrderByIdDesc(User user, String approvalStatus);
+
+    // Fetch all attendance records for a user, newest first
+    List<Attendance> findByUserOrderByIdDesc(User user);
 }

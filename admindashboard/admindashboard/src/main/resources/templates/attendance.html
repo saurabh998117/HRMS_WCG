@@ -338,7 +338,7 @@
         };
     }
 
-    // 4. Save Draft (Now accepts a silent flag)
+    // Update the URL from /api/timesheet/save to /api/attendance/save
     async function saveDraft(showAlert = true) {
         const data = gatherTimesheetData();
 
@@ -348,7 +348,8 @@
         }
 
         try {
-            const response = await fetch('/api/timesheet/save', {
+            // FIXED: Point to the Attendance endpoint
+            const response = await fetch('/api/attendance/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -356,13 +357,10 @@
 
             if (!response.ok) throw new Error(await response.text());
 
-            const savedTimesheet = await response.json();
+            const savedAttendance = await response.json();
 
-            // Only show the alert if the user clicked "Save Draft" directly
-            if (showAlert) {
-                alert("Draft Saved Successfully!");
-            }
-            return savedTimesheet;
+            if (showAlert) alert("Draft Saved Successfully!");
+            return savedAttendance;
 
         } catch (error) {
             console.error("Error:", error);
@@ -406,15 +404,14 @@
 
         // Save the draft silently (pass 'false' so the draft alert doesn't pop up)
         const savedSheet = await saveDraft(false);
-
         if (savedSheet && savedSheet.id) {
             try {
-                // Hit the submit endpoint
-                const response = await fetch(`/api/timesheet/submit/${savedSheet.id}`, {
+                // FIXED: Point to the Attendance submit endpoint
+                const response = await fetch(`/api/attendance/submit/${savedSheet.id}`, {
                     method: 'POST'
                 });
                 if (response.ok) {
-                    alert("Timesheet Submitted successfully for approval");
+                    alert("Attendance Record Submitted successfully for approval");
                     window.location.reload();
                 } else {
                     alert("Submission failed: " + await response.text());
