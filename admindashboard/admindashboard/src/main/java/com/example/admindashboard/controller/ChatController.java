@@ -102,21 +102,26 @@ public class ChatController {
 
     // 2. HANDLE LIVE INCOMING MESSAGES
     // ==========================================
-    @MessageMapping("/chat.send") // Frontend sends messages to "/app/chat.send"
-    public void processMessage(@Payload ChatMessage chatMessage) {
+    @MessageMapping("/chat.send")
+    public void processMessage(@Payload Map<String, Object> payload) {
 
-        // Auto-stamp the exact time and your new DATE field before saving!
+        // 1. Extract raw data manually to prevent strict Jackson parsing crashes
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setSenderId(Long.valueOf(payload.get("senderId").toString()));
+        chatMessage.setRecipientId(Long.valueOf(payload.get("recipientId").toString()));
+        chatMessage.setContent(payload.get("content").toString());
+
+        // 2. Auto-stamp the exact server time securely
         chatMessage.setTimestamp(LocalDateTime.now());
         chatMessage.setDate(LocalDate.now());
 
-        // Save the message permanently to the database
+        // 3. Save the message permanently to the database
         ChatMessage savedMsg = chatMessageRepository.save(chatMessage);
 
-        // Forward the message to the recipient instantly via WebSockets
-        // This sends it to a specific queue: /user/{recipientId}/queue/messages
-        messagingTemplate.convertAndSendToUser(
-                String.valueOf(chatMessage.getRecipientId()),
-                "/queue/messages",
+        // 4. Forward the message directly to the exact queue the frontend is subscribed to!
+        // Using 'convertAndSend' with the exact string path bypasses Principal mapping issues
+        messagingTemplate.convertAndSend(
+                "/user/" + chatMessage.getRecipientId() + "/queue/messages",
                 savedMsg
         );
     }
@@ -206,4 +211,5 @@ public class ChatController {
             return timestamp.format(DateTimeFormatter.ofPattern("dd MMM"));
         }
     }
+
 }

@@ -603,6 +603,30 @@
     }
 
     // 5. UPGRADED UI HELPER FUNCTIONS
+    function scrollToBottom() {
+        const chatHistoryBox = document.querySelector('.chat-history');
+        if (chatHistoryBox) {
+            chatHistoryBox.scrollTop = chatHistoryBox.scrollHeight;
+        }
+    }
+
+    // Moves the person you just messaged to the top of the sidebar (right below the HR Bot)
+    function moveContactToTop(contactId) {
+        if (contactId == 0) return; // Don't move the HR Bot
+
+        const contactItem = document.querySelector(`.contact-item[data-id='${contactId}']`);
+        const contactList = document.querySelector('.contact-list');
+        const hrBot = document.querySelector('.contact-item[data-id="0"]');
+
+        if (contactItem && contactList) {
+            // Insert the active contact right after the HR Bot
+            if (hrBot && hrBot.nextSibling) {
+                contactList.insertBefore(contactItem, hrBot.nextSibling);
+            } else {
+                contactList.prepend(contactItem);
+            }
+        }
+    }
 
     function displayMessage(msg, type) {
         const chatHistoryBox = document.querySelector('.chat-history');
