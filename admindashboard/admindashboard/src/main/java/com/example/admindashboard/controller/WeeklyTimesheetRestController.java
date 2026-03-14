@@ -5,7 +5,6 @@ import com.example.admindashboard.model.WeeklyTimesheet;
 import com.example.admindashboard.model.User;
 import com.example.admindashboard.repository.UserRepository;
 import com.example.admindashboard.service.WeeklyTimesheetService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import com.example.admindashboard.repository.WeeklyTimesheetRepository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/api/weekly-timesheet")
@@ -26,9 +28,14 @@ public class WeeklyTimesheetRestController {
     @Autowired
     private WeeklyTimesheetService timesheetService;
 
-    // UPDATED: Using your actual UserRepository
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WeeklyTimesheetRepository timesheetRepository;
+
+    @Autowired
+    private WeeklyTimesheetRepository weeklyTimesheetRepository;
 
     @PostMapping("/submit")
     public ResponseEntity<Map<String, String>> submitTimesheet(@RequestBody TimesheetSubmissionDTO payload) {
@@ -90,5 +97,33 @@ public class WeeklyTimesheetRestController {
 
         return timesheet.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+
+    // EXPORT ENDPOINTS
+    @GetMapping("/export/pdf/{id}")
+    public ResponseEntity<byte[]> exportPdf(@PathVariable Long id) {
+        WeeklyTimesheet timesheet = timesheetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Timesheet not found"));
+
+        byte[] pdfBytes = timesheetService.generatePdf(timesheet);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Timesheet_" + timesheet.getWeekStartDate() + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
+
+    @GetMapping("/export/excel/{id}")
+    public ResponseEntity<byte[]> exportExcel(@PathVariable Long id) {
+        WeeklyTimesheet timesheet = timesheetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Timesheet not found"));
+
+        byte[] excelBytes = timesheetService.generateExcel(timesheet);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Timesheet_" + timesheet.getWeekStartDate() + ".xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(excelBytes);
     }
 }
