@@ -281,8 +281,8 @@
         grid.innerHTML = '<div class="col-12 text-center text-muted py-5"><i class="fas fa-spinner fa-spin fs-2"></i><p class="mt-2 fw-bold">Loading your timesheets...</p></div>';
 
         try {
-            // Fetch real data from the backend
-            const response = await fetch('/api/timesheet/my-history');
+            // FIXED: Point to the Attendance API instead of the Timesheet API
+            const response = await fetch('/api/attendance/my-history');
             if (!response.ok) throw new Error("Failed to load data");
             const allTimesheets = await response.json();
 
@@ -300,7 +300,6 @@
             const uniqueMap = new Map();
             monthlyData.forEach(ts => {
                 const key = ts.weekStartDate;
-                // If the map doesn't have the week, OR if this timesheet has a higher ID (newer), save it
                 if (!uniqueMap.has(key) || ts.id > uniqueMap.get(key).id) {
                     uniqueMap.set(key, ts);
                 }
@@ -309,19 +308,16 @@
 
             // --- 2. SORT CARDS (Newest week first) ---
             monthlyData.sort((a, b) => new Date(b.weekStartDate) - new Date(a.weekStartDate));
-
             grid.innerHTML = ""; // Clear loader
-
-            // --- EMPTY STATE RENDERING ---
             if (monthlyData.length === 0) {
                 grid.innerHTML = `
                     <div class="col-12">
                         <div class="empty-state">
                             <i class="fas fa-folder-open empty-icon"></i>
-                            <h4 class="fw-bold mb-2" style="color: var(--navy);">No Timesheets Submitted</h4>
+                            <h4 class="fw-bold mb-2" style="color: var(--navy);">No Requests Submitted</h4>
                             <p class="text-muted mb-4">You haven't logged any hours for ${document.getElementById("currentMonthDisplay").innerText}.</p>
                             <a href="/attendance" class="btn btn-primary rounded-pill px-4 py-2 fw-bold text-decoration-none shadow-sm">
-                                <i class="fas fa-plus me-2"></i>Submit a Timesheet
+                                <i class="fas fa-plus me-2"></i>Submit a Request
                             </a>
                         </div>
                     </div>
@@ -329,40 +325,36 @@
                 return;
             }
 
-            // --- RENDER TIMESHEET CARDS ---
             monthlyData.forEach(ts => {
-                // Safely handle null values from DB, default to 0
+                // Safely handle null values from DB
                 const mon = ts.mondayHours || 0;
                 const tue = ts.tuesdayHours || 0;
                 const wed = ts.wednesdayHours || 0;
                 const thu = ts.thursdayHours || 0;
                 const fri = ts.fridayHours || 0;
-                const totalHours = mon + tue + wed + thu + fri;
 
-                const status = ts.status || "Submitted";
+                // FIXED: Use the database's totalHours if the daily breakdown isn't available
+                const calcTotal = mon + tue + wed + thu + fri;
+                const dbTotal = parseFloat(ts.totalHours) || 0;
+                const totalHours = calcTotal > 0 ? calcTotal : dbTotal;
+
+                // FIXED: Use approvalStatus to match the Attendance DB model
+                const status = ts.approvalStatus || "Submitted";
                 const statusClass = status === "Approved" ? "status-approved" :
                                   (status === "Draft" ? "status-draft" : "status-submitted");
 
                 const weekDateObj = new Date(ts.weekStartDate);
                 const weekLabel = "Week of " + weekDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-                // Helper to format Mode & Reason cleanly with smart fallbacks
                 const formatDaily = (hours, status, mode, reason) => {
-                    let displayStatus = status;
-                    if (!displayStatus) {
-                        displayStatus = (hours === 0 || hours === 0.0) ? 'Absent' : 'Present';
-                    }
-                    let displayMode = mode;
-                    if (!displayMode) {
-                        displayMode = (hours === 0 || hours === 0.0) ? '-' : 'Office';
-                    }
+                    let displayStatus = status || ((hours === 0 || hours === 0.0) ? 'Absent' : 'Present');
+                    let displayMode = mode || ((hours === 0 || hours === 0.0) ? '-' : 'Office');
                     return {
                         status: displayStatus,
                         modeReason: reason ? `${displayMode} (${reason})` : displayMode
                     };
                 };
 
-                // NEW: Helper to calculate the exact date for each day of the week
                 const getFormattedDate = (offset) => {
                     const d = new Date(ts.weekStartDate);
                     d.setDate(d.getDate() + offset);
@@ -370,17 +362,12 @@
                 };
 
                 const modalData = {
-                    weekTitle: "Timesheet Details", dates: weekLabel,
+                    weekTitle: "Attendance Details", dates: weekLabel,
                     status: status, statusClass: statusClass, total: totalHours,
                     mon: mon, tue: tue, wed: wed, thu: thu, fri: fri,
-
-                    // Add the calculated dates (Monday is offset 0, Tuesday is offset 1, etc.)
-                    monDate: getFormattedDate(0),
-                    tueDate: getFormattedDate(1),
-                    wedDate: getFormattedDate(2),
-                    thuDate: getFormattedDate(3),
+                    monDate: getFormattedDate(0), tueDate: getFormattedDate(1),
+                    wedDate: getFormattedDate(2), thuDate: getFormattedDate(3),
                     friDate: getFormattedDate(4),
-
                     monInfo: formatDaily(mon, ts.mondayStatus, ts.mondayMode, ts.mondayReason),
                     tueInfo: formatDaily(tue, ts.tuesdayStatus, ts.tuesdayMode, ts.tuesdayReason),
                     wedInfo: formatDaily(wed, ts.wednesdayStatus, ts.wednesdayMode, ts.wednesdayReason),
@@ -388,13 +375,12 @@
                     friInfo: formatDaily(fri, ts.fridayStatus, ts.fridayMode, ts.fridayReason)
                 };
 
-                // UPDATED HTML: Taller card, Daily Snapshot, and Shining Button
                 const html = `
                     <div class="col-md-6 col-lg-3">
                         <div class="ts-card">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
-                                    <div class="ts-week-title">Timesheet</div>
+                                    <div class="ts-week-title">Regularization</div>
                                     <div class="ts-dates">${weekLabel}</div>
                                 </div>
                                 <span class="status-badge ${statusClass}">${status}</span>
@@ -416,7 +402,7 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-navy-shine w-100 rounded-3 py-2 fw-bold mt-auto" onclick='openModal(${JSON.stringify(modalData)})'>
+                            <button class="btn btn-navy-shine w-100 rounded-3 py-2 fw-bold mt-auto" onclick='openModal(${JSON.stringify(modalData).replace(/'/g, "&#39;")})'>
                                 <i class="fas fa-eye me-2"></i> View Breakdown
                             </button>
                         </div>
@@ -426,7 +412,7 @@
             });
 
         } catch (error) {
-            grid.innerHTML = `<div class="col-12 text-center text-danger py-5 fw-bold"><i class="fas fa-exclamation-circle fs-3 mb-2"></i><br>Error loading timesheets: ${error.message}</div>`;
+            grid.innerHTML = `<div class="col-12 text-center text-danger py-5 fw-bold"><i class="fas fa-exclamation-circle fs-3 mb-2"></i><br>Error loading history: ${error.message}</div>`;
             console.error(error);
         }
     }
